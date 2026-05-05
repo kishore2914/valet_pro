@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import GlassCard from '../components/ui/GlassCard';
 import VideoModal from '../components/ui/VideoModal';
+import heroBg from '../assets/hero-bg.png';
 
 // Section Header Component
 const SectionHeader = ({ title, subtitle, centered = true }) => (
@@ -62,6 +63,10 @@ const LandingPage = () => {
 
   return (
     <div style={{ 
+      backgroundImage: `linear-gradient(to bottom, rgba(2, 6, 23, 0.6) 0%, rgba(2, 6, 23, 0.9) 100%), url(${heroBg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
       backgroundColor: 'var(--obsidian-black)', 
       color: 'white', 
       minHeight: '100vh', 
@@ -89,7 +94,7 @@ const LandingPage = () => {
       }}>
         <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--blue-500)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Car size={32} />
-          <span>Valet<span style={{ color: 'var(--amber-gold)' }}>Pro</span></span>
+          <span>Valet<span style={{ color: 'var(--amber-gold)' }}> Parking</span></span>
         </div>
         
         <nav style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -129,7 +134,7 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section style={{ 
-        padding: '12rem 5vw 8rem',
+        padding: '14rem 5vw 10rem',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -137,17 +142,6 @@ const LandingPage = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        <div style={{ 
-          position: 'absolute', 
-          top: '10%', 
-          left: '50%', 
-          transform: 'translateX(-50%)', 
-          width: '80vw', 
-          height: '40vh', 
-          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%)',
-          zIndex: 0,
-          pointerEvents: 'none'
-        }}></div>
 
         <motion.div
            initial={{ opacity: 0, y: 30 }}
@@ -236,7 +230,7 @@ const LandingPage = () => {
       </section>
 
       {/* Stats Bar */}
-      <section style={{ padding: '4rem 5vw', backgroundColor: 'var(--obsidian-elevated)' }}>
+      <section style={{ padding: '4rem 5vw', backgroundColor: 'rgba(255,255,255,0.02)', backdropFilter: 'blur(8px)' }}>
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
@@ -291,8 +285,9 @@ const LandingPage = () => {
                 height: '100%', 
                 padding: '2.5rem', 
                 border: '1px solid rgba(255,255,255,0.08)',
-                background: 'rgba(255, 255, 255, 0.03)',
-                backdropFilter: 'blur(12px)'
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255,255,255,0.1)'
               }}>
                 <div style={{ 
                   width: '56px', 
@@ -316,8 +311,97 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* How it Works Section */}
+      <section id="how-it-works" style={{ padding: '10rem 5vw', backgroundColor: 'rgba(255,255,255,0.01)' }}>
+        <SectionHeader 
+          title="How it Works" 
+          subtitle="A seamless 4-step process designed for the modern guest experience."
+        />
+
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', 
+          gap: '2.5rem', 
+          maxWidth: '1200px', 
+          margin: '0 auto',
+          position: 'relative'
+        }}>
+          {[
+            { 
+              step: '01', 
+              icon: Smartphone, 
+              title: 'Digital Arrival', 
+              desc: 'Guest arrives and receives a digital token via SMS instantly. No paper tickets needed.' 
+            },
+            { 
+              step: '02', 
+              icon: Shield, 
+              title: 'Secure Parking', 
+              desc: 'Valet captures vehicle photos and parks in a designated secure zone.' 
+            },
+            { 
+              step: '03', 
+              icon: Zap, 
+              title: 'One-Tap Request', 
+              desc: 'Guest requests their car via the digital token when they are ready to leave.' 
+            },
+            { 
+              step: '04', 
+              icon: Check, 
+              title: 'Swift Handover', 
+              desc: 'Car is delivered and guest is notified. Seamless exit in seconds.' 
+            },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              style={{ position: 'relative', textAlign: 'center', zIndex: 1 }}
+            >
+              <div style={{ 
+                width: '90px', 
+                height: '90px', 
+                borderRadius: '30px', 
+                backgroundColor: 'rgba(255, 255, 255, 0.03)', 
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                margin: '0 auto 2rem',
+                position: 'relative',
+                color: 'var(--amber-gold)'
+              }}>
+                <item.icon size={36} />
+                <div style={{ 
+                  position: 'absolute', 
+                  top: '-10px', 
+                  right: '-10px', 
+                  width: '32px', 
+                  height: '32px', 
+                  borderRadius: '10px', 
+                  backgroundColor: 'var(--blue-500)', 
+                  color: 'white', 
+                  fontSize: '0.75rem', 
+                  fontWeight: '800', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  boxShadow: '0 4px 10px rgba(37, 99, 235, 0.3)'
+                }}>
+                  {item.step}
+                </div>
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', marginBottom: '1rem', color: 'white' }}>{item.title}</h3>
+              <p style={{ color: 'var(--slate-400)', fontSize: '0.95rem', lineHeight: '1.6' }}>{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       {/* Pricing Section */}
-      <section id="pricing" style={{ padding: '10rem 5vw', backgroundColor: 'var(--obsidian-elevated)' }}>
+      <section id="pricing" style={{ padding: '10rem 5vw', backgroundColor: 'rgba(0,0,0,0.1)' }}>
         <SectionHeader 
           title="Simple, Transparent Pricing" 
           subtitle="Choose the perfect plan for your venue size and operational complexity."
@@ -362,7 +446,8 @@ const LandingPage = () => {
                 height: '100%', 
                 padding: '3rem 2rem', 
                 border: plan.featured ? '2px solid var(--blue-500)' : '1px solid rgba(255,255,255,0.05)',
-                backgroundColor: plan.featured ? 'rgba(37, 99, 235, 0.05)' : 'var(--obsidian-black)'
+                backgroundColor: plan.featured ? 'rgba(37, 99, 235, 0.1)' : 'rgba(2, 6, 23, 0.4)',
+                backdropFilter: 'blur(16px)'
               }}>
                 {plan.featured && (
                   <div style={{ 
@@ -397,7 +482,7 @@ const LandingPage = () => {
                   ))}
                 </div>
 
-                <Link to="/login" style={{ textDecoration: 'none' }}>
+                <Link to={`/signup?plan=${plan.tier.toLowerCase()}`} style={{ textDecoration: 'none' }}>
                   <Button variant={plan.featured ? 'primary' : 'outline'} style={{ 
                     width: '100%', 
                     borderRadius: '12px', 
@@ -415,7 +500,7 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '8rem 5vw 4rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <footer style={{ padding: '8rem 5vw 4rem', borderTop: '1px solid rgba(255,255,255,0.05)', backgroundColor: 'rgba(0,0,0,0.2)' }}>
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
@@ -426,7 +511,7 @@ const LandingPage = () => {
           <div>
             <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--blue-500)', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <Car size={32} />
-              <span>Valet<span style={{ color: 'var(--amber-gold)' }}>Pro</span></span>
+              <span>Valet<span style={{ color: 'var(--amber-gold)' }}> Parking</span></span>
             </div>
             <p style={{ color: 'var(--slate-500)', lineHeight: '1.6', maxWidth: '300px' }}>
               Transforming valet parking experience with cutting-edge digital tracking and management systems.
@@ -464,7 +549,7 @@ const LandingPage = () => {
           </Link>
         </div>
         <div style={{ textAlign: 'center', color: 'var(--slate-600)', fontSize: '0.875rem' }}>
-          © 2024 ValetPro Technologies. All rights reserved.
+          © 2024 Valet Parking Technologies. All rights reserved.
         </div>
       </footer>
     </div>

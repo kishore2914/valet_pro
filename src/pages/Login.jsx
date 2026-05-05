@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import GlassCard from '../components/ui/GlassCard';
 import { useAuth } from '../context/AuthContext';
+import heroBg from '../assets/hero-bg.png';
 
 const Login = () => {
   const [email, setEmail] = useState('admin@valetpro.com');
@@ -39,7 +40,9 @@ const Login = () => {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      background: 'linear-gradient(135deg, var(--slate-950) 0%, var(--slate-900) 100%)',
+      background: `linear-gradient(135deg, rgba(2, 6, 23, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%), url(${heroBg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
       padding: '2rem'
     }}>
       <div className="ticks" style={{ position: 'fixed', inset: 0, opacity: 0.1 }}></div>
@@ -66,7 +69,7 @@ const Login = () => {
             <Car size={32} />
           </div>
           <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: '800' }}>
-            Valet<span style={{ color: 'var(--accent)' }}>Pro</span>
+            Valet<span style={{ color: 'var(--accent)' }}> Parking</span>
           </h1>
           <p style={{ color: 'var(--slate-400)', marginTop: '0.5rem' }}>Digital Valet Management System</p>
         </div>
@@ -158,7 +161,7 @@ const Login = () => {
 
         <div style={{ textAlign: 'center', marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
           <p style={{ color: 'var(--slate-400)', fontSize: '0.875rem', marginBottom: '1rem' }}>
-            New to Valet Pro?
+            New to Valet Parking?
           </p>
           <Link to="/signup" style={{ textDecoration: 'none' }}>
             <Button variant="outline" style={{ width: '100%', borderRadius: '12px', borderColor: 'rgba(255,255,255,0.1)', color: 'white' }}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Car, 
@@ -10,13 +10,17 @@ import {
   MapPin,
   User
 } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
+import heroBg from '../assets/hero-bg.png';
 
 const Signup = () => {
+  const [searchParams] = useSearchParams();
+  const plan = searchParams.get('plan');
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -26,6 +30,26 @@ const Signup = () => {
   // Admin fields
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [adminCode, setAdminCode] = useState('');
+  const [adminExists, setAdminExists] = useState(false);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        const { data: config, error: configError } = await supabase
+          .from('system_config')
+          .select('value')
+          .eq('key', 'super_admin_exists')
+          .single();
+
+        if (!configError && config?.value === true) {
+          setAdminExists(true);
+        }
+      } catch (err) {
+        console.error('Error checking admin status:', err);
+      }
+    };
+    checkAdminStatus();
+  }, []);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -102,10 +126,19 @@ const Signup = () => {
 
           // Sync location_id into user metadata for instant AuthContext resolution
           await supabase.auth.updateUser({
-            data: { location_id: newLocationId, full_name: fullName, role: 'valet' }
+            data: { 
+              location_id: newLocationId, 
+              full_name: fullName, 
+              role: 'valet',
+              plan: plan || 'starter'
+            }
           });
 
-          navigate('/valet');
+          if (plan) {
+            navigate(`/payment?plan=${plan}`);
+          } else {
+            navigate('/valet');
+          }
         }
       }
     } catch (err) {
@@ -121,7 +154,9 @@ const Signup = () => {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      backgroundColor: 'var(--obsidian-black)',
+      backgroundImage: `linear-gradient(to bottom, rgba(2, 6, 23, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%), url(${heroBg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
       padding: '2rem'
     }}>
       <motion.div
@@ -136,8 +171,25 @@ const Signup = () => {
           <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'white', marginBottom: '0.5rem' }}>
             {isAdminMode ? 'Admin Registration' : 'Create Account'}
           </h1>
+          {plan && !isAdminMode && (
+            <div style={{ 
+              display: 'inline-block', 
+              padding: '4px 12px', 
+              borderRadius: '100px', 
+              backgroundColor: 'rgba(37, 99, 235, 0.2)', 
+              color: 'var(--blue-500)', 
+              fontSize: '0.75rem', 
+              fontWeight: '800',
+              textTransform: 'uppercase',
+              marginBottom: '1rem',
+              letterSpacing: '0.05em',
+              border: '1px solid rgba(37, 99, 235, 0.3)'
+            }}>
+              Selected Plan: {plan}
+            </div>
+          )}
           <p style={{ color: 'var(--slate-400)' }}>
-            {isAdminMode ? 'Claim the platform administrator account' : 'Join Valet Pro and start managing your location'}
+            {isAdminMode ? 'Claim the platform administrator account' : 'Join Valet Parking and start managing your location'}
           </p>
         </div>
 
@@ -195,45 +247,47 @@ const Signup = () => {
               </div>
             </div>
 
-            <div style={{ 
-              padding: '1.25rem', 
-              borderRadius: '12px', 
-              background: isAdminMode ? 'rgba(245, 158, 11, 0.1)' : 'rgba(37, 99, 235, 0.08)', 
-              border: isAdminMode ? '1px solid var(--amber-gold)' : '1px dashed rgba(37, 99, 235, 0.3)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'space-between',
-              transition: 'all 0.3s ease'
-            }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.95rem', fontWeight: '800', color: isAdminMode ? 'var(--amber-gold)' : 'white', marginBottom: '0.2rem' }}>Platform Administrator?</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--slate-300)', lineHeight: '1.4' }}>Enable for platform-wide oversight and management</div>
-              </div>
-              <div style={{ position: 'relative', width: '24px', height: '24px' }}>
-                <input 
-                  type="checkbox" 
-                  id="adminToggle"
-                  checked={isAdminMode} 
-                  onChange={(e) => setIsAdminMode(e.target.checked)}
-                  style={{ width: '24px', height: '24px', cursor: 'pointer', opacity: 0, position: 'absolute', zIndex: 2 }}
-                />
-                <div style={{ 
-                  width: '24px', 
-                  height: '24px', 
-                  borderRadius: '6px', 
-                  backgroundColor: isAdminMode ? 'var(--amber-gold)' : 'rgba(255,255,255,0.1)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--obsidian-black)',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}>
-                  {isAdminMode && '✓'}
+            {!plan && !adminExists && (
+              <div style={{ 
+                padding: '1.25rem', 
+                borderRadius: '12px', 
+                background: isAdminMode ? 'rgba(245, 158, 11, 0.1)' : 'rgba(37, 99, 235, 0.08)', 
+                border: isAdminMode ? '1px solid var(--amber-gold)' : '1px dashed rgba(37, 99, 235, 0.3)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                transition: 'all 0.3s ease'
+              }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: '800', color: isAdminMode ? 'var(--amber-gold)' : 'white', marginBottom: '0.2rem' }}>Platform Administrator?</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--slate-300)', lineHeight: '1.4' }}>Enable for platform-wide oversight and management</div>
+                </div>
+                <div style={{ position: 'relative', width: '24px', height: '24px' }}>
+                  <input 
+                    type="checkbox" 
+                    id="adminToggle"
+                    checked={isAdminMode} 
+                    onChange={(e) => setIsAdminMode(e.target.checked)}
+                    style={{ width: '24px', height: '24px', cursor: 'pointer', opacity: 0, position: 'absolute', zIndex: 2 }}
+                  />
+                  <div style={{ 
+                    width: '24px', 
+                    height: '24px', 
+                    borderRadius: '6px', 
+                    backgroundColor: isAdminMode ? 'var(--amber-gold)' : 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--obsidian-black)',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}>
+                    {isAdminMode && '✓'}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             <AnimatePresence mode="wait">
               {isAdminMode ? (

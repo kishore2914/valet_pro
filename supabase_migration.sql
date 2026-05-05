@@ -81,6 +81,17 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS system_config (
+    key TEXT PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Seed initial data
+INSERT INTO system_config (key, value) 
+VALUES ('super_admin_exists', 'false'::jsonb)
+ON CONFLICT (key) DO NOTHING;
+
 -- 4. Add Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_vehicles_location_id ON vehicles(location_id);
 CREATE INDEX IF NOT EXISTS idx_staff_location_id ON staff(location_id);
@@ -107,21 +118,7 @@ DROP POLICY IF EXISTS notifications_location_policy ON notifications;
 DROP POLICY IF EXISTS profiles_self_policy ON profiles;
 
 -- ============================================================
--- PROFILES: Allow users to read/update their own profile row.
--- This is essential because other policies do a sub-select on
--- profiles to resolve the caller's location_id.
--- ============================================================
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY profiles_self_policy ON profiles
-    FOR ALL
-    USING (id = auth.uid())
-    WITH CHECK (id = auth.uid());
-
--- ============================================================
--- Helper function: returns the location_id of the current user.
--- Using a SECURITY DEFINER function avoids the RLS recursion
--- problem where the sub-select on profiles gets blocked.
+-- Helper functions: avoid RLS recursion by using SECURITY DEFINER
 -- ============================================================
 CREATE OR REPLACE FUNCTION get_my_location_id()
 RETURNS UUID
@@ -132,49 +129,100 @@ AS $$
   SELECT location_id FROM profiles WHERE id = auth.uid() LIMIT 1;
 $$;
 
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS BOOLEAN
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM profiles 
+    WHERE id = auth.uid() 
+    AND (LOWER(role) = 'admin' OR LOWER(role) = 'super_admin')
+  );
+$$;
+
 -- ============================================================
--- TABLE POLICIES (using the helper function)
--- Each table uses USING + WITH CHECK so INSERT is allowed.
+-- TABLE POLICIES (with Global Admin bypass)
 -- ============================================================
 
--- Owners see their own location; admins see ALL locations
+-- Profiles: Users see self, Admins see ALL
+DROP POLICY IF EXISTS profiles_self_policy ON profiles;
+CREATE POLICY profiles_self_policy ON profiles
+    FOR ALL
+    USING (id = auth.uid() OR is_admin())
+    WITH CHECK (id = auth.uid() OR is_admin());
+
+-- Locations: Owners see theirs, Admins see ALL
+DROP POLICY IF EXISTS location_isolation_policy ON locations;
 CREATE POLICY location_isolation_policy ON locations
     FOR ALL
-    USING (
-        owner_id = auth.uid()
-        OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
-    )
-    WITH CHECK (
-        owner_id = auth.uid()
-        OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
-    );
+    USING (owner_id = auth.uid() OR is_admin())
+    WITH CHECK (owner_id = auth.uid() OR is_admin());
 
+-- Vehicles: Location-based or Admin bypass
+DROP POLICY IF EXISTS vehicles_location_policy ON vehicles;
 CREATE POLICY vehicles_location_policy ON vehicles
     FOR ALL
-    USING (location_id = get_my_location_id())
-    WITH CHECK (location_id = get_my_location_id());
+    USING (location_id = get_my_location_id() OR is_admin())
+    WITH CHECK (location_id = get_my_location_id() OR is_admin());
 
+-- Staff: Location-based or Admin bypass
+DROP POLICY IF EXISTS staff_location_policy ON staff;
 CREATE POLICY staff_location_policy ON staff
     FOR ALL
-    USING (location_id = get_my_location_id())
-    WITH CHECK (location_id = get_my_location_id());
+    USING (location_id = get_my_location_id() OR is_admin())
+    WITH CHECK (location_id = get_my_location_id() OR is_admin());
 
+-- Incidents: Location-based or Admin bypass
+DROP POLICY IF EXISTS incidents_location_policy ON incidents;
 CREATE POLICY incidents_location_policy ON incidents
     FOR ALL
-    USING (location_id = get_my_location_id())
-    WITH CHECK (location_id = get_my_location_id());
+    USING (location_id = get_my_location_id() OR is_admin())
+    WITH CHECK (location_id = get_my_location_id() OR is_admin());
 
+-- Bookings: Location-based or Admin bypass
+DROP POLICY IF EXISTS bookings_location_policy ON bookings;
 CREATE POLICY bookings_location_policy ON bookings
     FOR ALL
-    USING (location_id = get_my_location_id())
-    WITH CHECK (location_id = get_my_location_id());
+    USING (location_id = get_my_location_id() OR is_admin())
+    WITH CHECK (location_id = get_my_location_id() OR is_admin());
 
+-- Notifications: Location-based or Admin bypass
+DROP POLICY IF EXISTS notifications_location_policy ON notifications;
 CREATE POLICY notifications_location_policy ON notifications
     FOR ALL
-    USING (location_id = get_my_location_id())
-    WITH CHECK (location_id = get_my_location_id());
+    USING (location_id = get_my_location_id() OR is_admin())
+    WITH CHECK (location_id = get_my_location_id() OR is_admin());
 
+-- Payments: Location-based or Admin bypass
+DROP POLICY IF EXISTS payments_location_policy ON payments;
+CREATE POLICY payments_location_policy ON payments
+    FOR ALL
+    USING (location_id = get_my_location_id() OR is_admin())
+    WITH CHECK (location_id = get_my_location_id() OR is_admin());
+
+
+-- 6. Payments and Subscriptions
+ALTER TABLE locations ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'trial';
+ALTER TABLE locations ADD COLUMN IF NOT EXISTS selected_plan TEXT;
+ALTER TABLE locations ADD COLUMN IF NOT EXISTS last_payment_at TIMESTAMP WITH TIME ZONE;
+
+CREATE TABLE IF NOT EXISTS payments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
+    amount NUMERIC,
+    plan TEXT,
+    payment_method TEXT,
+    status TEXT DEFAULT 'pending',
+    metadata JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- RLS for payments
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
 -- Success Message
-COMMENT ON TABLE locations IS 'Renamed from venues. Stores venue/location data.';
+COMMENT ON TABLE locations IS 'Renamed from venues. Stores venue/location data and subscription status.';
+COMMENT ON TABLE payments IS 'Stores payment transactions for venue subscriptions.';
 COMMENT ON FUNCTION get_my_location_id() IS 'SECURITY DEFINER helper: resolves the location_id for the currently authenticated user from the profiles table without hitting RLS.';

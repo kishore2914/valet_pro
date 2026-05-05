@@ -22,6 +22,7 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/ui/Button';
 import { locationService } from '../services/locationService';
 import { MapPin } from 'lucide-react';
+import dashboardBg from '../assets/dashboard-bg.png';
 
 const DashboardLayout = ({ role }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -68,7 +69,13 @@ const DashboardLayout = ({ role }) => {
   const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: 'var(--bg-app)' }}>
+    <div style={{ 
+      display: 'flex', 
+      height: '100vh', 
+      width: '100vw', 
+      overflow: 'hidden', 
+      backgroundColor: 'var(--bg-app)' 
+    }}>
       {/* Sidebar */}
       <motion.aside
         initial={false}
@@ -80,6 +87,7 @@ const DashboardLayout = ({ role }) => {
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: 'var(--bg-surface)',
+          backdropFilter: 'none',
           transition: 'background-color var(--transition-normal), border-color var(--transition-normal)'
         }}
       >
@@ -91,7 +99,7 @@ const DashboardLayout = ({ role }) => {
               style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
               <Car size={32} />
-              <span>Valet<span style={{ color: 'var(--accent)' }}>Pro</span></span>
+              <span>Valet<span style={{ color: 'var(--accent)' }}> Parking</span></span>
             </motion.div>
           )}
           {!isSidebarOpen && <Car size={32} color="var(--primary)" />}
@@ -158,6 +166,7 @@ const DashboardLayout = ({ role }) => {
           justifyContent: 'space-between', 
           borderBottom: '1px solid var(--border-color)', 
           backgroundColor: 'var(--bg-surface)',
+          backdropFilter: 'none',
           zIndex: 10,
           transition: 'background-color var(--transition-normal), border-color var(--transition-normal)'
         }}>

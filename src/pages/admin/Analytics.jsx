@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BarChart, 
   Bar, 
@@ -26,7 +27,8 @@ import {
   X,
   MapPin,
   Shield,
-  User
+  User,
+  ChevronDown
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { formatCurrency, formatNumber } from '../../lib/utils';
@@ -51,20 +53,60 @@ const Analytics = () => {
   const [typeDistribution, setTypeDistribution] = useState([]);
   const [usersModalOpen, setUsersModalOpen] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
+  const [dateRange, setDateRange] = useState('30'); // 'today', '7', '30', 'all'
+  const [dateMenuOpen, setDateMenuOpen] = useState(false);
+  const dateMenuRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (dateMenuRef.current && !dateMenuRef.current.contains(e.target)) {
+        setDateMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const getDateRangeLabel = () => {
+    switch (dateRange) {
+      case 'today': return 'Today';
+      case '7': return 'Last 7 Days';
+      case '30': return 'Last 30 Days';
+      case 'all': return 'All Time';
+      default: return 'Last 30 Days';
+    }
+  };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [dateRange]);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Locations Count
+      const now = new Date();
+      let startDate = null;
+      if (dateRange === 'today') {
+        startDate = new Date(now.setHours(0, 0, 0, 0)).toISOString();
+      } else if (dateRange === '7') {
+        startDate = new Date(now.setDate(now.getDate() - 7)).toISOString();
+      } else if (dateRange === '30') {
+        startDate = new Date(now.setDate(now.getDate() - 30)).toISOString();
+      }
+
+      // 1. Fetch Revenue
+      let revenueQuery = supabase.from('payments').select('amount, created_at');
+      if (startDate) revenueQuery = revenueQuery.gte('created_at', startDate);
+      const { data: revData } = await revenueQuery;
+      const totalRevenue = (revData || []).reduce((sum, p) => sum + (p.amount || 0), 0);
+
+      // 2. Fetch Locations Count
       const { count: locationCount } = await supabase
         .from('locations')
         .select('*', { count: 'exact', head: true });
 
-      // 2. Fetch user counts: profiles (valet in-charges) + staff members
+      // 3. Fetch user counts
       const { count: profileCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
@@ -75,15 +117,16 @@ const Analytics = () => {
 
       const totalUsers = (profileCount || 0) + (staffCount || 0);
 
-      // 3. Fetch Locations Table with profile count per location
+      // 4. Fetch Locations Table with filtered data
       const { data: locationsData } = await supabase
         .from('locations')
         .select(`
           id,
           name,
           location,
-          vehicles(id, status),
-          profiles(id)
+          vehicles(id, status, received_at),
+          profiles(id),
+          payments(amount, created_at)
         `)
         .order('name');
 
@@ -92,12 +135,22 @@ const Analytics = () => {
         const vehicles = v.vehicles || [];
         const activeCount = vehicles.filter(veh => veh.status !== 'Delivered').length;
         const valetCount = (v.profiles || []).length;
+        
+        // Filter payments by date for this location
+        const locPayments = v.payments || [];
+        const locRevenue = locPayments
+          .filter(p => !startDate || p.created_at >= startDate)
+          .reduce((sum, p) => sum + (p.amount || 0), 0);
+
         return {
+          raw_name: v.name, // Keep for export
           name: <div style={{ fontWeight: '600' }}>{v.name}</div>,
           type: 'Standard',
           status: <Badge variant="green">Active</Badge>,
-          revenue: formatCurrency(0),
+          raw_revenue: locRevenue,
+          revenue: formatCurrency(locRevenue),
           valets: valetCount,
+          raw_util: activeCount,
           util: (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ flex: 1, height: '6px', width: '60px', backgroundColor: 'var(--slate-200)', borderRadius: '3px', position: 'relative' }}>
@@ -111,21 +164,19 @@ const Analytics = () => {
 
       setStats(prev => ({
         ...prev,
+        totalRevenue,
         activeLocations: locationCount || 0,
         totalUsers
       }));
       setLocations(processedLocations);
 
-      // 4. Fetch all user details for the modal
-      const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, role, location_id, locations(name)');
+      // 5. Fetch all user details
+      const [{ data: pData }, { data: sData }] = await Promise.all([
+        supabase.from('profiles').select('id, full_name, email, role, locations(name)'),
+        supabase.from('staff').select('id, name, role, email, phone, status, locations(name)')
+      ]);
 
-      const { data: staffData } = await supabase
-        .from('staff')
-        .select('id, name, role, email, phone, status, location_id, locations(name)');
-
-      const inCharges = (profilesData || []).map(p => ({
+      const inCharges = (pData || []).map(p => ({
         id: p.id,
         name: p.full_name || p.email || 'Unknown',
         type: 'Valet In-Charge',
@@ -135,7 +186,7 @@ const Analytics = () => {
         status: 'Active'
       }));
 
-      const runners = (staffData || []).map(s => ({
+      const runners = (sData || []).map(s => ({
         id: s.id,
         name: s.name || 'Unknown',
         type: 'Staff Runner',
@@ -147,14 +198,60 @@ const Analytics = () => {
 
       setAllUsers([...inCharges, ...runners]);
 
-      setRevenueHistory([{ month: 'Current', revenue: 0 }]);
+      // 6. Process Revenue History (simplified grouping)
+      const history = (revData || []).reduce((acc, p) => {
+        const date = new Date(p.created_at).toLocaleDateString();
+        acc[date] = (acc[date] || 0) + p.amount;
+        return acc;
+      }, {});
+      
+      const sortedHistory = Object.entries(history)
+        .map(([date, revenue]) => ({ month: date, revenue }))
+        .sort((a, b) => new Date(a.month) - new Date(b.month));
+
+      setRevenueHistory(sortedHistory.length > 0 ? sortedHistory : [{ month: 'No Data', revenue: 0 }]);
       setTypeDistribution([{ name: 'Active', value: locationCount || 0 }]);
 
     } catch (error) {
-      console.error('Error fetching analytics:', error);
+      console.error('Global Analytics Error:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleExport = () => {
+    const csvContent = [
+      ['Global Analytics Report', getDateRangeLabel()],
+      ['Generated At', new Date().toLocaleString()],
+      [],
+      ['Summary Statistics'],
+      ['Metric', 'Value'],
+      ['Total Revenue', stats.totalRevenue],
+      ['Active Locations', stats.activeLocations],
+      ['Total Users', stats.totalUsers],
+      ['System Health', stats.health],
+      [],
+      ['Location Performance'],
+      ['Location Name', 'Type', 'Status', 'Revenue', 'Active Valets', 'Utilization'],
+      ...locations.map(l => [
+        l.raw_name,
+        l.type,
+        'Active',
+        l.raw_revenue,
+        l.valets,
+        l.raw_util
+      ])
+    ].map(e => e.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `valet_parking_report_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const locationHeaders = ['Location Name', 'Type', 'Status', 'Daily Revenue', 'Active Valets', 'Utilization'];
@@ -166,12 +263,58 @@ const Analytics = () => {
           <h1 style={{ fontSize: '1.875rem' }}>Global Analytics</h1>
           <p style={{ color: 'var(--text-muted)' }}>Cross-tenant performance overview across all locations</p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <Button variant="outline">
-            <Calendar size={18} />
-            <span>Last 30 Days</span>
-          </Button>
-          <Button variant="primary">
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div ref={dateMenuRef} style={{ position: 'relative' }}>
+            <Button 
+              variant="outline" 
+              onClick={() => setDateMenuOpen(o => !o)}
+              style={{ gap: '0.5rem' }}
+            >
+              <Calendar size={18} />
+              <span>{getDateRangeLabel()}</span>
+              <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: dateMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+            </Button>
+
+            <AnimatePresence>
+              {dateMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                  transition={{ duration: 0.12 }}
+                  style={{
+                    position: 'absolute', top: '110%', right: 0, zIndex: 200,
+                    minWidth: '180px', backgroundColor: 'var(--bg-card)',
+                    border: '1px solid var(--border-color)', borderRadius: '12px',
+                    boxShadow: 'var(--shadow-lg)', overflow: 'hidden'
+                  }}
+                >
+                  {[
+                    { id: 'today', label: 'Today' },
+                    { id: '7', label: 'Last 7 Days' },
+                    { id: '30', label: 'Last 30 Days' },
+                    { id: 'all', label: 'All Time' }
+                  ].map(option => (
+                    <button
+                      key={option.id}
+                      onClick={() => { setDateRange(option.id); setDateMenuOpen(false); }}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '0.75rem 1rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem',
+                        background: dateRange === option.id ? 'rgba(37,99,235,0.08)' : 'transparent',
+                        color: dateRange === option.id ? 'var(--primary)' : 'var(--text-main)',
+                        fontWeight: dateRange === option.id ? '700' : '400'
+                      }}
+                    >
+                      {option.label}
+                      {dateRange === option.id && <span style={{ fontSize: '0.75rem' }}>✓</span>}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <Button variant="primary" onClick={handleExport}>
             <Download size={18} />
             <span>Export Report</span>
           </Button>
@@ -273,7 +416,7 @@ const Analytics = () => {
             {loading ? <Loader2 className="animate-spin" /> : 'Real-Time Sync'}
           </Button>
         </div>
-        <Table headers={locationHeaders} data={locations} emptyMessage="No locations registered yet. New signups will appear here." />
+        <Table headers={locationHeaders} data={locations.map(({ raw_name, raw_revenue, raw_util, ...rest }) => rest)} emptyMessage="No locations registered yet. New signups will appear here." />
       </GlassCard>
       {/* Users Detail Modal */}
       <Modal isOpen={usersModalOpen} onClose={() => setUsersModalOpen(false)} title={`All Users (${allUsers.length})`}>

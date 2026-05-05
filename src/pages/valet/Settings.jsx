@@ -90,7 +90,7 @@ const Settings = () => {
             <div style={{ padding: '1rem', borderRadius: '12px', background: 'linear-gradient(135deg, var(--bg-card), var(--bg-subtle))', border: '1px solid var(--primary)', position: 'relative', overflow: 'hidden' }}>
                <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '60px', height: '60px', backgroundColor: 'rgba(37, 99, 235, 0.1)', borderRadius: '50%' }}></div>
                <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Active Plan</div>
-               <div style={{ fontSize: '1.25rem', fontWeight: '700' }}>Valet Pro Enterprise</div>
+               <div style={{ fontSize: '1.25rem', fontWeight: '700' }}>Valet Parking Enterprise</div>
                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Next renewal on June 12, 2024</div>
             </div>
             
@@ -283,7 +283,7 @@ const Settings = () => {
             </div>
             <div>
               <label style={labelStyle}>Ready Message</label>
-              <textarea style={{ ...inputStyle, minHeight: '100px', resize: 'vertical' }} defaultValue="Your vehicle {model} ({plate}) is now at the entrance. Thank you for using Valet Pro!" />
+              <textarea style={{ ...inputStyle, minHeight: '100px', resize: 'vertical' }} defaultValue="Your vehicle {model} ({plate}) is now at the entrance. Thank you for using Valet Parking!" />
             </div>
           </div>
         );
@@ -357,7 +357,7 @@ const Settings = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <ParkingCircle size={28} color="var(--primary)" />
             <div>
-              <h3 style={{ fontSize: '1.1rem' }}>Current Plan: Valet Pro Enterprise</h3>
+              <h3 style={{ fontSize: '1.1rem' }}>Current Plan: Valet Parking Enterprise</h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Your location is currently on the high-performance tier.</p>
             </div>
           </div>

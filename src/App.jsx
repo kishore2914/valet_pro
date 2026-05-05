@@ -15,6 +15,7 @@ import GlobalSettings from './pages/admin/GlobalSettings';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import LandingPage from './pages/LandingPage';
+import Payment from './pages/Payment';
 
 const ProtectedRoute = ({ children, allowedRole }) => {
   const { session, userRole, loading } = useAuth();
@@ -38,6 +39,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/payment" element={<Payment />} />
             
             {/* Valet In-Charge Routes */}
             <Route path="/valet" element={
