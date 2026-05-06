@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
-const VideoModal = ({ isOpen, onClose, videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ" }) => {
+const VideoModal = ({ isOpen, onClose, videoUrl = "https://www.youtube.com/embed/VsWPRpmyPnw" }) => {
   return (
     <AnimatePresence>
       {isOpen && (

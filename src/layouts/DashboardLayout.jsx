@@ -23,6 +23,8 @@ import Button from '../components/ui/Button';
 import { locationService } from '../services/locationService';
 import { MapPin } from 'lucide-react';
 import dashboardBg from '../assets/dashboard-bg.png';
+import Logo from '../components/ui/Logo';
+
 
 const DashboardLayout = ({ role }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -93,16 +95,11 @@ const DashboardLayout = ({ role }) => {
       >
         <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: isSidebarOpen ? 'space-between' : 'center', height: '80px' }}>
           {isSidebarOpen && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <Car size={32} />
-              <span>Valet<span style={{ color: 'var(--accent)' }}> Parking</span></span>
-            </motion.div>
+            <Logo size={32} to={role === 'admin' ? '/admin' : '/valet'} />
           )}
-          {!isSidebarOpen && <Car size={32} color="var(--primary)" />}
+          {!isSidebarOpen && <Logo size={32} showText={false} to={role === 'admin' ? '/admin' : '/valet'} />}
+
+
         </div>
 
         <nav style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto' }}>

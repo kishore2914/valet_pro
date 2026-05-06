@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Car, Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
+import Logo from '../components/ui/Logo';
+
 import GlassCard from '../components/ui/GlassCard';
 import { useAuth } from '../context/AuthContext';
 import heroBg from '../assets/hero-bg.png';
@@ -40,7 +42,7 @@ const Login = () => {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      background: `linear-gradient(135deg, rgba(2, 6, 23, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%), url(${heroBg})`,
+      background: `linear-gradient(135deg, rgba(2, 6, 23, 0.6) 0%, rgba(2, 6, 23, 0.8) 100%), url(${heroBg})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       padding: '2rem'
@@ -54,23 +56,14 @@ const Login = () => {
         style={{ width: '100%', maxWidth: '440px' }}
       >
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ 
-            width: '64px', 
-            height: '64px', 
-            borderRadius: '16px', 
-            backgroundColor: 'var(--primary)', 
-            color: 'white', 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            marginBottom: '1rem',
-            boxShadow: '0 8px 16px rgba(37, 99, 235, 0.3)'
-          }}>
-            <Car size={32} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <Logo size={80} showText={false} />
           </div>
-          <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: '800' }}>
+          <h1 style={{ color: 'white', fontSize: '2rem', fontWeight: '800', marginBottom: '0.5rem' }}>
             Valet<span style={{ color: 'var(--accent)' }}> Parking</span>
           </h1>
+
+
           <p style={{ color: 'var(--slate-400)', marginTop: '0.5rem' }}>Digital Valet Management System</p>
         </div>
 
@@ -163,11 +156,14 @@ const Login = () => {
           <p style={{ color: 'var(--slate-400)', fontSize: '0.875rem', marginBottom: '1rem' }}>
             New to Valet Parking?
           </p>
-          <Link to="/signup" style={{ textDecoration: 'none' }}>
-            <Button variant="outline" style={{ width: '100%', borderRadius: '12px', borderColor: 'rgba(255,255,255,0.1)', color: 'white' }}>
-              Register Your Location
-            </Button>
-          </Link>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/signup')}
+            style={{ width: '100%', borderRadius: '12px', borderColor: 'rgba(255,255,255,0.1)', color: 'white' }}
+          >
+            Register Your Location
+          </Button>
+
         </div>
       </motion.div>
     </div>

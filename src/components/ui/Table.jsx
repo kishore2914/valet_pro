@@ -14,16 +14,25 @@ const Table = ({ headers, data, className = '' }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, rowIdx) => (
-            <tr key={rowIdx} style={{ borderBottom: rowIdx === data.length - 1 ? 'none' : '1px solid var(--border-color)', transition: 'background-color 0.2s' }} className="hover:bg-slate-50">
-              {Object.values(row).map((cell, cellIdx) => (
-                <td key={cellIdx} style={{ padding: '1rem', fontSize: '0.9rem' }}>
-                  {cell}
-                </td>
-              ))}
+          {data.length === 0 ? (
+            <tr>
+              <td colSpan={headers.length} style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                No records found.
+              </td>
             </tr>
-          ))}
+          ) : (
+            data.map((row, rowIdx) => (
+              <tr key={rowIdx} style={{ borderBottom: rowIdx === data.length - 1 ? 'none' : '1px solid var(--border-color)', transition: 'background-color 0.2s' }} className="hover:bg-slate-50">
+                {Object.values(row).map((cell, cellIdx) => (
+                  <td key={cellIdx} style={{ padding: '1rem', fontSize: '0.9rem' }}>
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
+
       </table>
     </div>
   );

@@ -102,15 +102,21 @@ const Analytics = () => {
       const totalRevenue = (revData || []).reduce((sum, p) => sum + (p.amount || 0), 0);
 
       // 2. Fetch Locations Count
-      const { count: locationCount } = await supabase
+      let { count: locationCount, error: vError } = await supabase
         .from('locations')
         .select('*', { count: 'exact', head: true });
+
+      if (vError) {
+        const { count } = await supabase.from('venues').select('*', { count: 'exact', head: true });
+        locationCount = count;
+      }
 
       // 3. Fetch user counts
       const { count: profileCount } = await supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
 
+      // Count only active staff members
       const { count: staffCount } = await supabase
         .from('staff')
         .select('*', { count: 'exact', head: true });
@@ -118,20 +124,34 @@ const Analytics = () => {
       const totalUsers = (profileCount || 0) + (staffCount || 0);
 
       // 4. Fetch Locations Table with filtered data
-      const { data: locationsData } = await supabase
-        .from('locations')
-        .select(`
-          id,
-          name,
-          location,
-          vehicles(id, status, received_at),
-          profiles(id),
-          payments(amount, created_at)
-        `)
-        .order('name');
+      let finalLocations = [];
+      
+      const fetchLocs = async (tableName) => {
+        const { data, error } = await supabase
+          .from(tableName)
+          .select(`
+            id,
+            name,
+            location,
+            vehicles(id, status, received_at),
+            profiles(id),
+            payments(amount, created_at)
+          `)
+          .order('name');
+        return { data, error };
+      };
+
+      let { data: locs, error: err } = await fetchLocs('locations');
+      
+      if (err || !locs || locs.length === 0) {
+        const { data: vData } = await fetchLocs('venues');
+        finalLocations = vData || [];
+      } else {
+        finalLocations = locs;
+      }
 
       // Process locations for table
-      const processedLocations = (locationsData || []).map(v => {
+      const processedLocations = finalLocations.map(v => {
         const vehicles = v.vehicles || [];
         const activeCount = vehicles.filter(veh => veh.status !== 'Delivered').length;
         const valetCount = (v.profiles || []).length;
@@ -143,14 +163,12 @@ const Analytics = () => {
           .reduce((sum, p) => sum + (p.amount || 0), 0);
 
         return {
-          raw_name: v.name, // Keep for export
+          raw_name: v.name,
           name: <div style={{ fontWeight: '600' }}>{v.name}</div>,
           type: 'Standard',
           status: <Badge variant="green">Active</Badge>,
-          raw_revenue: locRevenue,
           revenue: formatCurrency(locRevenue),
           valets: valetCount,
-          raw_util: activeCount,
           util: (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ flex: 1, height: '6px', width: '60px', backgroundColor: 'var(--slate-200)', borderRadius: '3px', position: 'relative' }}>
@@ -168,7 +186,10 @@ const Analytics = () => {
         activeLocations: locationCount || 0,
         totalUsers
       }));
+
       setLocations(processedLocations);
+
+
 
       // 5. Fetch all user details
       const [{ data: pData }, { data: sData }] = await Promise.all([

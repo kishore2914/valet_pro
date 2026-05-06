@@ -15,6 +15,8 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
+import Logo from '../components/ui/Logo';
+
 import heroBg from '../assets/hero-bg.png';
 
 const Signup = () => {
@@ -35,13 +37,15 @@ const Signup = () => {
   useEffect(() => {
     const checkAdminStatus = async () => {
       try {
-        const { data: config, error: configError } = await supabase
-          .from('system_config')
-          .select('value')
-          .eq('key', 'super_admin_exists')
-          .single();
+        // Check profiles table directly for any existing admin
+        const { data: adminUser, error: adminError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('role', 'admin')
+          .limit(1)
+          .maybeSingle();
 
-        if (!configError && config?.value === true) {
+        if (!adminError && adminUser) {
           setAdminExists(true);
         }
       } catch (err) {
@@ -154,7 +158,7 @@ const Signup = () => {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      backgroundImage: `linear-gradient(to bottom, rgba(2, 6, 23, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%), url(${heroBg})`,
+      backgroundImage: `linear-gradient(to bottom, rgba(2, 6, 23, 0.6) 0%, rgba(2, 6, 23, 0.8) 100%), url(${heroBg})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       padding: '2rem'
@@ -165,9 +169,10 @@ const Signup = () => {
         style={{ width: '100%', maxWidth: '480px' }}
       >
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ display: 'inline-flex', padding: '1rem', borderRadius: '20px', backgroundColor: 'rgba(37, 99, 235, 0.1)', color: 'var(--blue-500)', marginBottom: '1.5rem' }}>
-            <Car size={32} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <Logo size={80} showText={false} />
           </div>
+
           <h1 style={{ fontSize: '2rem', fontWeight: '800', color: 'white', marginBottom: '0.5rem' }}>
             {isAdminMode ? 'Admin Registration' : 'Create Account'}
           </h1>
@@ -193,7 +198,7 @@ const Signup = () => {
           </p>
         </div>
 
-        <GlassCard style={{ padding: '2.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <GlassCard style={{ padding: '2.5rem', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.02)' }}>
           <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {error && (
               <div style={{ padding: '0.75rem', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', fontSize: '0.875rem', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
@@ -212,7 +217,7 @@ const Signup = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="John Doe" 
-                    style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', color: 'white', outline: 'none' }} 
+                        style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
                   />
                 </div>
               </div>
@@ -226,7 +231,7 @@ const Signup = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.com" 
-                    style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', color: 'white', outline: 'none' }} 
+                        style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
                   />
                 </div>
               </div>
@@ -329,7 +334,7 @@ const Signup = () => {
                         value={venueName}
                         onChange={(e) => setVenueName(e.target.value)}
                         placeholder="e.g. Grand Plaza Hotel" 
-                        style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', color: 'white', outline: 'none' }} 
+                            style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
                       />
                     </div>
                   </div>

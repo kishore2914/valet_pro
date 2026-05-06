@@ -15,11 +15,13 @@ import {
   Database,
   Check
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import GlassCard from '../components/ui/GlassCard';
 import VideoModal from '../components/ui/VideoModal';
 import heroBg from '../assets/hero-bg.png';
+import Logo from '../components/ui/Logo';
+
 
 // Section Header Component
 const SectionHeader = ({ title, subtitle, centered = true }) => (
@@ -60,6 +62,7 @@ const SectionHeader = ({ title, subtitle, centered = true }) => (
 
 const LandingPage = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = React.useState(false);
+  const navigate = useNavigate();
 
   return (
     <div style={{ 
@@ -92,10 +95,8 @@ const LandingPage = () => {
         alignItems: 'center',
         padding: '0 5vw'
       }}>
-        <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--blue-500)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <Car size={32} />
-          <span>Valet<span style={{ color: 'var(--amber-gold)' }}> Parking</span></span>
-        </div>
+        <Logo size={40} />
+
         
         <nav style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2rem' }}>
           {['Features', 'How it Works', 'Pricing'].map(item => (
@@ -509,44 +510,90 @@ const LandingPage = () => {
           margin: '0 auto 6rem' 
         }}>
           <div>
-            <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--blue-500)', display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <Car size={32} />
-              <span>Valet<span style={{ color: 'var(--amber-gold)' }}> Parking</span></span>
-            </div>
+            <Logo size={40} />
+
             <p style={{ color: 'var(--slate-500)', lineHeight: '1.6', maxWidth: '300px' }}>
               Transforming valet parking experience with cutting-edge digital tracking and management systems.
             </p>
           </div>
           {[
-            { title: 'Platform', links: ['Features', 'Pipeline', 'Dashboard', 'Security'] },
-            { title: 'Company', links: ['About', 'Careers', 'Contact', 'Blog'] },
-            { title: 'Legal', links: ['Privacy Policy', 'Terms of Service', 'Cookie Policy'] },
+            { 
+              title: 'Platform', 
+              links: [
+                { name: 'Features', href: '#features' },
+                { name: 'Pipeline', to: '/login' },
+                { name: 'Dashboard', to: '/login' },
+                { name: 'Security', to: '/login' }
+              ] 
+            },
+            { 
+              title: 'Company', 
+              links: [
+                { name: 'About', to: '/about' },
+                { name: 'Contact: support@valetparking.com', href: 'mailto:support@valetparking.com' },
+                { name: '+1 (555) 123-4567', href: 'tel:+15551234567' }
+              ] 
+            },
+
+            { 
+              title: 'Legal', 
+              links: [
+                { name: 'Privacy Policy', to: '/legal/privacy-policy' },
+                { name: 'Terms of Service', to: '/legal/terms-of-service' },
+                { name: 'Cookie Policy', to: '/legal/cookie-policy' }
+              ] 
+            },
+
           ].map((group, i) => (
             <div key={i}>
               <h4 style={{ fontWeight: '700', marginBottom: '1.5rem' }}>{group.title}</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {group.links.map(link => (
-                  <a key={link} href="#" style={{ color: 'var(--slate-500)', textDecoration: 'none', fontSize: '0.9rem' }}>{link}</a>
+                  link.to ? (
+                    <Link 
+                      key={link.name} 
+                      to={link.to} 
+                      style={{ color: 'var(--slate-500)', textDecoration: 'none', fontSize: '0.9rem', transition: 'color 0.2s' }}
+                      onMouseOver={e => e.target.style.color = 'white'}
+                      onMouseOut={e => e.target.style.color = 'var(--slate-500)'}
+                    >
+                      {link.name}
+                    </Link>
+                  ) : (
+                    <a 
+                      key={link.name} 
+                      href={link.href} 
+                      style={{ color: 'var(--slate-500)', textDecoration: 'none', fontSize: '0.9rem', transition: 'color 0.2s' }}
+                      onMouseOver={e => e.target.style.color = 'white'}
+                      onMouseOut={e => e.target.style.color = 'var(--slate-500)'}
+                    >
+                      {link.name}
+                    </a>
+                  )
                 ))}
               </div>
             </div>
           ))}
+
         </div>
         <div style={{ textAlign: 'center', marginTop: '2.5rem', padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
           <p style={{ color: 'var(--slate-400)', fontSize: '0.875rem', marginBottom: '1rem' }}>
-            New to Valet Pro?
+            New to Valet Parking?
           </p>
-          <Link to="/signup" style={{ textDecoration: 'none' }}>
-            <Button variant="outline" style={{ 
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/signup')}
+            style={{ 
               width: '100%', 
               borderRadius: '12px', 
               borderColor: 'rgba(255,255,255,0.1)', 
               color: 'white',
               backgroundColor: 'rgba(255,255,255,0.02)'
-            }}>
-              Register Your Venue
-            </Button>
-          </Link>
+            }}
+          >
+            Register Your Venue
+          </Button>
+
         </div>
         <div style={{ textAlign: 'center', color: 'var(--slate-600)', fontSize: '0.875rem' }}>
           © 2024 Valet Parking Technologies. All rights reserved.

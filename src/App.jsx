@@ -16,6 +16,10 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import LandingPage from './pages/LandingPage';
 import Payment from './pages/Payment';
+import About from './pages/About';
+import Legal from './pages/Legal';
+
+
 
 const ProtectedRoute = ({ children, allowedRole }) => {
   const { session, userRole, loading } = useAuth();
@@ -66,8 +70,12 @@ function App() {
               <Route path="settings" element={<GlobalSettings />} />
             </Route>
 
+            <Route path="/about" element={<About />} />
+            <Route path="/legal/:type" element={<Legal />} />
+
             {/* Default Route */}
             <Route path="/" element={<LandingPage />} />
+
           </Routes>
         </Router>
       </AuthProvider>

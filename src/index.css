@@ -30,7 +30,7 @@
   --primary-hover: var(--blue-700);
   --accent: var(--gold-500);
   --bg-app: var(--slate-50);
-  --bg-card: rgba(255, 255, 255, 0.7);
+  --bg-card: rgba(255, 255, 255, 0.15);
   --bg-surface: #ffffff;
   --bg-subtle: var(--slate-100);
   --text-main: var(--slate-900);
@@ -65,7 +65,7 @@
 
 [data-theme='dark'] {
   --bg-app: var(--slate-950);
-  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-card: rgba(15, 23, 42, 0.3);
   --bg-surface: var(--slate-900);
   --bg-subtle: var(--slate-800);
   --text-main: var(--slate-50);
