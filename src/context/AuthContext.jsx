@@ -104,6 +104,18 @@ export const AuthProvider = ({ children }) => {
     return { error };
   };
 
+  const resetPassword = async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
+    });
+    return { error };
+  };
+
+  const updatePassword = async (newPassword) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    return { error };
+  };
+
   return (
     <AuthContext.Provider value={{ 
       session, 
@@ -113,7 +125,9 @@ export const AuthProvider = ({ children }) => {
       loading, 
       signIn, 
       signUp, 
-      signOut 
+      signOut,
+      resetPassword,
+      updatePassword 
     }}>
       {children}
     </AuthContext.Provider>

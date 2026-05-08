@@ -57,6 +57,7 @@ const ValetDashboard = () => {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   
   useEffect(() => {
@@ -112,6 +113,11 @@ const ValetDashboard = () => {
     }
   };
 
+  const filteredActivities = activities.filter(activity => 
+    (activity.plate_number?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (activity.model?.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -131,8 +137,11 @@ const ValetDashboard = () => {
                 border: '1px solid var(--border-color)',
                 backgroundColor: 'var(--bg-card)',
                 width: '300px',
-                outline: 'none'
+                outline: 'none',
+                color: 'var(--text-main)'
               }} 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <Button variant="primary" onClick={handleNewCheckin}>
@@ -196,13 +205,15 @@ const ValetDashboard = () => {
             <Button variant="ghost" style={{ fontSize: '0.875rem', padding: '4px 8px' }}>Syncing...</Button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {activities.length === 0 && !loading && (
+            {filteredActivities.length === 0 && (
               <div style={{ textAlign: 'center', padding: '3rem 1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
                 <Car size={48} strokeWidth={1} style={{ opacity: 0.2 }} />
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No active vehicles. Start check-in to see activity.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                  {searchQuery ? `No vehicles matching "${searchQuery}"` : 'No active vehicles. Start check-in to see activity.'}
+                </p>
               </div>
             )}
-            {activities.map((item) => {
+            {filteredActivities.map((item) => {
               const Icon = getStatusIcon(item.status);
               return (
                 <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-color)' }}>

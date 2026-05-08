@@ -95,7 +95,7 @@ const LandingPage = () => {
         alignItems: 'center',
         padding: '0 5vw'
       }}>
-        <Logo size={40} />
+        <Logo size={40} color="white" />
 
         
         <nav style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2rem' }}>
@@ -272,7 +272,7 @@ const LandingPage = () => {
             { icon: BarChart3, title: 'Real-time Analytics', desc: 'Monitor peak hours, revenue, and staff performance in high-fidelity dashboards.' },
             { icon: ShieldCheck, title: 'Fraud Prevention', desc: 'Digital logs ensure 100% accountability for every vehicle movement and key handover.' },
             { icon: Globe, title: 'Multi-Venue Control', desc: 'Manage unlimited venues from a single platform admin account with localized control.' },
-            { icon: Clock, title: 'Live Live Tracking', desc: 'Guests can see their car status and request retrieval with a single tap on their device.' },
+            { icon: Clock, title: 'Live Tracking', desc: 'Guests can see their car status and request retrieval with a single tap on their device.' },
             { icon: Database, title: 'Photo Evidence', desc: 'Integrated damage reporting with photo capture to protect against false claims.' },
           ].map((feature, i) => (
             <motion.div
@@ -596,7 +596,7 @@ const LandingPage = () => {
 
         </div>
         <div style={{ textAlign: 'center', color: 'var(--slate-600)', fontSize: '0.875rem' }}>
-          © 2024 Valet Parking Technologies. All rights reserved.
+          © 2026 Valet Parking Technologies. All rights reserved.
         </div>
       </footer>
     </div>

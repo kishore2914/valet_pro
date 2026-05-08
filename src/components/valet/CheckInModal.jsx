@@ -73,7 +73,7 @@ const CheckInModal = ({ isOpen, onClose, locationId }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Vehicle Check-in">
+    <Modal isOpen={isOpen} onClose={onClose} title="Vehicle Check-in" glass={false}>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
         {error && (

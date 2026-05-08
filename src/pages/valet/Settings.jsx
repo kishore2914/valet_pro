@@ -91,7 +91,7 @@ const Settings = () => {
                <div style={{ position: 'absolute', top: '-10px', right: '-10px', width: '60px', height: '60px', backgroundColor: 'rgba(37, 99, 235, 0.1)', borderRadius: '50%' }}></div>
                <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Active Plan</div>
                <div style={{ fontSize: '1.25rem', fontWeight: '700' }}>Valet Parking Enterprise</div>
-               <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Next renewal on June 12, 2024</div>
+               <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Next renewal on June 12, 2026</div>
             </div>
             
             <div>
@@ -106,9 +106,9 @@ const Settings = () => {
             <div>
               <label style={labelStyle}>Recent Invoices</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {['INV-2024-001', 'INV-2024-002'].map(inv => (
+                {['INV-2026-001', 'INV-2026-002'].map(inv => (
                   <div key={inv} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
-                    <span>{inv} - May 2024</span>
+                    <span>{inv} - May 2026</span>
                     <span style={{ fontWeight: '600' }}>₹14,999.00</span>
                   </div>
                 ))}

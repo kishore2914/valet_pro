@@ -12,7 +12,7 @@ const Legal = () => {
   const content = {
     'privacy-policy': {
       title: 'Privacy Policy',
-      lastUpdated: 'May 2024',
+      lastUpdated: 'May 2026',
       sections: [
         { title: '1. Information We Collect', text: 'We collect information you provide directly to us, such as when you create an account, register a venue, or contact support. This includes name, email, and venue location details.' },
         { title: '2. How We Use Information', text: 'We use the information we collect to operate, maintain, and provide the features of our platform, including digital vehicle tracking and reporting.' },
@@ -21,7 +21,7 @@ const Legal = () => {
     },
     'terms-of-service': {
       title: 'Terms of Service',
-      lastUpdated: 'May 2024',
+      lastUpdated: 'May 2026',
       sections: [
         { title: '1. Acceptance of Terms', text: 'By accessing or using Valet Parking, you agree to be bound by these Terms of Service and all applicable laws and regulations.' },
         { title: '2. Use License', text: 'Permission is granted to use our platform for your venue management. This is the grant of a license, not a transfer of title.' },
@@ -30,7 +30,7 @@ const Legal = () => {
     },
     'cookie-policy': {
       title: 'Cookie Policy',
-      lastUpdated: 'May 2024',
+      lastUpdated: 'May 2026',
       sections: [
         { title: '1. What are Cookies', text: 'Cookies are small text files stored on your device to help us recognize you and improve your experience.' },
         { title: '2. How We Use Cookies', text: 'We use essential cookies for authentication and security, and analytical cookies to understand how users interact with our platform.' },
@@ -52,7 +52,7 @@ const Legal = () => {
       padding: '4rem 5vw'
     }}>
       <header style={{ marginBottom: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Logo size={40} />
+        <Logo size={40} color="white" />
         <Button variant="ghost" onClick={() => navigate('/')} style={{ color: 'white' }}>Back to Home</Button>
       </header>
 
@@ -77,7 +77,7 @@ const Legal = () => {
       </main>
 
       <footer style={{ marginTop: '8rem', textAlign: 'center', color: 'var(--slate-600)', fontSize: '0.9rem' }}>
-        © 2024 Valet Parking Technologies. All rights reserved.
+        © 2026 Valet Parking Technologies. All rights reserved.
       </footer>
     </div>
   );

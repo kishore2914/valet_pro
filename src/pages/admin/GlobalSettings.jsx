@@ -96,7 +96,7 @@ const GlobalSettings = () => {
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Schedule platform-wide updates and downtime periods.</p>
             <div>
               <label style={labelStyle}>Next Window Start</label>
-              <input style={inputStyle} type="datetime-local" defaultValue="2024-05-01T02:00" />
+              <input style={inputStyle} type="datetime-local" defaultValue="2026-05-01T02:00" />
             </div>
             <div>
               <label style={labelStyle}>Duration (Hours)</label>

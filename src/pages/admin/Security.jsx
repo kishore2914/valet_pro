@@ -19,10 +19,10 @@ const Security = () => {
   const auditHeaders = ['Timestamp', 'Event', 'User', 'Location / Target', 'Severity', 'IP Address'];
   
   const logs = [
-    { time: '2024-04-17 11:45:22', event: 'Global Admin Login', user: 'Admin User', target: 'System', severity: 'Low', ip: '192.168.1.1' },
-    { time: '2024-04-17 11:32:10', event: 'Subscription Tier Update', user: 'Billing Dept', target: 'Grand Plaza', severity: 'Medium', ip: '192.168.1.45' },
-    { time: '2024-04-17 11:15:05', event: 'Denied API Access', user: 'Unknown', target: 'Auth-Service', severity: 'High', ip: '203.0.113.1' },
-    { time: '2024-04-17 11:00:00', event: 'New Location Onboarded', user: 'Admin User', target: 'City Mall', severity: 'Low', ip: '192.168.1.1' },
+    { time: '2026-04-17 11:45:22', event: 'Global Admin Login', user: 'Admin User', target: 'System', severity: 'Low', ip: '192.168.1.1' },
+    { time: '2026-04-17 11:32:10', event: 'Subscription Tier Update', user: 'Billing Dept', target: 'Grand Plaza', severity: 'Medium', ip: '192.168.1.45' },
+    { time: '2026-04-17 11:15:05', event: 'Denied API Access', user: 'Unknown', target: 'Auth-Service', severity: 'High', ip: '203.0.113.1' },
+    { time: '2026-04-17 11:00:00', event: 'New Location Onboarded', user: 'Admin User', target: 'City Mall', severity: 'Low', ip: '192.168.1.1' },
   ];
 
   const formattedLogs = logs.map(log => ({

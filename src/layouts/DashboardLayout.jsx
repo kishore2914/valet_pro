@@ -94,12 +94,18 @@ const DashboardLayout = ({ role }) => {
         }}
       >
         <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: isSidebarOpen ? 'space-between' : 'center', height: '80px' }}>
-          {isSidebarOpen && (
-            <Logo size={32} to={role === 'admin' ? '/admin' : '/valet'} />
+          {isSidebarOpen ? (
+            <>
+              <Logo size={32} to={role === 'admin' ? '/admin' : '/valet'} />
+              <Button variant="ghost" onClick={() => setSidebarOpen(false)} style={{ padding: '0.25rem' }}>
+                <X size={20} />
+              </Button>
+            </>
+          ) : (
+            <Button variant="ghost" onClick={() => setSidebarOpen(true)} style={{ padding: '0.25rem' }}>
+              <Menu size={20} />
+            </Button>
           )}
-          {!isSidebarOpen && <Logo size={32} showText={false} to={role === 'admin' ? '/admin' : '/valet'} />}
-
-
         </div>
 
         <nav style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto' }}>
@@ -168,9 +174,7 @@ const DashboardLayout = ({ role }) => {
           transition: 'background-color var(--transition-normal), border-color var(--transition-normal)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <Button variant="ghost" onClick={() => setSidebarOpen(!isSidebarOpen)}>
-              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-            </Button>
+            {!isSidebarOpen && <Logo size={28} showText={false} to={role === 'admin' ? '/admin' : '/valet'} />}
             
             {role === 'valet' && currentLocation && (
               <div style={{ 

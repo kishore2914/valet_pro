@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import Button from './Button';
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, glass = true }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -28,7 +28,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
               position: 'absolute', 
               inset: 0, 
               backgroundColor: 'rgba(0, 0, 0, 0.4)', 
-              backdropFilter: 'blur(4px)' 
+              backdropFilter: glass ? 'blur(4px)' : 'none' 
             }}
           />
           
@@ -37,12 +37,12 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            className="glass"
+            className={glass ? 'glass' : ''}
             style={{ 
               position: 'relative', 
               width: '100%', 
               maxWidth: '600px', 
-              backgroundColor: 'var(--bg-card)', 
+              backgroundColor: glass ? 'var(--bg-card)' : 'var(--bg-surface)', 
               borderRadius: '20px', 
               boxShadow: 'var(--shadow-lg)',
               border: '1px solid var(--border-color)',

@@ -21,7 +21,7 @@ const About = () => {
       padding: '4rem 5vw'
     }}>
       <header style={{ marginBottom: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Logo size={40} />
+        <Logo size={40} color="white" />
         <Button variant="ghost" onClick={() => navigate('/')} style={{ color: 'white' }}>Back to Home</Button>
       </header>
 
@@ -69,14 +69,26 @@ const About = () => {
         <section style={{ textAlign: 'center', padding: '6rem 2rem', borderRadius: '32px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
           <h2 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '1.5rem' }}>Ready to transform your venue?</h2>
           <p style={{ color: 'var(--slate-400)', marginBottom: '2.5rem', fontSize: '1.1rem' }}>Join the hundreds of luxury establishments already using Valet Parking.</p>
-          <Button variant="accent" onClick={() => navigate('/signup')} style={{ padding: '1rem 3rem', fontSize: '1.1rem', borderRadius: '100px' }}>
+          <Button 
+            variant="accent" 
+            onClick={() => navigate('/signup')} 
+            style={{ 
+              padding: '1rem 3rem', 
+              fontSize: '1.1rem', 
+              borderRadius: '100px',
+              backgroundColor: 'var(--amber-gold)',
+              color: 'var(--obsidian-black)',
+              fontWeight: '700',
+              boxShadow: '0 10px 20px -5px rgba(245, 158, 11, 0.3)'
+            }}
+          >
             Get Started Today
           </Button>
         </section>
       </main>
 
       <footer style={{ marginTop: '8rem', textAlign: 'center', color: 'var(--slate-600)', fontSize: '0.9rem' }}>
-        © 2024 Valet Parking Technologies. All rights reserved.
+        © 2026 Valet Parking Technologies. All rights reserved.
       </footer>
     </div>
   );

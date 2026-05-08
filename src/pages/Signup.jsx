@@ -8,7 +8,9 @@ import {
   Loader2,
   Building2,
   MapPin,
-  User
+  User,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -33,6 +35,8 @@ const Signup = () => {
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [adminCode, setAdminCode] = useState('');
   const [adminExists, setAdminExists] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showAdminCode, setShowAdminCode] = useState(false);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -242,13 +246,20 @@ const Signup = () => {
               <div style={{ position: 'relative' }}>
                 <Lock size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--slate-500)' }} />
                 <input 
-                  type="password" 
+                  type={showPassword ? "text" : "password"} 
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••" 
-                  style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', color: 'white', outline: 'none' }} 
+                  style={{ width: '100%', padding: '0.7rem 2.5rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', color: 'white', outline: 'none' }} 
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--slate-500)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
               </div>
             </div>
 
@@ -306,13 +317,20 @@ const Signup = () => {
                   <div style={{ position: 'relative' }}>
                     <Lock size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--amber-gold)' }} />
                     <input 
-                      type="password" 
+                      type={showAdminCode ? "text" : "password"} 
                       required={isAdminMode}
                       value={adminCode}
                       onChange={(e) => setAdminCode(e.target.value)}
                       placeholder="Enter secret code" 
-                      style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '10px', border: '1px solid var(--amber-gold)', backgroundColor: 'rgba(245, 158, 11, 0.03)', color: 'white', outline: 'none' }} 
+                      style={{ width: '100%', padding: '0.75rem 2.5rem 0.75rem 2.5rem', borderRadius: '10px', border: '1px solid var(--amber-gold)', backgroundColor: 'rgba(245, 158, 11, 0.03)', color: 'white', outline: 'none' }} 
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowAdminCode(!showAdminCode)}
+                      style={{ position: 'absolute', right: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--amber-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      {showAdminCode ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
                 </motion.div>
               ) : (
@@ -368,8 +386,14 @@ const Signup = () => {
                 color: isAdminMode ? 'var(--obsidian-black)' : 'white'
                }}
             >
-              {loading ? <Loader2 size={20} className="animate-spin" /> : (isAdminMode ? 'Register Platform Admin' : 'Create Account')}
-              {!loading && <ArrowRight size={20} />}
+              {loading ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', width: '100%' }}>
+                  <span style={{ lineHeight: '1' }}>{isAdminMode ? 'Register Platform Admin' : 'Create Account'}</span>
+                  <ArrowRight size={20} style={{ display: 'block' }} />
+                </div>
+              )}
             </Button>
           </form>
         </GlassCard>

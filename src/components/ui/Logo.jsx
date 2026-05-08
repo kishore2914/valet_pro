@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../../assets/logo.png';
 
-const Logo = ({ size = 40, showText = true, className = "", to = "/" }) => {
+const Logo = ({ size = 40, showText = true, className = "", to = "/", color }) => {
   const content = (
     <div 
       className={className}
@@ -26,7 +26,7 @@ const Logo = ({ size = 40, showText = true, className = "", to = "/" }) => {
         <span style={{ 
           fontSize: `${size * 0.5}px`, 
           fontWeight: '800', 
-          color: 'white',
+          color: color || 'var(--text-main)',
           display: 'flex',
           alignItems: 'center'
         }}>
