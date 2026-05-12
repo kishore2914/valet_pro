@@ -51,10 +51,11 @@ const ContextMenu = ({ car, staff, onAssign, onUnassign, onClose }) => {
         right: 0,
         zIndex: 100,
         minWidth: '210px',
-        backgroundColor: 'var(--bg-card)',
+        backgroundColor: 'var(--bg-surface)',
         border: '1px solid var(--border-color)',
         borderRadius: '12px',
         boxShadow: 'var(--shadow-lg)',
+        zIndex: 1000,
         overflow: 'hidden'
       }}
     >
@@ -252,6 +253,7 @@ const Pipeline = () => {
   const [vehicles, setVehicles] = useState([]);
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [selectedZone, setSelectedZone] = useState('all');
   const [zoneMenuOpen, setZoneMenuOpen] = useState(false);
   const zoneMenuRef = useRef(null);
@@ -275,12 +277,18 @@ const Pipeline = () => {
     ? vehicles
     : vehicles.filter(v => v.zone === selectedZone);
 
-  const fetchData = async () => {
+  const fetchData = async (isManual = false) => {
     if (!locationId) { setLoading(false); return; }
+    if (isManual) setRefreshing(true);
+    
+    // Ensure the loading state is visible for at least 600ms to provide clear visual feedback
+    const minDelay = isManual ? new Promise(resolve => setTimeout(resolve, 600)) : Promise.resolve();
+
     try {
       const [{ data: vData }, { data: sData }] = await Promise.all([
         vehicleService.getActiveVehicles(locationId),
-        staffService.getStaff(locationId)
+        staffService.getStaff(locationId),
+        minDelay
       ]);
       if (vData) setVehicles(vData);
       if (sData) setStaff(sData);
@@ -288,6 +296,7 @@ const Pipeline = () => {
       console.error('Error fetching pipeline data:', err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -331,18 +340,29 @@ const Pipeline = () => {
           <p style={{ color: 'var(--text-muted)' }}>Track vehicle lifecycle from arrival to departure</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <Button variant="outline" onClick={fetchData}>Refresh Data</Button>
+          <Button 
+            variant="outline" 
+            onClick={() => fetchData(true)}
+            disabled={refreshing}
+            style={{ minWidth: '130px' }}
+          >
+            {refreshing ? <Loader2 size={16} className="animate-spin" /> : null}
+            {refreshing ? 'Refreshing...' : 'Refresh Data'}
+          </Button>
 
           {/* Zone Filter Dropdown */}
           <div ref={zoneMenuRef} style={{ position: 'relative' }}>
             <Button
               variant="primary"
               onClick={() => setZoneMenuOpen(o => !o)}
-              style={{ gap: '0.5rem' }}
+              style={{ gap: '0.75rem', padding: '0.6rem 1.25rem' }}
             >
               <LayoutGrid size={16} />
-              {selectedZone === 'all' ? 'Filter: All Zones' : `Zone: ${selectedZone}`}
-              <ChevronDown size={14} style={{ marginLeft: '2px', transition: 'transform 0.2s', transform: zoneMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+              <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.7rem', opacity: 0.8, textTransform: 'uppercase', fontWeight: '500', letterSpacing: '0.05em' }}>Filter:</span>
+                <span style={{ fontSize: '0.9rem', fontWeight: '700' }}>{selectedZone === 'all' ? 'All Zones' : selectedZone}</span>
+              </div>
+              <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: zoneMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
             </Button>
 
             <AnimatePresence>
@@ -353,31 +373,33 @@ const Pipeline = () => {
                   exit={{ opacity: 0, scale: 0.95, y: -4 }}
                   transition={{ duration: 0.12 }}
                   style={{
-                    position: 'absolute', top: '110%', right: 0, zIndex: 200,
-                    minWidth: '180px', backgroundColor: 'var(--bg-card)',
+                    position: 'absolute', top: '110%', right: 0, zIndex: 1000,
+                    minWidth: '240px', backgroundColor: 'var(--bg-surface)',
                     border: '1px solid var(--border-color)', borderRadius: '12px',
-                    boxShadow: 'var(--shadow-lg)', overflow: 'hidden'
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)', 
+                    overflow: 'hidden'
                   }}
                 >
-                  <div style={{ padding: '0.4rem 0.75rem', fontSize: '0.7rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--border-color)' }}>
+                  <div style={{ padding: '0.6rem 1rem', fontSize: '0.7rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--border-color)' }}>
                     Filter by Zone
                   </div>
                   {zones.map(zone => (
                     <button
                       key={zone}
                       onClick={() => { setSelectedZone(zone); setZoneMenuOpen(false); }}
-                      style={{
-                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '0.6rem 1rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem',
+                       style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                        padding: '0.8rem 1.2rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem',
                         background: selectedZone === zone ? 'rgba(37,99,235,0.08)' : 'transparent',
                         color: selectedZone === zone ? 'var(--primary)' : 'var(--text-main)',
-                        fontWeight: selectedZone === zone ? '700' : '400'
+                        fontWeight: selectedZone === zone ? '700' : '400',
+                        textAlign: 'left'
                       }}
                       onMouseEnter={e => { if (selectedZone !== zone) e.currentTarget.style.background = 'var(--bg-subtle)'; }}
                       onMouseLeave={e => { if (selectedZone !== zone) e.currentTarget.style.background = 'transparent'; }}
                     >
-                      {zone === 'all' ? 'All Zones' : `Zone: ${zone}`}
-                      {selectedZone === zone && <span style={{ fontSize: '0.75rem' }}>✓</span>}
+                      <span style={{ flex: 1, letterSpacing: '0.01em' }}>{zone === 'all' ? 'All Zones' : zone}</span>
+                      {selectedZone === zone && <span style={{ fontSize: '0.75rem', flexShrink: 0 }}>✓</span>}
                     </button>
                   ))}
                   {zones.length === 1 && (

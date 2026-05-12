@@ -190,7 +190,7 @@ const ValetDashboard = () => {
                 <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} />
                 <Tooltip 
-                   contentStyle={{ backgroundColor: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)', color: 'var(--text-main)' }}
+                   contentStyle={{ backgroundColor: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)', color: 'var(--text-main)' }}
                 />
                 <Area type="monotone" dataKey="in" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorIn)" />
                 <Area type="monotone" dataKey="out" stroke="var(--accent)" strokeWidth={3} fillOpacity={1} fill="url(#colorOut)" />
