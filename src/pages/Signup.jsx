@@ -115,44 +115,43 @@ const Signup = () => {
           }
           
           navigate('/admin');
-        } else {
-          // 3b. Standard Location Onboarding via SECURITY DEFINER RPC
-          // Using RPC so it works even when email confirmation is enabled
-          // (auth.uid() would be null without a session, breaking direct inserts)
-          const { data: newLocationId, error: locationError } = await supabase.rpc(
-            'create_user_location',
-            {
-              p_user_id:   authData.user.id,
-              p_name:      venueName,
-              p_location:  location,
-              p_full_name: fullName,
-              p_email:     email
-            }
-          );
-
-          if (locationError) throw locationError;
-
-          // Sync location_id into user metadata for instant AuthContext resolution
-          await supabase.auth.updateUser({
-            data: { 
-              location_id: newLocationId, 
-              full_name: fullName, 
-              role: 'valet',
-              plan: plan || 'starter'
-            }
-          });
-
-          if (plan) {
-            navigate(`/payment?plan=${plan}`);
-          } else {
-            navigate('/valet');
-          }
         }
       }
     } catch (err) {
       setError(err.message || 'An error occurred during signup');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleNextStep = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    // Validate fields
+    if (!email || !password || !fullName || !venueName || !location) {
+      setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    // Store signup data for later
+    const signupData = {
+      email,
+      password,
+      fullName,
+      venueName,
+      location,
+      role: 'valet'
+    };
+    
+    sessionStorage.setItem('pending_signup', JSON.stringify(signupData));
+    
+    // Navigate to next step
+    if (plan) {
+      navigate(`/payment?plan=${plan}`);
+    } else {
+      navigate('/choose-plan');
     }
   };
 
@@ -203,7 +202,7 @@ const Signup = () => {
         </div>
 
         <GlassCard style={{ padding: '2.5rem', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.02)' }}>
-          <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <form onSubmit={isAdminMode ? handleSignup : handleNextStep} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {error && (
               <div style={{ padding: '0.75rem', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', fontSize: '0.875rem', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                 {error}
@@ -390,7 +389,7 @@ const Signup = () => {
                 <Loader2 size={20} className="animate-spin" />
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', width: '100%' }}>
-                  <span style={{ lineHeight: '1' }}>{isAdminMode ? 'Register Platform Admin' : 'Create Account'}</span>
+                  <span style={{ lineHeight: '1' }}>{isAdminMode ? 'Register Platform Admin' : 'Next: Choose Plan'}</span>
                   <ArrowRight size={20} style={{ display: 'block' }} />
                 </div>
               )}

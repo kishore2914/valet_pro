@@ -15,6 +15,7 @@ import GlobalSettings from './pages/admin/GlobalSettings';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import LandingPage from './pages/LandingPage';
+import ChoosePlan from './pages/ChoosePlan';
 import Payment from './pages/Payment';
 import About from './pages/About';
 import Legal from './pages/Legal';
@@ -43,6 +44,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/choose-plan" element={<ChoosePlan />} />
             <Route path="/payment" element={<Payment />} />
             
             {/* Valet In-Charge Routes */}

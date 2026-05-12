@@ -93,7 +93,7 @@ const Staff = () => {
       fetchStaff();
     } catch (err) {
       console.error('Error adding staff:', err);
-      alert('Failed to add staff member. Please try again.');
+      alert(err.message || 'Failed to add staff member. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

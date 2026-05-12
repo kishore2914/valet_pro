@@ -46,13 +46,38 @@ export const staffService = {
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        if (authError.message.includes('already registered')) {
+          throw new Error('This email address is already registered as a user.');
+        }
+        throw authError;
+      }
 
-      // 3. Add to the staff table for management/tracking
-      const { data, error } = await supabase
+      if (!authData?.user) {
+        throw new Error('Failed to create authentication account.');
+      }
+
+      // 3. Add to the profiles table (CRITICAL for RLS and Location resolution)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{
+          id: authData.user.id,
+          full_name: name,
+          email,
+          role: role.toLowerCase().includes('admin') ? 'admin' : 'valet',
+          location_id
+        }]);
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        throw new Error(`Profile creation failed: ${profileError.message}`);
+      }
+
+      // 4. Add to the staff table for management/tracking
+      const { data, error: staffError } = await supabase
         .from('staff')
         .insert([{
-          id: authData.user.id, // Link to the Auth user
+          id: authData.user.id,
           name,
           email,
           role,
@@ -64,7 +89,12 @@ export const staffService = {
         }])
         .select();
 
-      return { data, error };
+      if (staffError) {
+        console.error('Staff table insert error:', staffError);
+        throw new Error(`Staff record creation failed: ${staffError.message}`);
+      }
+
+      return { data, error: null };
     } catch (err) {
       console.error('Error in addStaff:', err);
       return { data: null, error: err };

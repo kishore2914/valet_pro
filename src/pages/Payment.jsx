@@ -24,8 +24,15 @@ const Payment = () => {
   const [searchParams] = useSearchParams();
   const plan = searchParams.get('plan') || 'starter';
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { signUp } = useAuth();
   
+  React.useEffect(() => {
+    const signupData = sessionStorage.getItem('pending_signup');
+    if (!signupData) {
+      navigate('/signup');
+    }
+  }, [navigate]);
+
   const [method, setMethod] = useState('card');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -45,7 +52,7 @@ const Payment = () => {
   };
 
   const selectedPlan = plans[plan.toLowerCase()] || plans.starter;
-
+  
   const handlePayment = async () => {
     // Basic Validation
     if (method === 'card' && (!cardName || !cardNumber || !expiry || !cvv)) {
@@ -61,11 +68,43 @@ const Payment = () => {
     setError('');
 
     try {
-      const locationId = profile?.location_id;
-      
-      if (locationId) {
+      // 1. Get pending signup data from sessionStorage
+      const signupDataRaw = sessionStorage.getItem('pending_signup');
+      if (!signupDataRaw) {
+        throw new Error('Registration session expired. Please start the signup process again.');
+      }
+      const signupData = JSON.parse(signupDataRaw);
+
+      // 2. Create the user in Supabase Auth
+      const { data: authData, error: authError } = await signUp(signupData.email, signupData.password, {
+        full_name: signupData.fullName,
+        role: 'valet',
+        plan: selectedPlan.name
+      });
+
+      if (authError) throw authError;
+
+      if (authData.user) {
+        // 3. Create the location record via RPC (Security Definer)
+        const { data: newLocationId, error: locationError } = await supabase.rpc(
+          'create_user_location',
+          {
+            p_user_id:   authData.user.id,
+            p_name:      signupData.venueName,
+            p_location:  signupData.location,
+            p_full_name: signupData.fullName,
+            p_email:     signupData.email
+          }
+        );
+
+        if (locationError) {
+          console.error('Location creation error:', locationError);
+          throw new Error('Payment was successful but location setup failed. Please contact support.');
+        }
+
+        // 4. Record the payment in the database
         const { error: paymentError } = await supabase.from('payments').insert([{
-          location_id: locationId,
+          location_id: newLocationId,
           amount: selectedPlan.amount,
           plan: selectedPlan.name,
           payment_method: method,
@@ -77,31 +116,38 @@ const Payment = () => {
           }
         }]);
 
+        if (paymentError) console.warn('Payment record failed:', paymentError);
+
+        // 5. Activate the location subscription
         await supabase.from('locations').update({
           subscription_status: 'active',
           selected_plan: selectedPlan.name,
           last_payment_at: new Date().toISOString()
-        }).eq('id', locationId);
+        }).eq('id', newLocationId);
 
+        // 6. Finalize user metadata for instant dashboard access
         await supabase.auth.updateUser({
           data: { 
+            location_id: newLocationId,
             subscription_status: 'active',
             payment_completed: true 
           }
         });
-      }
 
-      setTimeout(() => {
-        setIsProcessing(false);
-        setShowSuccess(true);
+        // 7. Success! Clear session storage and show success state
+        sessionStorage.removeItem('pending_signup');
+
         setTimeout(() => {
-          navigate('/valet');
-        }, 3500);
-      }, 2000);
-
+          setIsProcessing(false);
+          setShowSuccess(true);
+          setTimeout(() => {
+            navigate('/valet');
+          }, 3500);
+        }, 2000);
+      }
     } catch (err) {
-      console.error('Payment failed:', err);
-      setError('Payment processing failed. Please try again.');
+      console.error('Transaction flow failed:', err);
+      setError(err.message || 'Payment processing failed. Please try again.');
       setIsProcessing(false);
     }
   };
