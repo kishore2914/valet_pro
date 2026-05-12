@@ -30,6 +30,10 @@ const ProtectedRoute = ({ children, allowedRole }) => {
   if (!session) return <Navigate to="/login" replace />;
   
   if (allowedRole && userRole !== allowedRole) {
+    // Special case: valet_staff is allowed in valet routes
+    if (allowedRole === 'valet' && userRole === 'valet_staff') {
+      return children;
+    }
     return <Navigate to={userRole === 'admin' ? '/admin' : '/valet'} replace />;
   }
   

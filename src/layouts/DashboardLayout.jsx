@@ -35,7 +35,7 @@ const DashboardLayout = ({ role }) => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (locationId && role === 'valet') {
+    if (locationId && role.startsWith('valet')) {
       locationService.getLocationById(locationId).then(({ data }) => {
         if (data) setCurrentLocation(data);
       });
@@ -49,6 +49,13 @@ const DashboardLayout = ({ role }) => {
 
   const navigation = {
     valet: [
+      { name: 'Dashboard', path: '/valet', icon: LayoutDashboard },
+      { name: 'Live Pipeline', path: '/valet/pipeline', icon: ClipboardList },
+      { name: 'Staff Module', path: '/valet/staff', icon: Users },
+      { name: 'Incident Tracker', path: '/valet/incidents', icon: AlertTriangle },
+      { name: 'Settings', path: '/valet/settings', icon: Settings },
+    ],
+    valet_staff: [
       { name: 'Dashboard', path: '/valet', icon: LayoutDashboard },
       { name: 'Live Pipeline', path: '/valet/pipeline', icon: ClipboardList },
       { name: 'Staff Module', path: '/valet/staff', icon: Users },
@@ -176,7 +183,7 @@ const DashboardLayout = ({ role }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             {!isSidebarOpen && <Logo size={28} showText={false} to={role === 'admin' ? '/admin' : '/valet'} />}
             
-            {role === 'valet' && currentLocation && (
+            {role.startsWith('valet') && currentLocation && (
               <div style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -225,7 +232,9 @@ const DashboardLayout = ({ role }) => {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span style={{ fontSize: '0.875rem', fontWeight: '700', color: 'var(--text-main)', textTransform: 'capitalize' }}>{displayName}</span>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '500' }}>{role === 'valet' ? 'Valet In-Charge' : 'Global Admin'}</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '500' }}>
+                  {role === 'valet' ? 'Valet In-Charge' : role === 'valet_staff' ? 'Valet Staff' : 'Global Admin'}
+                </span>
               </div>
             </div>
           </div>

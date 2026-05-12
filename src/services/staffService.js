@@ -39,7 +39,7 @@ export const staffService = {
         options: {
           data: {
             full_name: name,
-            role: role.toLowerCase().includes('admin') ? 'admin' : 'valet',
+            role: role.toLowerCase().includes('admin') ? 'admin' : 'valet_staff',
             location_id: location_id,
             display_role: role
           }
@@ -65,7 +65,7 @@ export const staffService = {
           id: authData.user.id,
           full_name: name,
           email,
-          role: role.toLowerCase().includes('admin') ? 'admin' : 'valet',
+          role: role.toLowerCase().includes('admin') ? 'admin' : 'valet_staff',
           location_id
         }], { onConflict: 'id' });
 

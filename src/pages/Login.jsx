@@ -45,7 +45,11 @@ const Login = () => {
 
     // Role-based redirect logic (determined by AuthContext session)
     const role = data.user.user_metadata?.role || 'valet';
-    navigate(role === 'admin' ? '/admin' : '/valet');
+    if (role === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/valet');
+    }
     setLoading(false);
   };
 
