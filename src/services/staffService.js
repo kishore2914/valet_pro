@@ -57,8 +57,7 @@ export const staffService = {
         throw new Error('Failed to create authentication account.');
       }
 
-      // 3. Add to the profiles table (CRITICAL for RLS and Location resolution)
-      // Check if profile already exists (e.g. created by a DB trigger)
+      // 3. Profile Sync (Ensure profile exists and is up to date)
       const { data: existingProfile } = await supabase
         .from('profiles')
         .select('id')
@@ -76,12 +75,15 @@ export const staffService = {
             location_id
           }]);
 
-        if (profileError && !profileError.message.includes('duplicate key')) {
-          console.error('Profile creation error:', profileError);
-          throw new Error(`Profile creation failed: ${profileError.message}`);
+        // If insert fails because it already exists (race condition), we can ignore it
+        if (profileError) {
+          const isDuplicate = profileError.code === '23505' || profileError.message?.toLowerCase().includes('duplicate');
+          if (!isDuplicate) {
+            console.error('Profile creation error:', profileError);
+            throw new Error(`Profile creation failed: ${profileError.message}`);
+          }
         }
       } else {
-        // Sync data to existing profile
         await supabase
           .from('profiles')
           .update({
@@ -92,7 +94,7 @@ export const staffService = {
           .eq('id', authData.user.id);
       }
 
-      // 4. Add to the staff table for management/tracking
+      // 4. Staff Sync (Ensure staff record exists and is up to date)
       const { data: existingStaff } = await supabase
         .from('staff')
         .select('id')
@@ -116,9 +118,12 @@ export const staffService = {
           }])
           .select();
         
-        if (staffError && !staffError.message.includes('duplicate key')) {
-          console.error('Staff table insert error:', staffError);
-          throw new Error(`Staff record creation failed: ${staffError.message}`);
+        if (staffError) {
+          const isDuplicate = staffError.code === '23505' || staffError.message?.toLowerCase().includes('duplicate');
+          if (!isDuplicate) {
+            console.error('Staff table insert error:', staffError);
+            throw new Error(`Staff record creation failed: ${staffError.message}`);
+          }
         }
         staffResult = data;
       } else {
