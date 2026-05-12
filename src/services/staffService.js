@@ -58,45 +58,89 @@ export const staffService = {
       }
 
       // 3. Add to the profiles table (CRITICAL for RLS and Location resolution)
-      // Use upsert to handle cases where a DB trigger might have already created the profile
-      const { error: profileError } = await supabase
+      // Check if profile already exists (e.g. created by a DB trigger)
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .upsert([{
-          id: authData.user.id,
-          full_name: name,
-          email,
-          role: role.toLowerCase().includes('admin') ? 'admin' : 'valet_staff',
-          location_id
-        }], { onConflict: 'id' });
+        .select('id')
+        .eq('id', authData.user.id)
+        .maybeSingle();
 
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        throw new Error(`Profile creation failed: ${profileError.message}`);
+      if (!existingProfile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{
+            id: authData.user.id,
+            full_name: name,
+            email,
+            role: role.toLowerCase().includes('admin') ? 'admin' : 'valet_staff',
+            location_id
+          }]);
+
+        if (profileError && !profileError.message.includes('duplicate key')) {
+          console.error('Profile creation error:', profileError);
+          throw new Error(`Profile creation failed: ${profileError.message}`);
+        }
+      } else {
+        // Sync data to existing profile
+        await supabase
+          .from('profiles')
+          .update({
+            full_name: name,
+            role: role.toLowerCase().includes('admin') ? 'admin' : 'valet_staff',
+            location_id
+          })
+          .eq('id', authData.user.id);
       }
 
       // 4. Add to the staff table for management/tracking
-      // Use upsert to handle potential duplicates or re-onboarding
-      const { data, error: staffError } = await supabase
+      const { data: existingStaff } = await supabase
         .from('staff')
-        .upsert([{
-          id: authData.user.id,
-          name,
-          email,
-          role,
-          phone,
-          location_id,
-          status: 'On Shift',
-          handled_count: 0,
-          rating: 5.0
-        }], { onConflict: 'id' })
-        .select();
+        .select('id')
+        .eq('id', authData.user.id)
+        .maybeSingle();
 
-      if (staffError) {
-        console.error('Staff table upsert error:', staffError);
-        throw new Error(`Staff record creation failed: ${staffError.message}`);
+      let staffResult;
+      if (!existingStaff) {
+        const { data, error: staffError } = await supabase
+          .from('staff')
+          .insert([{
+            id: authData.user.id,
+            name,
+            email,
+            role,
+            phone,
+            location_id,
+            status: 'On Shift',
+            handled_count: 0,
+            rating: 5.0
+          }])
+          .select();
+        
+        if (staffError && !staffError.message.includes('duplicate key')) {
+          console.error('Staff table insert error:', staffError);
+          throw new Error(`Staff record creation failed: ${staffError.message}`);
+        }
+        staffResult = data;
+      } else {
+        const { data, error: staffError } = await supabase
+          .from('staff')
+          .update({
+            name,
+            role,
+            phone,
+            location_id
+          })
+          .eq('id', authData.user.id)
+          .select();
+        
+        if (staffError) {
+          console.error('Staff table update error:', staffError);
+          throw new Error(`Staff record update failed: ${staffError.message}`);
+        }
+        staffResult = data;
       }
 
-      return { data, error: null };
+      return { data: staffResult, error: null };
     } catch (err) {
       console.error('Error in addStaff:', err);
       return { data: null, error: err };
