@@ -99,12 +99,12 @@ const Signup = () => {
       if (authData.user) {
         if (isAdminMode) {
           // 3a. Initialize Super Admin status in DB
-          await supabase.from('profiles').insert([{ 
+          await supabase.from('profiles').upsert([{ 
             id: authData.user.id, 
             full_name: fullName, 
             email: email, 
             role: 'admin' 
-          }]);
+          }], { onConflict: 'id' });
 
           const { error: updateError } = await supabase
             .from('system_config')

@@ -58,15 +58,16 @@ export const staffService = {
       }
 
       // 3. Add to the profiles table (CRITICAL for RLS and Location resolution)
+      // Use upsert to handle cases where a DB trigger might have already created the profile
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert([{
+        .upsert([{
           id: authData.user.id,
           full_name: name,
           email,
           role: role.toLowerCase().includes('admin') ? 'admin' : 'valet',
           location_id
-        }]);
+        }], { onConflict: 'id' });
 
       if (profileError) {
         console.error('Profile creation error:', profileError);
@@ -74,9 +75,10 @@ export const staffService = {
       }
 
       // 4. Add to the staff table for management/tracking
+      // Use upsert to handle potential duplicates or re-onboarding
       const { data, error: staffError } = await supabase
         .from('staff')
-        .insert([{
+        .upsert([{
           id: authData.user.id,
           name,
           email,
@@ -86,11 +88,11 @@ export const staffService = {
           status: 'On Shift',
           handled_count: 0,
           rating: 5.0
-        }])
+        }], { onConflict: 'id' })
         .select();
 
       if (staffError) {
-        console.error('Staff table insert error:', staffError);
+        console.error('Staff table upsert error:', staffError);
         throw new Error(`Staff record creation failed: ${staffError.message}`);
       }
 
