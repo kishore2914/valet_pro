@@ -21,10 +21,12 @@ import { staffService } from '../../services/staffService';
 import { useAuth } from '../../context/AuthContext';
 
 const stages = [
-  { id: 'Received',  name: 'Received',  icon: Car,          next: 'Parked' },
-  { id: 'Parked',    name: 'Parked',    icon: CheckCircle2, next: 'Requested' },
-  { id: 'Requested', name: 'Requested', icon: Clock,        next: 'Ready' },
-  { id: 'Ready',     name: 'Ready',     icon: CheckCircle2, next: 'Delivered' },
+  { id: 'Received',   name: 'Received',   icon: Car,          next: 'Parking' },
+  { id: 'Parking',    name: 'Parking',    icon: Loader2,      next: 'Parked' },
+  { id: 'Parked',     name: 'Parked',     icon: CheckCircle2, next: 'Ready' },
+  { id: 'Ready',      name: 'Requested',  icon: Clock,        next: 'Delivering' },
+  { id: 'Delivering', name: 'Delivering', icon: Loader2,      next: 'Returned' },
+  { id: 'Returned',   name: 'Returned',   icon: CheckCircle2, next: null },
 ];
 
 // ── Context Menu ────────────────────────────────────────────────────────────

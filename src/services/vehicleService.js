@@ -25,7 +25,7 @@ export const vehicleService = {
     const stats = {
       received: data?.length || 0,
       parked: data?.filter(v => v.status === 'Parked').length || 0,
-      requested: data?.filter(v => v.status === 'Requested').length || 0,
+      requested: data?.filter(v => v.status === 'Ready').length || 0,
     };
     
     return { data: stats, error: null };
@@ -61,8 +61,8 @@ export const vehicleService = {
   async updateStatus(id, status, extraData = {}) {
     const update = { status, ...extraData };
     if (status === 'Parked') update.parked_at = new Date().toISOString();
-    if (status === 'Requested') update.requested_at = new Date().toISOString();
-    if (status === 'Delivered') update.delivered_at = new Date().toISOString();
+    if (status === 'Ready') update.requested_at = new Date().toISOString();
+    if (status === 'Returned') update.delivered_at = new Date().toISOString();
 
     const { data, error } = await supabase
       .from('vehicles')

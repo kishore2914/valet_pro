@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LocaleProvider } from './context/LocaleContext';
 import DashboardLayout from './layouts/DashboardLayout';
 import ValetDashboard from './pages/valet/Dashboard';
 import Pipeline from './pages/valet/Pipeline';
@@ -42,50 +43,52 @@ const ProtectedRoute = ({ children, allowedRole }) => {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/choose-plan" element={<ChoosePlan />} />
-            <Route path="/payment" element={<Payment />} />
-            
-            {/* Valet In-Charge Routes */}
-            <Route path="/valet" element={
-              <ProtectedRoute allowedRole="valet">
-                <DashboardLayout role="valet" />
-              </ProtectedRoute>
-            }>
-              <Route index element={<ValetDashboard />} />
-              <Route path="pipeline" element={<Pipeline />} />
-              <Route path="staff" element={<Staff />} />
-              <Route path="incidents" element={<Incidents />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
-
-            {/* Platform Admin Routes */}
-            <Route path="/admin" element={
-              <ProtectedRoute allowedRole="admin">
-                <DashboardLayout role="admin" />
-              </ProtectedRoute>
-            }>
-              <Route index element={<AdminAnalytics />} />
-              <Route path="clients" element={<ClientManagement />} />
-              <Route path="security" element={<Security />} />
-              <Route path="settings" element={<GlobalSettings />} />
-            </Route>
-
-            <Route path="/about" element={<About />} />
-            <Route path="/legal/:type" element={<Legal />} />
-
-            {/* Default Route */}
-            <Route path="/" element={<LandingPage />} />
-
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+    <LocaleProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/choose-plan" element={<ChoosePlan />} />
+              <Route path="/payment" element={<Payment />} />
+              
+              {/* Valet In-Charge Routes */}
+              <Route path="/valet" element={
+                <ProtectedRoute allowedRole="valet">
+                  <DashboardLayout role="valet" />
+                </ProtectedRoute>
+              }>
+                <Route index element={<ValetDashboard />} />
+                <Route path="pipeline" element={<Pipeline />} />
+                <Route path="staff" element={<Staff />} />
+                <Route path="incidents" element={<Incidents />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
+  
+              {/* Platform Admin Routes */}
+              <Route path="/admin" element={
+                <ProtectedRoute allowedRole="admin">
+                  <DashboardLayout role="admin" />
+                </ProtectedRoute>
+              }>
+                <Route index element={<AdminAnalytics />} />
+                <Route path="clients" element={<ClientManagement />} />
+                <Route path="security" element={<Security />} />
+                <Route path="settings" element={<GlobalSettings />} />
+              </Route>
+  
+              <Route path="/about" element={<About />} />
+              <Route path="/legal/:type" element={<Legal />} />
+  
+              {/* Default Route */}
+              <Route path="/" element={<LandingPage />} />
+  
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </LocaleProvider>
   );
 }
 

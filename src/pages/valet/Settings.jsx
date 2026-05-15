@@ -109,7 +109,7 @@ const Settings = () => {
                 {['INV-2026-001', 'INV-2026-002'].map(inv => (
                   <div key={inv} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', padding: '0.5rem 0', borderBottom: '1px solid var(--border-color)' }}>
                     <span>{inv} - May 2026</span>
-                    <span style={{ fontWeight: '600' }}>₹14,999.00</span>
+                    <span style={{ fontWeight: '600' }}>₹7,999.00</span>
                   </div>
                 ))}
               </div>

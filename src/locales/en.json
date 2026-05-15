@@ -1,0 +1,42 @@
+{
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How it Works",
+    "pricing": "Pricing",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "hero": {
+    "badge": "Introducing v2.0 - Real-time Fleet Tracking",
+    "title": "Valet Parking,",
+    "titleAccent": "Reimagined.",
+    "subtitle": "The ultra-modern digital valet platform for world-class venues. Eliminate tickets, prevent fraud, and delight your guests with real-time tracking.",
+    "cta": "Get Started for Free",
+    "demo": "Watch Demo"
+  },
+  "stats": {
+    "vehicles": "Vehicles Handled",
+    "venues": "Venue Partnerships",
+    "fraud": "Fraud Reduction",
+    "uptime": "Average Uptime"
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Choose the perfect plan for your venue size and operational complexity.",
+    "month": "/month",
+    "choose": "Choose {{tier}}",
+    "starter": {
+      "name": "Starter",
+      "desc": "For small boutiques and restaurants."
+    },
+    "pro": {
+      "name": "Pro",
+      "desc": "For hotels and major shopping malls."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "desc": "For multi-venue hotel chains.",
+      "price": "Custom"
+    }
+  }
+}

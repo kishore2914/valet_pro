@@ -37,11 +37,15 @@ import Button from '../../components/ui/Button';
 import Table from '../../components/ui/Table';
 import Badge from '../../components/ui/Badge';
 import Modal from '../../components/ui/Modal';
+import { useLocale } from '../../context/LocaleContext';
+
 
 const COLORS = ['#2563eb', '#f59e0b', '#10b981', '#ef4444'];
 
 const Analytics = () => {
+  const { currentCountry } = useLocale();
   const [loading, setLoading] = useState(true);
+
   const [stats, setStats] = useState({
     totalRevenue: 0,
     activeLocations: 0,
@@ -167,8 +171,9 @@ const Analytics = () => {
           name: <div style={{ fontWeight: '600' }}>{v.name}</div>,
           type: 'Standard',
           status: <Badge variant="green">Active</Badge>,
-          revenue: formatCurrency(locRevenue),
+          revenue: formatCurrency(locRevenue, currentCountry),
           valets: valetCount,
+
           util: (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ flex: 1, height: '6px', width: '60px', backgroundColor: 'var(--slate-200)', borderRadius: '3px', position: 'relative' }}>
@@ -347,9 +352,10 @@ const Analytics = () => {
         <GlassCard style={{ flex: 1 }}>
           <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>Total System Revenue</div>
           <div style={{ fontSize: '2rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <IndianRupee size={24} color="var(--primary)" />
-            <span>{formatNumber(stats.totalRevenue)}</span>
+            <Globe size={24} color="var(--primary)" />
+            <span>{formatCurrency(stats.totalRevenue, currentCountry)}</span>
           </div>
+
           <div style={{ fontSize: '0.8rem', color: '#16a34a', marginTop: '0.5rem', fontWeight: '600' }}>Live Data</div>
         </GlassCard>
         <GlassCard style={{ flex: 1 }}>
@@ -388,9 +394,10 @@ const Analytics = () => {
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} />
                 <Tooltip 
-                  formatter={(value) => formatCurrency(value)}
+                  formatter={(value) => formatCurrency(value, currentCountry)}
                   contentStyle={{ backgroundColor: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-color)' }}
                 />
+
                 <Line type="monotone" dataKey="revenue" stroke="var(--primary)" strokeWidth={4} dot={{ r: 6, fill: 'var(--primary)' }} activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>

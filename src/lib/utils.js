@@ -1,11 +1,21 @@
-export const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0
-  }).format(amount);
+const EXCHANGE_RATES = {
+  INR: 1,
+  USD: 0.012,
+  GBP: 0.0094,
+  AED: 0.044
 };
 
-export const formatNumber = (num) => {
-  return new Intl.NumberFormat('en-IN').format(num);
+export const formatCurrency = (amount, country = { locale: 'en-IN', currency: 'INR' }) => {
+  const rate = EXCHANGE_RATES[country.currency] || 1;
+  const convertedAmount = amount * rate;
+  
+  return new Intl.NumberFormat(country.locale, {
+    style: 'currency',
+    currency: country.currency,
+    maximumFractionDigits: 0
+  }).format(convertedAmount);
+};
+
+export const formatNumber = (num, locale = 'en-IN') => {
+  return new Intl.NumberFormat(locale).format(num);
 };

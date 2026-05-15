@@ -21,6 +21,10 @@ import GlassCard from '../components/ui/GlassCard';
 import VideoModal from '../components/ui/VideoModal';
 import heroBg from '../assets/hero-bg.png';
 import Logo from '../components/ui/Logo';
+import { useTranslation } from 'react-i18next';
+import { useLocale } from '../context/LocaleContext';
+import { formatCurrency } from '../lib/utils';
+import CountrySelector from '../components/ui/CountrySelector';
 
 
 // Section Header Component
@@ -61,6 +65,9 @@ const SectionHeader = ({ title, subtitle, centered = true }) => (
 );
 
 const LandingPage = () => {
+  const { t } = useTranslation();
+  const { currentCountry, platformSettings } = useLocale();
+
   const [isVideoModalOpen, setIsVideoModalOpen] = React.useState(false);
   const navigate = useNavigate();
 
@@ -99,21 +106,26 @@ const LandingPage = () => {
 
         
         <nav style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          {['Features', 'How it Works', 'Pricing'].map(item => (
-            <a key={item} href={`#${item.toLowerCase().replace(/ /g, '-')}`} style={{ 
+          {[
+            { key: 'features', label: t('nav.features') },
+            { key: 'how-it-works', label: t('nav.howItWorks') },
+            { key: 'pricing', label: t('nav.pricing') }
+          ].map(item => (
+            <a key={item.key} href={`#${item.key}`} style={{ 
               color: 'var(--slate-400)', 
               textDecoration: 'none', 
               fontSize: '0.9rem', 
               fontWeight: '600',
               transition: 'color 0.2s ease'
             }} onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'var(--slate-400)'}>
-              {item}
+              {item.label}
             </a>
           ))}
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginLeft: '1rem' }}>
+          <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', marginLeft: '1rem' }}>
+            <CountrySelector />
             <Link to="/login" style={{ textDecoration: 'none' }}>
               <Button variant="ghost" style={{ color: 'white', fontWeight: '600' }}>
-                Sign In
+                {t('nav.signIn')}
               </Button>
             </Link>
             <Link to="/signup" style={{ textDecoration: 'none' }}>
@@ -126,7 +138,7 @@ const LandingPage = () => {
                 color: 'var(--obsidian-black)',
                 fontWeight: '700'
               }}>
-                Sign Up
+                {t('nav.signUp')}
               </Button>
             </Link>
           </div>
@@ -164,7 +176,7 @@ const LandingPage = () => {
             marginBottom: '2rem'
           }}>
             <Zap size={16} />
-            <span>Introducing v2.0 - Real-time Fleet Tracking</span>
+            <span>{t('hero.badge')}</span>
           </div>
 
           <h1 style={{ 
@@ -178,11 +190,11 @@ const LandingPage = () => {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
           }}>
-            Valet Parking, <br />
+            {t('hero.title')} <br />
             <span style={{ 
               color: 'var(--amber-gold)',
               WebkitTextFillColor: 'var(--amber-gold)' 
-            }}>Reimagined.</span>
+            }}>{t('hero.titleAccent')}</span>
           </h1>
 
           <p style={{ 
@@ -192,8 +204,7 @@ const LandingPage = () => {
             margin: '0 auto 3rem',
             lineHeight: '1.6'
           }}>
-            The ultra-modern digital valet platform for world-class venues. 
-            Eliminate tickets, prevent fraud, and delight your guests with real-time tracking.
+            {t('hero.subtitle')}
           </p>
 
           <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -207,7 +218,7 @@ const LandingPage = () => {
                 fontWeight: '700',
                 boxShadow: '0 10px 20px -5px rgba(245, 158, 11, 0.3)'
               }}>
-                Get Started for Free
+                {t('hero.cta')}
                 <ArrowRight size={20} />
               </Button>
             </Link>
@@ -224,7 +235,7 @@ const LandingPage = () => {
                 backgroundColor: 'rgba(255,255,255,0.05)'
               }}
             >
-              Watch Demo
+              {t('hero.demo')}
             </Button>
           </div>
         </motion.div>
@@ -240,10 +251,10 @@ const LandingPage = () => {
           margin: '0 auto' 
         }}>
           {[
-            { label: 'Vehicles Handled', value: '1.2M+' },
-            { label: 'Venue Partnerships', value: '450+' },
-            { label: 'Fraud Reduction', value: '99.9%' },
-            { label: 'Average Uptime', value: '99.99%' },
+            { label: t('stats.vehicles'), value: '1.2M+' },
+            { label: t('stats.venues'), value: '450+' },
+            { label: t('stats.fraud'), value: '99.9%' },
+            { label: t('stats.uptime'), value: '99.99%' },
           ].map((stat, i) => (
             <div key={i} style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '0.5rem', color: 'white' }}>{stat.value}</div>
@@ -404,8 +415,8 @@ const LandingPage = () => {
       {/* Pricing Section */}
       <section id="pricing" style={{ padding: '10rem 5vw', backgroundColor: 'rgba(0,0,0,0.1)' }}>
         <SectionHeader 
-          title="Simple, Transparent Pricing" 
-          subtitle="Choose the perfect plan for your venue size and operational complexity."
+          title={t('pricing.title')} 
+          subtitle={t('pricing.subtitle')}
         />
 
         <div style={{ 
@@ -418,21 +429,22 @@ const LandingPage = () => {
           {[
             { 
               tier: 'Starter', 
-              price: '₹7,999', 
-              desc: 'For small boutiques and restaurants.', 
-              features: ['Up to 500 cars/mo', 'Digital SMS Tokens', 'Basic Analytics', 'Standard Support'] 
+              price: formatCurrency(platformSettings.pricing_starter, currentCountry), 
+              desc: t('pricing.starter.desc'), 
+              features: ['Up to 100 cars/mo', 'Digital SMS Tokens', 'Basic Analytics', 'Standard Support'] 
             },
             { 
               tier: 'Pro', 
-              price: '₹14,999', 
-              desc: 'For hotels and major shopping malls.', 
+              price: formatCurrency(platformSettings.pricing_pro, currentCountry), 
+              desc: t('pricing.pro.desc'), 
               featured: true,
-              features: ['Unlimited cars/mo', 'Advanced Real-time Tracking', 'Custom Branding', 'Email & Chat Support'] 
+              features: ['Up to 250 cars/mo', 'Advanced Real-time Tracking', 'Custom Branding', 'Email & Chat Support'] 
             },
+
             { 
               tier: 'Enterprise', 
-              price: 'Custom', 
-              desc: 'For multi-venue hotel chains.', 
+              price: t('pricing.enterprise.price'), 
+              desc: t('pricing.enterprise.desc'), 
               features: ['Multi-tenant Management', 'API Access', 'White-label Mobile App', 'Dedicated Account Manager'] 
             },
           ].map((plan, i) => (
@@ -471,7 +483,7 @@ const LandingPage = () => {
                 <p style={{ color: 'var(--slate-400)', fontSize: '0.9rem', marginBottom: '2rem' }}>{plan.desc}</p>
                 <div style={{ marginBottom: '2.5rem' }}>
                   <span style={{ fontSize: '3rem', fontWeight: '800' }}>{plan.price}</span>
-                  {plan.price !== 'Custom' && <span style={{ color: 'var(--slate-500)' }}>/month</span>}
+                  {plan.tier !== 'Enterprise' && <span style={{ color: 'var(--slate-500)' }}>{t('pricing.month')}</span>}
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2.5rem' }}>
@@ -491,7 +503,7 @@ const LandingPage = () => {
                     color: 'white',
                     borderColor: plan.featured ? 'transparent' : 'rgba(255,255,255,0.1)'
                   }}>
-                    Choose {plan.tier}
+                    {t('pricing.choose', { tier: plan.tier })}
                   </Button>
                 </Link>
               </GlassCard>

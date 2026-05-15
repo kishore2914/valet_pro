@@ -107,8 +107,9 @@ const ValetDashboard = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'Parked': return CheckCircle2;
-      case 'Requested': return Clock;
-      case 'In-Transit': return Navigation;
+      case 'Ready': return Clock;
+      case 'Delivering': return Navigation;
+      case 'Returned': return CheckCircle2;
       default: return Car;
     }
   };
@@ -225,7 +226,7 @@ const ValetDashboard = () => {
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.plate_number}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <Badge variant={item.status === 'Requested' ? 'red' : item.status === 'Parked' ? 'green' : 'blue'}>{item.status}</Badge>
+                    <Badge variant={item.status === 'Ready' ? 'red' : item.status === 'Parked' ? 'green' : 'blue'}>{item.status}</Badge>
                     <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                       {new Date(item.received_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>

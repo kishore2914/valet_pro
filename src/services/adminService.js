@@ -47,5 +47,22 @@ export const adminService = {
       console.error('Supabase Error (getGlobalStats):', err);
       return { data: null, error: err };
     }
+  },
+
+  // Fetch all platform settings
+  async getPlatformSettings() {
+    const { data, error } = await supabase
+      .from('platform_settings')
+      .select('*');
+    return { data, error };
+  },
+
+  // Update a specific platform setting
+  async updatePlatformSetting(key, value) {
+    const { data, error } = await supabase
+      .from('platform_settings')
+      .update({ value, updated_at: new Date().toISOString() })
+      .eq('key', key);
+    return { data, error };
   }
 };

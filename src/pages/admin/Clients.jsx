@@ -10,8 +10,10 @@ import {
   MapPin,
   Mail,
   Loader2,
-  AlertTriangle
+  AlertTriangle,
+  Globe
 } from 'lucide-react';
+
 import { formatCurrency, formatNumber } from '../../lib/utils';
 import GlassCard from '../../components/ui/GlassCard';
 import Table from '../../components/ui/Table';
@@ -19,9 +21,13 @@ import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import Modal from '../../components/ui/Modal';
 import { adminService } from '../../services/adminService';
+import { useLocale } from '../../context/LocaleContext';
+
 
 const ClientManagement = () => {
+  const { currentCountry } = useLocale();
   const [isModalOpen, setModalOpen] = useState(false);
+
   const [locations, setLocations] = useState([]);
   const [stats, setStats] = useState({ locationCount: 0, vehicleCount: 0, revenue: 0 });
   const [loading, setLoading] = useState(true);
@@ -123,14 +129,15 @@ const ClientManagement = () => {
         <GlassCard>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ padding: '0.75rem', borderRadius: '12px', backgroundColor: 'rgba(245, 158, 11, 0.1)', color: 'var(--gold-600)' }}>
-              <IndianRupee size={24} />
+              <Globe size={24} />
             </div>
             <div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Annual Revenue</div>
               <div style={{ fontSize: '1.25rem', fontWeight: '700' }}>
-                {formatCurrency(stats.revenue)}
+                {formatCurrency(stats.revenue, currentCountry)}
               </div>
             </div>
+
           </div>
         </GlassCard>
         <GlassCard>

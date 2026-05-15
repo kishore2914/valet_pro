@@ -17,14 +17,16 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import GlassCard from '../components/ui/GlassCard';
-import Button from '../components/ui/Button';
-import heroBg from '../assets/hero-bg.png';
+import Logo from '../components/ui/Logo';
+import { useLocale } from '../context/LocaleContext';
+import { formatCurrency } from '../lib/utils';
 
 const Payment = () => {
   const [searchParams] = useSearchParams();
   const plan = searchParams.get('plan') || 'starter';
   const navigate = useNavigate();
   const { signUp } = useAuth();
+  const { currentCountry, platformSettings } = useLocale();
   
   React.useEffect(() => {
     const signupData = sessionStorage.getItem('pending_signup');
@@ -46,8 +48,16 @@ const Payment = () => {
   const [upiId, setUpiId] = useState('');
 
   const plans = {
-    starter: { name: 'Starter', price: '₹7,999', amount: 7999 },
-    pro: { name: 'Pro', price: '₹14,999', amount: 14999 },
+    starter: { 
+      name: 'Starter', 
+      price: formatCurrency(platformSettings.pricing_starter, currentCountry), 
+      amount: platformSettings.pricing_starter 
+    },
+    pro: { 
+      name: 'Pro', 
+      price: formatCurrency(platformSettings.pricing_pro, currentCountry), 
+      amount: platformSettings.pricing_pro 
+    },
     enterprise: { name: 'Enterprise', price: 'Custom', amount: 0 }
   };
 
@@ -365,7 +375,7 @@ const Payment = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <span style={{ color: 'var(--slate-400)' }}>Tax (GST/VAT)</span>
-                <span style={{ color: 'white', fontWeight: '600' }}>{selectedPlan.price === 'Custom' ? '-' : '₹0.00'}</span>
+                <span style={{ color: 'white', fontWeight: '600' }}>{selectedPlan.name === 'Enterprise' ? '-' : formatCurrency(0, currentCountry)}</span>
               </div>
               <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.1)', margin: '1.5rem 0' }}></div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>

@@ -19,8 +19,13 @@ import {
   Mail,
   Smartphone,
   Globe2,
-  ListFilter
+  ListFilter,
+  Tag,
+  IndianRupee
 } from 'lucide-react';
+import { adminService } from '../../services/adminService';
+import Badge from '../../components/ui/Badge';
+
 import GlassCard from '../../components/ui/GlassCard';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
@@ -29,6 +34,22 @@ const GlobalSettings = () => {
   const [activeItem, setActiveItem] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [starterPrice, setStarterPrice] = useState('3999');
+  const [proPrice, setProPrice] = useState('7999');
+
+  React.useEffect(() => {
+    const fetchSettings = async () => {
+      const { data } = await adminService.getPlatformSettings();
+      if (data) {
+        const starter = data.find(s => s.key === 'pricing_starter');
+        const pro = data.find(s => s.key === 'pricing_pro');
+        if (starter) setStarterPrice(starter.value);
+        if (pro) setProPrice(pro.value);
+      }
+    };
+    fetchSettings();
+  }, []);
+
 
   const sections = [
     { 
@@ -54,20 +75,39 @@ const GlobalSettings = () => {
       icon: BellRing, 
       desc: 'SMS/Email providers and global alert templates',
       items: ['Gateway Configuration', 'Global SMS Providers', 'Email Templates']
+    },
+    { 
+      title: 'Pricing & Plans', 
+      icon: Tag, 
+      desc: 'Update platform-wide subscription costs and tier limits',
+      items: ['Subscription Prices', 'Plan Features']
     }
   ];
 
-  const handleSave = () => {
+
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      setSaveSuccess(true);
+    
+    try {
+      if (activeItem === 'Subscription Prices') {
+        await adminService.updatePlatformSetting('pricing_starter', starterPrice);
+        await adminService.updatePlatformSetting('pricing_pro', proPrice);
+      }
+      
       setTimeout(() => {
-        setSaveSuccess(false);
-        setActiveItem(null);
-      }, 1500);
-    }, 1000);
+        setIsSaving(false);
+        setSaveSuccess(true);
+        setTimeout(() => {
+          setSaveSuccess(false);
+          setActiveItem(null);
+        }, 1500);
+      }, 1000);
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+      setIsSaving(false);
+    }
   };
+
 
   const renderGlobalSettingContent = (item) => {
     const inputStyle = {
@@ -302,6 +342,67 @@ const GlobalSettings = () => {
               <label style={labelStyle}>Twilio Auth Token</label>
               <input style={inputStyle} type="password" placeholder="••••••••••••••••" />
             </div>
+          </div>
+        );
+      case 'Subscription Prices':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Set the base monthly subscription price in INR. These will be automatically converted to other currencies for global users.</p>
+            <div>
+              <label style={labelStyle}>Starter Plan (Monthly)</label>
+              <div style={{ position: 'relative' }}>
+                <IndianRupee size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input 
+                  style={{ ...inputStyle, paddingLeft: '2.5rem' }} 
+                  type="number" 
+                  value={starterPrice} 
+                  onChange={(e) => setStarterPrice(e.target.value)} 
+                />
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>Pro Plan (Monthly)</label>
+              <div style={{ position: 'relative' }}>
+                <IndianRupee size={16} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input 
+                  style={{ ...inputStyle, paddingLeft: '2.5rem' }} 
+                  type="number" 
+                  value={proPrice} 
+                  onChange={(e) => setProPrice(e.target.value)} 
+                />
+              </div>
+            </div>
+            <div style={{ padding: '1rem', backgroundColor: 'rgba(37, 99, 235, 0.05)', borderRadius: '12px', border: '1px solid rgba(37, 99, 235, 0.1)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', color: 'var(--primary)', fontWeight: '600', fontSize: '0.85rem' }}>
+                <Globe size={16} />
+                <span>Global Price Preview</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  USD: ${(starterPrice * 0.012).toFixed(0)}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  GBP: £{(starterPrice * 0.0094).toFixed(0)}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  AED: {(starterPrice * 0.044).toFixed(0)} AED
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'Plan Features':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Manage usage limits and feature access for each tier.</p>
+             <div style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
+               <div style={{ fontWeight: '700', marginBottom: '0.5rem' }}>Starter</div>
+               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Max 100 vehicles/mo</div>
+             </div>
+             <div style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
+               <div style={{ fontWeight: '700', marginBottom: '0.5rem' }}>Pro</div>
+               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Max 250 vehicles/mo • Custom Branding</div>
+             </div>
           </div>
         );
       default:

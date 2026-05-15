@@ -6,10 +6,13 @@ import GlassCard from '../components/ui/GlassCard';
 import Button from '../components/ui/Button';
 import heroBg from '../assets/hero-bg.png';
 import Logo from '../components/ui/Logo';
+import { useLocale } from '../context/LocaleContext';
+import { formatCurrency } from '../lib/utils';
 
 const ChoosePlan = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { currentCountry, platformSettings } = useLocale();
   
   React.useEffect(() => {
     const signupData = sessionStorage.getItem('pending_signup');
@@ -21,16 +24,16 @@ const ChoosePlan = () => {
   const plans = [
     { 
       tier: 'Starter', 
-      price: '₹7,999', 
+      price: formatCurrency(platformSettings.pricing_starter, currentCountry), 
       desc: 'For small boutiques and restaurants.', 
-      features: ['Up to 500 cars/mo', 'Digital SMS Tokens', 'Basic Analytics', 'Standard Support'] 
+      features: ['Up to 100 cars/mo', 'Digital SMS Tokens', 'Basic Analytics', 'Standard Support'] 
     },
     { 
       tier: 'Pro', 
-      price: '₹14,999', 
+      price: formatCurrency(platformSettings.pricing_pro, currentCountry), 
       desc: 'For hotels and major shopping malls.', 
       featured: true,
-      features: ['Unlimited cars/mo', 'Advanced Real-time Tracking', 'Custom Branding', 'Email & Chat Support'] 
+      features: ['Up to 250 cars/mo', 'Advanced Real-time Tracking', 'Custom Branding', 'Email & Chat Support'] 
     },
     { 
       tier: 'Enterprise', 
