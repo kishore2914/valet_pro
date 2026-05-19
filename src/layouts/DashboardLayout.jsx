@@ -29,7 +29,7 @@ import Logo from '../components/ui/Logo';
 const DashboardLayout = ({ role }) => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const { theme, toggleTheme } = useTheme();
-  const { user, signOut, locationId } = useAuth();
+  const { user, signOut, locationId, setLocationId, locations } = useAuth();
   const [currentLocation, setCurrentLocation] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -183,7 +183,41 @@ const DashboardLayout = ({ role }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             {!isSidebarOpen && <Logo size={28} showText={false} to={role === 'admin' ? '/admin' : '/valet'} />}
             
-            {role.startsWith('valet') && currentLocation && (
+            {role.startsWith('valet') && (locations && locations.length > 0 ? (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '0.5rem', 
+                padding: '0.4rem 0.75rem', 
+                backgroundColor: 'rgba(37, 99, 235, 0.1)', 
+                borderRadius: '10px',
+                color: 'var(--primary)',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                border: '1px solid rgba(37, 99, 235, 0.2)'
+              }}>
+                <MapPin size={16} />
+                <select 
+                  value={locationId || ''} 
+                  onChange={(e) => setLocationId(e.target.value)}
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: 'var(--primary)',
+                    fontWeight: '700',
+                    fontSize: '0.9rem',
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {locations.map(loc => (
+                    <option key={loc.id} value={loc.id} style={{ color: 'var(--text-main)', backgroundColor: 'var(--bg-surface)' }}>
+                      {loc.hotelName || loc.name} {loc.city_name ? `- ${loc.city_name}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : currentLocation ? (
               <div style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -196,9 +230,9 @@ const DashboardLayout = ({ role }) => {
                 fontWeight: '600'
               }}>
                 <MapPin size={16} />
-                <span>Location: {currentLocation.name}</span>
+                <span>{currentLocation.name}</span>
               </div>
-            )}
+            ) : null)}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>

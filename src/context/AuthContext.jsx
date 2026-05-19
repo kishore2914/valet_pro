@@ -8,50 +8,63 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState(null);
   const [locationId, setLocationId] = useState(null);
+  const [locations, setLocations] = useState([]);
 
   const resolveLocationId = async (user) => {
     if (!user) return null;
 
-    // 1. Try user_metadata first (fastest, no DB call)
-    const metaLocationId = user.user_metadata?.location_id || user.user_metadata?.venue_id;
-    if (metaLocationId) {
-      setLocationId(metaLocationId);
-      return metaLocationId;
-    }
-
-    // 2. Fall back to profiles table with a 5s timeout so login never hangs
     try {
-      const profileFetch = supabase
-        .from('profiles')
-        .select('location_id')
-        .eq('id', user.id)
-        .single();
+      // Fetch all assigned locations for the user
+      const { data: userLocs, error } = await supabase
+        .from('user_locations')
+        .select(`
+          location_id,
+          locations (
+            id,
+            name,
+            companies ( company_name ),
+            cities ( city_name )
+          )
+        `)
+        .eq('user_id', user.id);
 
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('timeout')), 5000)
-      );
+      if (userLocs && userLocs.length > 0) {
+        // Flatten the data
+        const assignedLocations = userLocs.map(ul => ({
+          id: ul.locations.id,
+          name: ul.locations.name,
+          company_name: ul.locations.companies?.company_name,
+          city_name: ul.locations.cities?.city_name
+        }));
+        
+        setLocations(assignedLocations);
 
-      const { data: profile } = await Promise.race([profileFetch, timeout]);
+        // Determine default location: check metadata first, else use the first one
+        const metaLocationId = user.user_metadata?.location_id || user.user_metadata?.venue_id;
+        const defaultLoc = assignedLocations.find(l => l.id === metaLocationId) || assignedLocations[0];
 
-      if (profile?.location_id) {
-        setLocationId(profile.location_id);
-        // Sync back to metadata for instant resolution next login
-        supabase.auth.updateUser({ data: { location_id: profile.location_id } });
-        return profile.location_id;
+        setLocationId(defaultLoc.id);
+        
+        // Sync back to metadata for instant resolution next login if it changed
+        if (metaLocationId !== defaultLoc.id) {
+            supabase.auth.updateUser({ data: { location_id: defaultLoc.id } });
+        }
+        return defaultLoc.id;
+      } else {
+        // Fallback for legacy users who haven't been migrated or have no locations
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('location_id')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.location_id) {
+           setLocationId(profile.location_id);
+           return profile.location_id;
+        }
       }
     } catch (e) {
-      console.warn('resolveLocationId: profiles query failed or timed out', e.message);
-    }
-
-    // 3. Last resort: grab any location
-    try {
-      const { data: loc } = await supabase.from('locations').select('id').limit(1).single();
-      if (loc?.id) {
-        setLocationId(loc.id);
-        return loc.id;
-      }
-    } catch (e) {
-      console.warn('resolveLocationId: locations query failed', e.message);
+      console.warn('resolveLocationId: multi-branch query failed', e.message);
     }
 
     return null;
@@ -122,6 +135,8 @@ export const AuthProvider = ({ children }) => {
       user: session?.user, 
       userRole, 
       locationId,
+      setLocationId,
+      locations,
       loading, 
       signIn, 
       signUp, 

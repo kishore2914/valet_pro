@@ -18,8 +18,10 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import GlassCard from '../components/ui/GlassCard';
 import Logo from '../components/ui/Logo';
+import Button from '../components/ui/Button';
 import { useLocale } from '../context/LocaleContext';
 import { formatCurrency } from '../lib/utils';
+import heroBg from '../assets/hero-bg.png';
 
 const Payment = () => {
   const [searchParams] = useSearchParams();
@@ -97,13 +99,10 @@ const Payment = () => {
       if (authData.user) {
         // 3. Create the location record via RPC (Security Definer)
         const { data: newLocationId, error: locationError } = await supabase.rpc(
-          'create_user_location',
+          'setup_multi_locations',
           {
             p_user_id:   authData.user.id,
-            p_name:      signupData.venueName,
-            p_location:  signupData.location,
-            p_full_name: signupData.fullName,
-            p_email:     signupData.email
+            p_locations: signupData.locationsList
           }
         );
 

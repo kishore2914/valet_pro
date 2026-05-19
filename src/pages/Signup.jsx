@@ -28,8 +28,19 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [venueName, setVenueName] = useState('');
-  const [location, setLocation] = useState('');
+  
+  // Locations Array
+  const [locationsList, setLocationsList] = useState([{ companyName: '', cityName: '', hotelName: '' }]);
+
+  const handleAddLocation = () => {
+    setLocationsList([...locationsList, { companyName: '', cityName: '', hotelName: '' }]);
+  };
+
+  const handleUpdateLocation = (index, field, value) => {
+    const newList = [...locationsList];
+    newList[index][field] = value;
+    setLocationsList(newList);
+  };
   
   // Admin fields
   const [isAdminMode, setIsAdminMode] = useState(false);
@@ -129,8 +140,8 @@ const Signup = () => {
     setLoading(true);
     
     // Validate fields
-    if (!email || !password || !fullName || !venueName || !location) {
-      setError('Please fill in all fields');
+    if (!email || !password || !fullName || locationsList.some(l => !l.companyName || !l.cityName || !l.hotelName)) {
+      setError('Please fill in all fields including all location details');
       setLoading(false);
       return;
     }
@@ -140,8 +151,7 @@ const Signup = () => {
       email,
       password,
       fullName,
-      venueName,
-      location,
+      locationsList,
       role: 'valet'
     };
     
@@ -341,34 +351,67 @@ const Signup = () => {
                   style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
                 >
                   <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.2rem 0' }}></div>
-                  <div>
-                    <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Location Name</label>
-                    <div style={{ position: 'relative' }}>
-                      <Building2 size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--slate-500)' }} />
-                      <input 
-                        type="text" 
-                        required={!isAdminMode}
-                        value={venueName}
-                        onChange={(e) => setVenueName(e.target.value)}
-                        placeholder="e.g. Grand Plaza Hotel" 
-                            style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
-                      />
+                  
+                  {locationsList.map((loc, index) => (
+                    <div key={index} style={{ padding: '1rem', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                        <span style={{ color: 'var(--blue-500)', fontSize: '0.85rem', fontWeight: '700' }}>Branch {index + 1}</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div>
+                          <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Company Name</label>
+                          <input 
+                            type="text" 
+                            required={!isAdminMode}
+                            value={loc.companyName}
+                            onChange={(e) => handleUpdateLocation(index, 'companyName', e.target.value)}
+                            placeholder="e.g. ITC Hotels" 
+                            style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>City</label>
+                          <input 
+                            type="text" 
+                            required={!isAdminMode}
+                            value={loc.cityName}
+                            onChange={(e) => handleUpdateLocation(index, 'cityName', e.target.value)}
+                            placeholder="e.g. Chennai" 
+                            style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Hotel Name</label>
+                          <input 
+                            type="text" 
+                            required={!isAdminMode}
+                            value={loc.hotelName}
+                            onChange={(e) => handleUpdateLocation(index, 'hotelName', e.target.value)}
+                            placeholder="e.g. ITC Grand Chola" 
+                            style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Location</label>
-                    <div style={{ position: 'relative' }}>
-                      <MapPin size={16} style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--slate-500)' }} />
-                      <input 
-                        type="text" 
-                        required={!isAdminMode}
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        placeholder="e.g. Dubai, UAE" 
-                        style={{ width: '100%', padding: '0.7rem 0.75rem 0.7rem 2.5rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', color: 'white', outline: 'none' }} 
-                      />
-                    </div>
-                  </div>
+                  ))}
+                  
+                  <button
+                    type="button"
+                    onClick={handleAddLocation}
+                    style={{ 
+                      padding: '0.75rem', 
+                      borderRadius: '8px', 
+                      backgroundColor: 'rgba(37, 99, 235, 0.1)', 
+                      color: 'var(--blue-500)', 
+                      border: '1px dashed rgba(37, 99, 235, 0.3)',
+                      fontWeight: '700',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    + Add Another Hotel
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
