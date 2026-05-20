@@ -229,6 +229,7 @@ const Staff = () => {
         isOpen={isModalOpen} 
         onClose={() => setModalOpen(false)} 
         title="Onboard New Staff Member"
+        glass={false}
       >
         <form onSubmit={handleAddStaff} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div>
@@ -239,7 +240,7 @@ const Staff = () => {
               placeholder="e.g. Rahul Sharma" 
               value={newStaff.name}
               onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', outline: 'none' }} 
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-subtle)', color: 'var(--text-main)', outline: 'none' }} 
             />
           </div>
           
@@ -248,7 +249,7 @@ const Staff = () => {
             <select 
               value={newStaff.role}
               onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
-              style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', outline: 'none' }}
+              style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-subtle)', color: 'var(--text-main)', outline: 'none' }}
             >
               <option>Valet Runner</option>
               <option>Shift Lead</option>
@@ -267,7 +268,7 @@ const Staff = () => {
                   placeholder="+91 98765 43210" 
                   value={newStaff.phone}
                   onChange={(e) => setNewStaff({ ...newStaff, phone: e.target.value })}
-                  style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.25rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', outline: 'none' }} 
+                  style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.25rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-subtle)', color: 'var(--text-main)', outline: 'none' }} 
                 />
               </div>
             </div>
@@ -281,7 +282,7 @@ const Staff = () => {
                   placeholder="staff@valetpro.com" 
                   value={newStaff.email}
                   onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
-                  style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.25rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', outline: 'none' }} 
+                  style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.25rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-subtle)', color: 'var(--text-main)', outline: 'none' }} 
                 />
               </div>
             </div>
@@ -297,7 +298,7 @@ const Staff = () => {
                 placeholder="••••••••" 
                 value={newStaff.password}
                 onChange={(e) => setNewStaff({ ...newStaff, password: e.target.value })}
-                style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.25rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', outline: 'none' }} 
+                style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.25rem', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-subtle)', color: 'var(--text-main)', outline: 'none' }} 
               />
             </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>Staff will use this password to log in to the mobile application.</p>

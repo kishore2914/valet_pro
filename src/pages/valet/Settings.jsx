@@ -69,7 +69,7 @@ const Settings = () => {
       padding: '0.75rem',
       borderRadius: '8px',
       border: '1px solid var(--border-color)',
-      backgroundColor: 'var(--bg-app)',
+      backgroundColor: 'var(--bg-subtle)',
       color: 'var(--text-main)',
       outline: 'none',
       fontSize: '0.9rem'
@@ -96,7 +96,7 @@ const Settings = () => {
             
             <div>
               <label style={labelStyle}>Payment Method</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '10px', backgroundColor: 'var(--bg-app)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', border: '1px solid var(--border-color)', borderRadius: '10px', backgroundColor: 'var(--bg-subtle)' }}>
                 <div style={{ width: '40px', height: '24px', backgroundColor: '#000', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.5rem' }}>VISA</div>
                 <div style={{ flex: 1, fontSize: '0.9rem' }}>•••• •••• •••• 4412</div>
                 <Button variant="ghost" style={{ fontSize: '0.75rem', padding: '0.2rem' }}>Edit</Button>
@@ -130,7 +130,7 @@ const Settings = () => {
                 <input style={inputStyle} type="number" defaultValue="1" />
               </div>
             </div>
-            <div style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '10px', backgroundColor: 'var(--bg-app)', fontSize: '0.8rem' }}>
+            <div style={{ padding: '1rem', border: '1px solid var(--border-color)', borderRadius: '10px', backgroundColor: 'var(--bg-subtle)', fontSize: '0.8rem' }}>
               <strong>Preview:</strong> A-1, A-2, A-3 ... A-50
             </div>
           </div>
@@ -217,11 +217,11 @@ const Settings = () => {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: 'var(--bg-app)', borderRadius: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: 'var(--bg-subtle)', borderRadius: '10px' }}>
                 <span style={{ fontSize: '0.85rem' }}>New Check-in Alert</span>
                 <div style={{ width: '36px', height: '18px', backgroundColor: 'var(--primary)', borderRadius: '9px' }}></div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: 'var(--bg-app)', borderRadius: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', backgroundColor: 'var(--bg-subtle)', borderRadius: '10px' }}>
                 <span style={{ fontSize: '0.85rem' }}>Key Misplacement Alert</span>
                 <div style={{ width: '36px', height: '18px', backgroundColor: '#ef4444', borderRadius: '9px' }}></div>
               </div>
@@ -369,6 +369,7 @@ const Settings = () => {
         isOpen={!!activeSetting}
         onClose={() => !isSaving && setActiveSetting(null)}
         title={activeSetting}
+        glass={false}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {renderSettingContent(activeSetting)}

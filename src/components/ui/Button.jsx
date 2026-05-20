@@ -45,13 +45,15 @@ const Button = ({ children, variant = 'primary', className = '', ...props }) => 
     lineHeight: '1',
   };
 
+  const { style: propsStyle, ...restProps } = props;
+
   return (
     <motion.button
       whileTap={{ scale: 0.96 }}
       whileHover={{ scale: 1.02 }}
       className={`btn-${variant} ${className}`}
-      style={{ ...styleBase, ...variants[variant], ...props.style }}
-      {...props}
+      style={{ ...styleBase, ...variants[variant], ...propsStyle }}
+      {...restProps}
     >
       {children}
     </motion.button>

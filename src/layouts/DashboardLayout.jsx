@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate, useOutlet } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Car, 
@@ -33,6 +33,7 @@ const DashboardLayout = ({ role }) => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const currentOutlet = useOutlet();
 
   React.useEffect(() => {
     if (locationId && role.startsWith('valet')) {
@@ -121,19 +122,27 @@ const DashboardLayout = ({ role }) => {
             const Icon = item.icon;
             
             return (
-              <Link key={item.name} to={item.path} style={{ textDecoration: 'none' }}>
-                <motion.div
-                  whileHover={{ x: 4 }}
-                  style={{
+              <motion.div
+                key={item.name}
+                whileHover={{ x: 4 }}
+                style={{
+                  backgroundColor: isActive ? 'var(--primary)' : 'transparent',
+                  borderRadius: '12px',
+                  overflow: 'hidden'
+                }}
+              >
+                <Link 
+                  to={item.path} 
+                  style={{ 
+                    textDecoration: 'none',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '1rem',
                     padding: '0.75rem 1rem',
-                    borderRadius: '12px',
-                    backgroundColor: isActive ? 'var(--primary)' : 'transparent',
                     color: isActive ? 'white' : 'var(--text-muted)',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease'
+                    transition: 'color 0.2s ease',
+                    width: '100%'
                   }}
                 >
                   <Icon size={24} />
@@ -147,8 +156,8 @@ const DashboardLayout = ({ role }) => {
                     </motion.span>
                   )}
                   {isActive && isSidebarOpen && <div style={{ marginLeft: 'auto' }}><ChevronRight size={16} /></div>}
-                </motion.div>
-              </Link>
+                </Link>
+              </motion.div>
             );
           })}
         </nav>
@@ -284,7 +293,7 @@ const DashboardLayout = ({ role }) => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              <Outlet />
+              {currentOutlet}
             </motion.div>
           </AnimatePresence>
         </main>

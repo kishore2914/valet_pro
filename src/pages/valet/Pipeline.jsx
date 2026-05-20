@@ -232,18 +232,6 @@ const PipelineCard = ({ car, staff, onStatusChange, onAssign, onUnassign }) => {
           <Clock size={12} />
           <span>{new Date(car.received_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
         </div>
-        {nextStage && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleNext}
-            disabled={updating}
-            style={{ padding: '2px 8px', fontSize: '0.75rem', gap: '4px', color: 'var(--primary)' }}
-          >
-            {updating ? <Loader2 size={12} className="animate-spin" /> : <ArrowRightCircle size={14} />}
-            Move to {nextStage}
-          </Button>
-        )}
       </div>
     </motion.div>
   );
@@ -317,12 +305,25 @@ const Pipeline = () => {
   };
 
   const handleAssign = async (vehicleId, staffId, staffName) => {
+    const vehicle = vehicles.find(v => v.id === vehicleId);
+    const shouldMoveToParking = vehicle?.status === 'Received';
+
     // Optimistic: update UI immediately
     setVehicles(prev =>
-      prev.map(v => v.id === vehicleId ? { ...v, driver_id: staffId, driver_name: staffName } : v)
+      prev.map(v => v.id === vehicleId ? { 
+        ...v, 
+        driver_id: staffId, 
+        driver_name: staffName,
+        status: shouldMoveToParking ? 'Parking' : v.status
+      } : v)
     );
+    
     const { error } = await vehicleService.assignDriver(vehicleId, staffId, staffName);
-    if (error) console.error('assignDriver DB error (columns may be missing):', error.message);
+    if (error) {
+      console.error('assignDriver DB error:', error.message);
+    } else if (shouldMoveToParking) {
+      await vehicleService.updateStatus(vehicleId, 'Parking');
+    }
   };
 
   const handleUnassign = async (vehicleId) => {
