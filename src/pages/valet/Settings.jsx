@@ -12,23 +12,40 @@ import {
   Check,
   Upload,
   Zap,
-  Info
+  Info,
+  Building2
 } from 'lucide-react';
 import GlassCard from '../../components/ui/GlassCard';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
 
 const Settings = () => {
   const [activeSetting, setActiveSetting] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  const { user, locationId, setLocationId } = useAuth();
+  const [companyName, setCompanyName] = useState('');
+  const [cityName, setCityName] = useState('');
+  const [hotelName, setHotelName] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleOpenSetting = (item) => {
+    setErrorMsg('');
+    setCompanyName('');
+    setCityName('');
+    setHotelName('');
+    setActiveSetting(item);
+  };
+
   const sections = [
     { 
       title: 'Location Configuration', 
       icon: MapPin, 
       desc: 'Parking zones, slot IDs, and capacity limits',
-      items: ['Manage Parking Zones', 'Slot Mapping', 'Valet Station Locations']
+      items: ['Add New Hotel/Branch', 'Manage Parking Zones', 'Slot Mapping', 'Valet Station Locations']
     },
     { 
       title: 'Branding & Aesthetics', 
@@ -50,9 +67,52 @@ const Settings = () => {
     }
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API call
+    setErrorMsg('');
+
+    if (activeSetting === 'Add New Hotel/Branch') {
+      if (!companyName || !cityName || !hotelName) {
+        setErrorMsg('All fields are required');
+        setIsSaving(false);
+        return;
+      }
+
+      try {
+        const { data: newLocId, error } = await supabase.rpc(
+          'setup_multi_locations',
+          {
+            p_user_id: user.id,
+            p_locations: [{ companyName, cityName, hotelName }]
+          }
+        );
+
+        if (error) throw error;
+
+        if (newLocId) {
+          setLocationId(newLocId);
+          await supabase.auth.updateUser({ data: { location_id: newLocId } });
+        }
+
+        setSaveSuccess(true);
+        setCompanyName('');
+        setCityName('');
+        setHotelName('');
+
+        setTimeout(() => {
+          setSaveSuccess(false);
+          setActiveSetting(null);
+        }, 1500);
+      } catch (err) {
+        console.error('Error adding branch:', err);
+        setErrorMsg(err.message || 'Failed to add hotel. Please try again.');
+      } finally {
+        setIsSaving(false);
+      }
+      return;
+    }
+
+    // Default simulation for other settings
     setTimeout(() => {
       setIsSaving(false);
       setSaveSuccess(true);
@@ -84,6 +144,46 @@ const Settings = () => {
     };
 
     switch (item) {
+      case 'Add New Hotel/Branch':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              Add a new hotel or branch to your organization. It will immediately show up in your active branch selector.
+            </p>
+            {errorMsg && (
+              <div style={{ padding: '0.75rem', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', fontSize: '0.85rem', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                {errorMsg}
+              </div>
+            )}
+            <div>
+              <label style={labelStyle}>Company Name</label>
+              <input 
+                style={inputStyle} 
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                placeholder="e.g. Park Avenue" 
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>City</label>
+              <input 
+                style={inputStyle} 
+                value={cityName}
+                onChange={(e) => setCityName(e.target.value)}
+                placeholder="e.g. Chennai" 
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Hotel Name</label>
+              <input 
+                style={inputStyle} 
+                value={hotelName}
+                onChange={(e) => setHotelName(e.target.value)}
+                placeholder="e.g. Park Galanza" 
+              />
+            </div>
+          </div>
+        );
       case 'Billing Details':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -322,7 +422,7 @@ const Settings = () => {
               {section.items.map(item => (
                 <div 
                   key={item} 
-                  onClick={() => setActiveSetting(item)}
+                  onClick={() => handleOpenSetting(item)}
                   style={{ 
                     display: 'flex', 
                     alignItems: 'center', 

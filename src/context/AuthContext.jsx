@@ -9,6 +9,29 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null);
   const [locationId, setLocationId] = useState(null);
   const [locations, setLocations] = useState([]);
+  const [profile, setProfile] = useState(null);
+
+  const fetchUserProfile = async (currentUser) => {
+    if (!currentUser) {
+      setProfile(null);
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single();
+      if (!error && data) {
+        setProfile(data);
+        if (data.role) {
+          setUserRole(data.role);
+        }
+      }
+    } catch (e) {
+      console.warn('fetchUserProfile failed', e.message);
+    }
+  };
 
   const resolveLocationId = async (user) => {
     if (!user) return null;
@@ -77,6 +100,7 @@ export const AuthProvider = ({ children }) => {
         setUserRole(session.user.user_metadata?.role || 'valet');
         setLoading(false); // Unblock the app immediately
         resolveLocationId(session.user); // Resolve in background
+        fetchUserProfile(session.user); // Resolve in background
       } else {
         setLoading(false);
       }
@@ -88,9 +112,11 @@ export const AuthProvider = ({ children }) => {
         setUserRole(session.user.user_metadata?.role || 'valet');
         setLoading(false); // Unblock the app immediately
         resolveLocationId(session.user); // Resolve in background
+        fetchUserProfile(session.user); // Resolve in background
       } else {
         setUserRole(null);
         setLocationId(null);
+        setProfile(null);
         setLoading(false);
       }
     });
@@ -133,6 +159,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{ 
       session, 
       user: session?.user, 
+      profile,
       userRole, 
       locationId,
       setLocationId,

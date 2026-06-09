@@ -97,18 +97,24 @@ const Payment = () => {
       if (authError) throw authError;
 
       if (authData.user) {
-        // 3. Create the location record via RPC (Security Definer)
-        const { data: newLocationId, error: locationError } = await supabase.rpc(
-          'setup_multi_locations',
-          {
-            p_user_id:   authData.user.id,
-            p_locations: signupData.locationsList
-          }
-        );
+        let newLocationId = null;
 
-        if (locationError) {
-          console.error('Location creation error:', locationError);
-          throw new Error('Payment was successful but location setup failed. Please contact support.');
+        // 3. Create the location record via RPC (Security Definer) if locations list is provided
+        if (signupData.locationsList && signupData.locationsList.length > 0 && signupData.locationsList.some(l => l.hotelName)) {
+          const { data: createdLocationId, error: locationError } = await supabase.rpc(
+            'setup_multi_locations',
+            {
+              p_user_id:   authData.user.id,
+              p_locations: signupData.locationsList.filter(l => l.hotelName && l.companyName)
+            }
+          );
+
+          if (locationError) {
+            console.error('Location creation error:', locationError);
+            throw new Error('Payment was successful but location setup failed. Please contact support.');
+          }
+          
+          newLocationId = createdLocationId;
         }
 
         // 4. Record the payment in the database
@@ -128,16 +134,19 @@ const Payment = () => {
         if (paymentError) console.warn('Payment record failed:', paymentError);
 
         // 5. Activate the location subscription
-        await supabase.from('locations').update({
-          subscription_status: 'active',
-          selected_plan: selectedPlan.name,
-          last_payment_at: new Date().toISOString()
-        }).eq('id', newLocationId);
+        if (newLocationId) {
+          await supabase.from('locations').update({
+            subscription_status: 'active',
+            selected_plan: selectedPlan.name,
+            last_payment_at: new Date().toISOString()
+          }).eq('id', newLocationId);
+        }
 
         // 6. Finalize user metadata for instant dashboard access
         await supabase.auth.updateUser({
           data: { 
             location_id: newLocationId,
+            role: 'valet',
             subscription_status: 'active',
             payment_completed: true 
           }

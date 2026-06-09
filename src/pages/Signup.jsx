@@ -29,18 +29,8 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   
-  // Locations Array
-  const [locationsList, setLocationsList] = useState([{ companyName: '', cityName: '', hotelName: '' }]);
-
-  const handleAddLocation = () => {
-    setLocationsList([...locationsList, { companyName: '', cityName: '', hotelName: '' }]);
-  };
-
-  const handleUpdateLocation = (index, field, value) => {
-    const newList = [...locationsList];
-    newList[index][field] = value;
-    setLocationsList(newList);
-  };
+  // Single location info configured on signup
+  const [locationInfo, setLocationInfo] = useState({ companyName: '', cityName: '', hotelName: '' });
   
   // Admin fields
   const [isAdminMode, setIsAdminMode] = useState(false);
@@ -140,18 +130,18 @@ const Signup = () => {
     setLoading(true);
     
     // Validate fields
-    if (!email || !password || !fullName || locationsList.some(l => !l.companyName || !l.cityName || !l.hotelName)) {
-      setError('Please fill in all fields including all location details');
+    if (!email || !password || !fullName || !locationInfo.companyName || !locationInfo.cityName || !locationInfo.hotelName) {
+      setError('Please fill in all fields including branch details');
       setLoading(false);
       return;
     }
 
-    // Store signup data for later
+    // Store signup data for later (with single branch array)
     const signupData = {
       email,
       password,
       fullName,
-      locationsList,
+      locationsList: [locationInfo],
       role: 'valet'
     };
     
@@ -352,66 +342,46 @@ const Signup = () => {
                 >
                   <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)', margin: '0.2rem 0' }}></div>
                   
-                  {locationsList.map((loc, index) => (
-                    <div key={index} style={{ padding: '1rem', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '0.5rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                        <span style={{ color: 'var(--blue-500)', fontSize: '0.85rem', fontWeight: '700' }}>Branch {index + 1}</span>
+                  <div style={{ padding: '1rem', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                      <span style={{ color: 'var(--blue-500)', fontSize: '0.85rem', fontWeight: '700' }}>Branch Details</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <div>
+                        <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Company Name</label>
+                        <input 
+                          type="text" 
+                          required={!isAdminMode}
+                          value={locationInfo.companyName}
+                          onChange={(e) => setLocationInfo({ ...locationInfo, companyName: e.target.value })}
+                          placeholder="e.g. ITC Hotels" 
+                          style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
+                        />
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <div>
-                          <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Company Name</label>
-                          <input 
-                            type="text" 
-                            required={!isAdminMode}
-                            value={loc.companyName}
-                            onChange={(e) => handleUpdateLocation(index, 'companyName', e.target.value)}
-                            placeholder="e.g. ITC Hotels" 
-                            style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
-                          />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>City</label>
-                          <input 
-                            type="text" 
-                            required={!isAdminMode}
-                            value={loc.cityName}
-                            onChange={(e) => handleUpdateLocation(index, 'cityName', e.target.value)}
-                            placeholder="e.g. Chennai" 
-                            style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
-                          />
-                        </div>
-                        <div>
-                          <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Hotel Name</label>
-                          <input 
-                            type="text" 
-                            required={!isAdminMode}
-                            value={loc.hotelName}
-                            onChange={(e) => handleUpdateLocation(index, 'hotelName', e.target.value)}
-                            placeholder="e.g. ITC Grand Chola" 
-                            style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
-                          />
-                        </div>
+                      <div>
+                        <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>City</label>
+                        <input 
+                          type="text" 
+                          required={!isAdminMode}
+                          value={locationInfo.cityName}
+                          onChange={(e) => setLocationInfo({ ...locationInfo, cityName: e.target.value })}
+                          placeholder="e.g. Chennai" 
+                          style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', color: 'white', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem' }}>Hotel Name</label>
+                        <input 
+                          type="text" 
+                          required={!isAdminMode}
+                          value={locationInfo.hotelName}
+                          onChange={(e) => setLocationInfo({ ...locationInfo, hotelName: e.target.value })}
+                          placeholder="e.g. ITC Grand Chola" 
+                          style={{ width: '100%', padding: '0.7rem 0.75rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', outline: 'none' }} 
+                        />
                       </div>
                     </div>
-                  ))}
-                  
-                  <button
-                    type="button"
-                    onClick={handleAddLocation}
-                    style={{ 
-                      padding: '0.75rem', 
-                      borderRadius: '8px', 
-                      backgroundColor: 'rgba(37, 99, 235, 0.1)', 
-                      color: 'var(--blue-500)', 
-                      border: '1px dashed rgba(37, 99, 235, 0.3)',
-                      fontWeight: '700',
-                      fontSize: '0.85rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    + Add Another Hotel
-                  </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

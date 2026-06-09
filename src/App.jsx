@@ -6,7 +6,14 @@ import { LocaleProvider } from './context/LocaleContext';
 import DashboardLayout from './layouts/DashboardLayout';
 import ValetDashboard from './pages/valet/Dashboard';
 import Pipeline from './pages/valet/Pipeline';
+import FloorMap from './pages/valet/FloorMap';
+import Customers from './pages/valet/Customers';
 import Staff from './pages/valet/Staff';
+import Schedule from './pages/valet/Schedule';
+import Bookings from './pages/valet/Bookings';
+import Messaging from './pages/valet/Messaging';
+import Forecast from './pages/valet/Forecast';
+import Reports from './pages/valet/Reports';
 import Incidents from './pages/valet/Incidents';
 import AdminAnalytics from './pages/admin/Analytics';
 import ClientManagement from './pages/admin/Clients';
@@ -61,7 +68,14 @@ function App() {
               }>
                 <Route index element={<ValetDashboard />} />
                 <Route path="pipeline" element={<Pipeline />} />
+                <Route path="floor-map" element={<FloorMap />} />
+                <Route path="customers" element={<Customers />} />
                 <Route path="staff" element={<Staff />} />
+                <Route path="schedule" element={<Schedule />} />
+                <Route path="bookings" element={<Bookings />} />
+                <Route path="messaging" element={<Messaging />} />
+                <Route path="forecast" element={<Forecast />} />
+                <Route path="reports" element={<Reports />} />
                 <Route path="incidents" element={<Incidents />} />
                 <Route path="settings" element={<Settings />} />
               </Route>

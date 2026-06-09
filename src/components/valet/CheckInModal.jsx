@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Car, Smartphone, Palette, FileText, Loader2, AlertCircle, MapPin, LayoutGrid } from 'lucide-react';
+import { Car, Smartphone, Palette, FileText, Loader2, AlertCircle, MapPin, LayoutGrid, User } from 'lucide-react';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import { vehicleService } from '../../services/vehicleService';
+import { supabase } from '../../lib/supabase';
 
 const inputStyle = {
   width: '100%',
@@ -34,7 +35,8 @@ const CheckInModal = ({ isOpen, onClose, locationId }) => {
     color: '',
     phone_number: '',
     slot_id: '',
-    zone: ''
+    zone: '',
+    customer_name: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,15 +52,31 @@ const CheckInModal = ({ isOpen, onClose, locationId }) => {
     setError('');
 
     try {
+      // 1. Upsert customer info if name and phone are provided
+      if (formData.phone_number && formData.customer_name) {
+        const { error: custError } = await supabase
+          .from('customers')
+          .upsert([{
+            location_id: locationId,
+            name: formData.customer_name,
+            phone: formData.phone_number,
+            vehicles: [formData.plate_number]
+          }], { onConflict: 'location_id,phone' });
+        
+        if (custError) console.warn('Customer upsert failed:', custError.message);
+      }
+
+      // 2. Add vehicle (excluding customer_name field to avoid DB errors)
+      const { customer_name, ...vehiclePayload } = formData;
       const { error: submitError } = await vehicleService.addVehicle({
-        ...formData,
+        ...vehiclePayload,
         location_id: locationId,
         status: 'Received'
       });
 
       if (submitError) throw submitError;
 
-      setFormData({ plate_number: '', model: '', color: '', phone_number: '', slot_id: '', zone: '' });
+      setFormData({ plate_number: '', model: '', color: '', phone_number: '', slot_id: '', zone: '', customer_name: '' });
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to check in vehicle');
@@ -138,15 +156,25 @@ const CheckInModal = ({ isOpen, onClose, locationId }) => {
           </Field>
         </div>
 
-        {/* Phone */}
-        <Field label="Customer Phone Number" icon={Smartphone}>
-          <input
-            type="tel" name="phone_number"
-            value={formData.phone_number} onChange={handleChange}
-            placeholder="e.g. +91 98765 43210"
-            style={inputStyle}
-          />
-        </Field>
+        {/* Customer Name + Phone */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <Field label="Customer Name" icon={User}>
+            <input
+              type="text" name="customer_name"
+              value={formData.customer_name} onChange={handleChange}
+              placeholder="e.g. John Doe"
+              style={inputStyle}
+            />
+          </Field>
+          <Field label="Customer Phone Number" icon={Smartphone}>
+            <input
+              type="tel" name="phone_number"
+              value={formData.phone_number} onChange={handleChange}
+              placeholder="e.g. +91 98765 43210"
+              style={inputStyle}
+            />
+          </Field>
+        </div>
 
         {/* Actions */}
         <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>

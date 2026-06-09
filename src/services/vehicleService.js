@@ -3,11 +3,12 @@ import { supabase } from '../lib/supabase';
 export const vehicleService = {
   // Fetch all active vehicles for a location
   async getActiveVehicles(locationId) {
+    const todayStart = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
     const { data, error } = await supabase
       .from('vehicles')
       .select('*')
       .eq('location_id', locationId)
-      .is('delivered_at', null)
+      .or(`delivered_at.is.null,delivered_at.gte.${todayStart}`)
       .order('received_at', { ascending: false });
     return { data, error };
   },
