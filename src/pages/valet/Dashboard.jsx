@@ -78,7 +78,7 @@ const StatCard = ({ title, value, icon: Icon, iconColor = '#3b82f6', iconBg = 'r
           {title}
         </span>
       </div>
-      <div style={{ fontSize: '1.5rem', fontWeight: '800', color: '#ffffff', lineHeight: 1.1 }}>
+      <div style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--text-main)', lineHeight: 1.1 }}>
         {value}
       </div>
     </div>
@@ -100,7 +100,7 @@ const ZoneCard = ({ zoneName, current, max, type, subtitle, color, percentage })
       minWidth: '160px'
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>{zoneName}</span>
+        <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>{zoneName}</span>
         <span style={{ 
           fontSize: '0.65rem', 
           fontWeight: '700', 
@@ -114,7 +114,7 @@ const ZoneCard = ({ zoneName, current, max, type, subtitle, color, percentage })
         </span>
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem' }}>
-        <span style={{ fontSize: '1.4rem', fontWeight: '800', color: '#ffffff' }}>{current}</span>
+        <span style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>{current}</span>
         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>/{max}</span>
       </div>
       <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', lineHeight: 1 }}>{subtitle}</div>
@@ -452,7 +452,7 @@ const ValetDashboard = () => {
       {/* Top Title & Controls Row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Dashboard</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Dashboard</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             {activeLocationName} · Thursday, 4 June 2026 · Peak: 10:00 AM - 11:00 AM
           </p>
@@ -483,8 +483,8 @@ const ValetDashboard = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              backgroundColor: '#fbbf24',
-              color: '#080c14',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--accent-text)',
               padding: '0.55rem 1rem',
               borderRadius: '10px',
               fontWeight: '700',
@@ -523,7 +523,7 @@ const ValetDashboard = () => {
         padding: '1.25rem'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>Zone Occupancy</h3>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>Zone Occupancy</h3>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600' }}>{displayActiveVehicles} / {totalCapacity} slots</span>
         </div>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -546,7 +546,7 @@ const ValetDashboard = () => {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff', marginBottom: '1.25rem' }}>Live Vehicle Feed</h3>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '1.25rem' }}>Live Vehicle Feed</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {displayFeed.map((item, index) => (
               <div 
@@ -575,7 +575,7 @@ const ValetDashboard = () => {
                   {item.badge}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.title}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -610,7 +610,7 @@ const ValetDashboard = () => {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff', marginBottom: '1.25rem' }}>Audit Timeline</h3>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '1.25rem' }}>Audit Timeline</h3>
           <div style={{ 
             display: 'flex', 
             flexDirection: 'column', 
@@ -645,7 +645,7 @@ const ValetDashboard = () => {
                 }} />
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', minWidth: 0 }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff' }}>{item.title}</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-main)' }}>{item.title}</span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.detail}
                   </span>
@@ -688,7 +688,7 @@ const ValetDashboard = () => {
           flexDirection: 'column'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>Recent Payments</h3>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>Recent Payments</h3>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600' }}>{paymentsData.length} transactions</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.95rem' }}>
@@ -705,7 +705,7 @@ const ValetDashboard = () => {
               >
                 <div style={{ minWidth: 0, flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {item.name}
                     </span>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '600' }}>{item.token}</span>
@@ -716,7 +716,7 @@ const ValetDashboard = () => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ffffff' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
                       ₹ {item.amount}
                     </span>
                     {item.tip && (
@@ -755,7 +755,7 @@ const ValetDashboard = () => {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff', marginBottom: '1.25rem' }}>Recent Incidents</h3>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '1.25rem' }}>Recent Incidents</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.95rem', overflowY: 'auto', maxHeight: '360px', paddingRight: '4px' }}>
             {incidentsData.length > 0 ? incidentsData.map((item, index) => {
               const badgeColor = item.severity === 'HIGH' ? '#ef4444' : item.severity === 'MEDIUM' ? '#f59e0b' : '#10b981';
@@ -796,7 +796,7 @@ const ValetDashboard = () => {
                     </div>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{item.time}</span>
                   </div>
-                  <div style={{ fontSize: '0.78rem', color: '#ffffff', fontWeight: '500', lineHeight: 1.3 }}>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-main)', fontWeight: '500', lineHeight: 1.3 }}>
                     {item.text}
                   </div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
@@ -823,7 +823,7 @@ const ValetDashboard = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <TrendingUp size={16} style={{ color: '#fbbf24' }} />
-            <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>Operational Performance</h3>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>Operational Performance</h3>
           </div>
           <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: '600' }}>Fastest retrieval today: {displayFastestRetrieval}</span>
         </div>
@@ -832,21 +832,21 @@ const ValetDashboard = () => {
             <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Avg Park Duration
             </span>
-            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff' }}>{displayAvgParkDuration}</span>
+            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>{displayAvgParkDuration}</span>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Avg Retrieval
             </span>
-            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff' }}>{displayAvgRetrieval}</span>
+            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>{displayAvgRetrieval}</span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Peak Hour
             </span>
-            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff' }}>10:00 AM - 11:00 AM</span>
+            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>10:00 AM - 11:00 AM</span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>

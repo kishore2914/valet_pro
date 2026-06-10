@@ -17,32 +17,15 @@ envContent.split('\n').forEach(line => {
 const supabase = createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY);
 
 async function check() {
-  // Get the most recent user
-  const { data: users, error: userError } = await supabase.from('profiles').select('*').order('created_at', { ascending: false }).limit(1);
-  if (userError || !users.length) {
-    console.error('Error fetching users or no users found', userError);
-    return;
+  const { data: locations, error } = await supabase.from('locations').select('*');
+  console.log('Locations count:', locations ? locations.length : 0);
+  if (locations && locations.length > 0) {
+    console.log('Sample location:', locations[0]);
   }
-  const user = users[0];
-  console.log('Most recent user:', user.email, user.id);
-
-  // Get user_locations for this user
-  const { data: userLocs, error: locError } = await supabase.from('user_locations').select('*').eq('user_id', user.id);
-  console.log('user_locations error:', locError);
-  console.log('user_locations data:', userLocs);
-
-  // Test the exact AuthContext query
-  const { data: fullLocs, error: fullError } = await supabase.from('user_locations').select(`
-    location_id,
-    locations (
-      id,
-      name,
-      companies ( company_name ),
-      cities ( city_name )
-    )
-  `).eq('user_id', user.id);
-  console.log('AuthContext query error:', fullError);
-  console.log('AuthContext query data:', JSON.stringify(fullLocs, null, 2));
 }
 
+
+
+
 check();
+

@@ -330,31 +330,12 @@ const Messaging = () => {
       {/* Title Header Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Messaging Center</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Messaging Center</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             Automated SMS & WhatsApp for every milestone
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          {dbMessages.length > 0 && (
-            <button
-              onClick={handleClearMessages}
-              disabled={loading}
-              style={{
-                backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                color: '#ef4444',
-                border: '1px solid rgba(239, 68, 68, 0.15)',
-                borderRadius: '10px',
-                padding: '0.65rem 1rem',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              Clear Database
-            </button>
-          )}
           {dbMessages.length === 0 && (
             <button
               onClick={handleSeedMessages}
@@ -377,8 +358,8 @@ const Messaging = () => {
           <button
             onClick={() => setShowComposeModal(true)}
             style={{
-              backgroundColor: '#fbbf24',
-              color: '#080c14',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--accent-text)',
               border: 'none',
               borderRadius: '10px',
               padding: '0.65rem 1.15rem',
@@ -388,7 +369,7 @@ const Messaging = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)',
+              boxShadow: '0 4px 15px var(--accent-shadow)',
               transition: 'all 0.15s ease'
             }}
             onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
@@ -417,7 +398,7 @@ const Messaging = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Sent Today
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               {sentCount}
             </span>
           </div>
@@ -459,7 +440,7 @@ const Messaging = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Response Rate
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               64%
             </span>
           </div>
@@ -480,7 +461,7 @@ const Messaging = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Active Templates
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               {templates.filter(t => t.active).length}
             </span>
           </div>
@@ -501,7 +482,7 @@ const Messaging = () => {
         {/* Left Column: Automated Templates */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Automated Templates</h2>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Automated Templates</h2>
             <button
               onClick={() => setShowTemplateModal(true)}
               style={{
@@ -536,7 +517,7 @@ const Messaging = () => {
                 {/* Header elements inside template card */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#ffffff' }}>{t.name}</span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-main)' }}>{t.name}</span>
                     <span style={{
                       padding: '0.15rem 0.45rem',
                       borderRadius: '4px',
@@ -557,8 +538,8 @@ const Messaging = () => {
                       width: '42px',
                       height: '24px',
                       borderRadius: '100px',
-                      backgroundColor: t.active ? '#fbbf24' : 'rgba(255,255,255,0.05)',
-                      border: t.active ? '1px solid #fbbf24' : '1px solid var(--border-color)',
+                      backgroundColor: t.active ? 'var(--accent)' : 'var(--bg-toggle-inactive)',
+                      border: t.active ? '1px solid var(--accent)' : '1px solid var(--border-color)',
                       padding: '2px',
                       cursor: 'pointer',
                       display: 'flex',
@@ -571,7 +552,7 @@ const Messaging = () => {
                       width: '18px',
                       height: '18px',
                       borderRadius: '50%',
-                      backgroundColor: t.active ? '#080c14' : '#64748b',
+                      backgroundColor: t.active ? 'var(--accent-text)' : '#64748b',
                       transition: 'all 0.2s ease-in-out'
                     }} />
                   </div>
@@ -608,7 +589,7 @@ const Messaging = () => {
 
         {/* Right Column: Recent Messages */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Recent Messages</h2>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Recent Messages</h2>
 
           <div style={{
             backgroundColor: 'var(--bg-card)',
@@ -649,7 +630,7 @@ const Messaging = () => {
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ffffff' }}>{m.name}</span>
+                      <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>{m.name}</span>
                       <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
                         {m.type} · {m.phone}
                       </span>
@@ -702,7 +683,7 @@ const Messaging = () => {
           backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: '#0d1321',
+            backgroundColor: 'var(--bg-surface)',
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -714,7 +695,7 @@ const Messaging = () => {
             boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Compose Message</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Compose Message</h3>
               <button 
                 onClick={() => setShowComposeModal(false)}
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
@@ -737,8 +718,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -758,8 +739,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -776,8 +757,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -800,8 +781,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%',
@@ -814,8 +795,8 @@ const Messaging = () => {
                 type="submit"
                 disabled={isSending}
                 style={{
-                  backgroundColor: '#fbbf24',
-                  color: '#080c14',
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.65rem',
@@ -827,7 +808,7 @@ const Messaging = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.5rem',
-                  boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)'
+                  boxShadow: '0 4px 15px var(--accent-shadow)'
                 }}
               >
                 {isSending && <Loader2 size={14} className="animate-spin" />}
@@ -855,7 +836,7 @@ const Messaging = () => {
           backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: '#0d1321',
+            backgroundColor: 'var(--bg-surface)',
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -867,7 +848,7 @@ const Messaging = () => {
             boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Create Template</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Create Template</h3>
               <button 
                 onClick={() => setShowTemplateModal(false)}
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
@@ -890,8 +871,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -908,8 +889,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -929,8 +910,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -956,8 +937,8 @@ const Messaging = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%',
@@ -969,8 +950,8 @@ const Messaging = () => {
               <button
                 type="submit"
                 style={{
-                  backgroundColor: '#fbbf24',
-                  color: '#080c14',
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.65rem',
@@ -982,7 +963,7 @@ const Messaging = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.5rem',
-                  boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)'
+                  boxShadow: '0 4px 15px var(--accent-shadow)'
                 }}
               >
                 <span>Create Template</span>

@@ -195,7 +195,7 @@ const Reports = () => {
   // Active location details
   const activeLocation = (locations || []).find(loc => loc.id === locationId);
   const companyName = activeLocation?.company_name || 'ITC Hotels';
-  const cityName = activeLocation?.city || 'Chennai';
+  const cityName = activeLocation?.city_name || 'Chennai';
 
   // Weekly Vehicle count data
   const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -280,7 +280,7 @@ const Reports = () => {
       
       {/* Title Header Section */}
       <div>
-        <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Reports & Analytics</h1>
+        <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Reports & Analytics</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
           Performance overview for {companyName} {cityName}
         </p>
@@ -450,7 +450,7 @@ const Reports = () => {
                       <text
                         x={startX + 18}
                         y={barY - 8}
-                        fill="#ffffff"
+                        fill="var(--text-main)"
                         fontSize="12"
                         fontWeight="800"
                         textAnchor="middle"
@@ -518,11 +518,11 @@ const Reports = () => {
                 <div key={pm.name} style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: '800' }}>
                     <span style={{ color: 'var(--text-muted)', textTransform: 'capitalize' }}>{pm.name}</span>
-                    <span style={{ color: '#ffffff' }}>{formatINR(pm.value)}</span>
+                    <span style={{ color: 'var(--text-main)' }}>{formatINR(pm.value)}</span>
                   </div>
                   
                   {/* Horizontal Progress bar */}
-                  <div style={{ width: '100%', height: '6px', backgroundColor: '#111726', borderRadius: '100px', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-subtle)', borderRadius: '100px', overflow: 'hidden' }}>
                     <div style={{
                       width: `${pm.pct}%`,
                       height: '100%',
@@ -565,7 +565,7 @@ const Reports = () => {
                     alignItems: 'center',
                     gap: '0.75rem',
                     padding: '0.65rem 0.85rem',
-                    backgroundColor: '#111726',
+                    backgroundColor: 'var(--bg-card)',
                     border: '1px solid var(--border-color)',
                     borderRadius: '12px'
                   }}
@@ -588,14 +588,14 @@ const Reports = () => {
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, gap: '0.1rem' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff' }}>{staff.name}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{staff.name}</span>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
                       ★ {staff.rating} · ₹{staff.tips} tips today
                     </span>
                   </div>
 
                   {/* Handled count value */}
-                  <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>
                     {staff.handled}
                   </div>
                 </div>
@@ -627,13 +627,13 @@ const Reports = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '0.75rem 1rem',
-                    backgroundColor: '#111726',
+                    backgroundColor: 'var(--bg-card)',
                     border: '1px solid var(--border-color)',
                     borderRadius: '10px'
                   }}
                 >
                   <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)' }}>{brand}</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ffffff' }}>{count}</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>{count}</span>
                 </div>
               ))
             )}
@@ -692,7 +692,7 @@ const trendBadge = {
 const cardNum = {
   fontSize: '1.85rem',
   fontWeight: '800',
-  color: '#ffffff',
+  color: 'var(--text-main)',
   marginTop: '0.25rem'
 };
 
@@ -717,7 +717,7 @@ const panelStyle = {
 const panelTitle = {
   fontSize: '1.1rem',
   fontWeight: '800',
-  color: '#ffffff'
+  color: 'var(--text-main)'
 };
 
 export default Reports;

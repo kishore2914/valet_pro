@@ -413,7 +413,7 @@ const Bookings = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: '#ffffff' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: 'var(--text-main)' }}>
         <Loader2 className="animate-spin" size={32} />
         <span style={{ marginLeft: '0.75rem', fontWeight: '600' }}>Loading Bookings...</span>
       </div>
@@ -426,7 +426,7 @@ const Bookings = () => {
       {/* Title Header Row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Bookings</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Bookings</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             {upcomingCount} upcoming · {arrivedCount} arrived · {formatCurrency(totalPreAuth)} pre-authorized
           </p>
@@ -485,8 +485,8 @@ const Bookings = () => {
           <button
             onClick={() => setShowAddModal(true)}
             style={{
-              backgroundColor: '#fbbf24',
-              color: '#080c14',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--accent-text)',
               border: 'none',
               borderRadius: '10px',
               padding: '0.65rem 1.15rem',
@@ -496,7 +496,7 @@ const Bookings = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)',
+              boxShadow: '0 4px 15px var(--accent-shadow)',
               transition: 'all 0.15s ease'
             }}
             onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
@@ -512,7 +512,7 @@ const Bookings = () => {
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: '#111726',
+        backgroundColor: 'var(--bg-card)',
         border: '1px solid var(--border-color)',
         borderRadius: '12px',
         padding: '0.65rem 1rem',
@@ -530,7 +530,7 @@ const Bookings = () => {
             background: 'none',
             border: 'none',
             outline: 'none',
-            color: '#ffffff',
+            color: 'var(--text-main)',
             fontSize: '0.85rem',
             width: '100%'
           }}
@@ -561,7 +561,7 @@ const Bookings = () => {
         }}>
           <Calendar size={48} style={{ opacity: 0.3, color: '#fbbf24' }} />
           <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.25rem' }}>No Bookings Found</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.25rem' }}>No Bookings Found</h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '300px', margin: '0 auto', lineHeight: '1.4' }}>
               Create a new booking reservation or seed demo bookings to get started.
             </p>
@@ -604,7 +604,7 @@ const Bookings = () => {
                 {/* Card Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#ffffff', lineHeight: '1.2' }}>{b.customerName}</h3>
+                    <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)', lineHeight: '1.2' }}>{b.customerName}</h3>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{b.resId}</span>
                   </div>
                   <span style={{
@@ -637,7 +637,7 @@ const Bookings = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                     <Car size={14} style={{ color: '#64748b' }} />
                     <span>
-                      <strong style={{ color: '#ffffff', fontWeight: '600' }}>{b.plateNumber}</strong> · {b.carModel}
+                      <strong style={{ color: 'var(--text-main)', fontWeight: '600' }}>{b.plateNumber}</strong> · {b.carModel}
                     </span>
                   </div>
 
@@ -680,7 +680,7 @@ const Bookings = () => {
                   </span>
 
                   <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-muted)' }}>
-                    <strong style={{ color: '#ffffff' }}>{formatCurrency(b.preAuth)}</strong> pre-auth
+                    <strong style={{ color: 'var(--text-main)' }}>{formatCurrency(b.preAuth)}</strong> pre-auth
                   </span>
                 </div>
 
@@ -720,7 +720,7 @@ const Bookings = () => {
           backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: '#0d1321',
+            backgroundColor: 'var(--bg-surface)',
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -735,7 +735,7 @@ const Bookings = () => {
           }}>
             {/* Modal Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Add New Booking</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Add New Booking</h3>
               <button 
                 onClick={() => setShowAddModal(false)}
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
@@ -760,8 +760,8 @@ const Bookings = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -1030,8 +1030,8 @@ const Bookings = () => {
                 type="submit"
                 disabled={isSubmitting}
                 style={{
-                  backgroundColor: '#fbbf24',
-                  color: '#080c14',
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.65rem',
@@ -1039,7 +1039,7 @@ const Bookings = () => {
                   fontWeight: '700',
                   cursor: 'pointer',
                   marginTop: '0.5rem',
-                  boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)',
+                  boxShadow: '0 4px 15px var(--accent-shadow)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

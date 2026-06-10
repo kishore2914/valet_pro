@@ -199,7 +199,7 @@ const FloorMap = () => {
         key={num}
         onClick={() => setSelectedSlotNum(num)}
         style={{
-          backgroundColor: isSelected ? '#161e2e' : 'rgba(255, 255, 255, 0.02)',
+          backgroundColor: isSelected ? 'var(--bg-subtle)' : 'transparent',
           border: isSelected ? '1.5px solid #fbbf24' : '1px solid var(--border-color)',
           borderRadius: '10px',
           padding: '0.65rem 0.85rem',
@@ -211,8 +211,8 @@ const FloorMap = () => {
           transition: 'all 0.15s ease',
           boxShadow: isSelected ? '0 0 10px rgba(251, 191, 36, 0.15)' : 'none'
         }}
-        onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'; }}
-        onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.02)'; }}
+        onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = 'var(--bg-subtle)'; }}
+        onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.backgroundColor = 'transparent'; }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700' }}>
@@ -226,7 +226,7 @@ const FloorMap = () => {
         <div style={{ display: 'flex', flexDirection: 'column', marginTop: '0.35rem' }}>
           {vehicleInSlot ? (
             <>
-              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {vehicleInSlot.plate_number}
               </span>
               <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -248,7 +248,7 @@ const FloorMap = () => {
       {/* Title & Controls Row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Live Floor Map</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Live Floor Map</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             Real-time view of every zone and slot
           </p>
@@ -303,7 +303,7 @@ const FloorMap = () => {
                 <Layers size={14} style={{ color: activeZoneTab === zoneName ? '#fbbf24' : 'var(--text-muted)' }} />
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem' }}>
-                <span style={{ fontSize: '1.4rem', fontWeight: '800', color: '#ffffff' }}>{occ}</span>
+                <span style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>{occ}</span>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>/24</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -344,7 +344,7 @@ const FloorMap = () => {
         }}>
           {/* Floor Plan Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>
               Zone {activeZoneTab} — Floor Plan
             </h3>
             {/* Zone Selector Buttons */}
@@ -363,7 +363,7 @@ const FloorMap = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: activeZoneTab === letter ? '#fbbf24' : 'rgba(255,255,255,0.03)',
+                    backgroundColor: activeZoneTab === letter ? '#fbbf24' : 'var(--bg-subtle)',
                     color: activeZoneTab === letter ? '#080c14' : 'var(--text-muted)',
                     border: '1px solid var(--border-color)',
                     transition: 'all 0.15s'
@@ -436,7 +436,7 @@ const FloorMap = () => {
                   <Car size={22} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#ffffff' }}>
+                  <span style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)' }}>
                     {selectedVehicle.plate_number}
                   </span>
                   <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
@@ -451,7 +451,7 @@ const FloorMap = () => {
                   <MapPin size={16} style={{ color: 'var(--text-muted)' }} />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>Model / Color</span>
-                    <span style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '600' }}>{selectedVehicle.model} ({selectedVehicle.color})</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: '600' }}>{selectedVehicle.model} ({selectedVehicle.color})</span>
                   </div>
                 </div>
 
@@ -459,7 +459,7 @@ const FloorMap = () => {
                   <Smartphone size={16} style={{ color: 'var(--text-muted)' }} />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>Customer</span>
-                    <span style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '600' }}>{selectedVehicle.owner_name} · {selectedVehicle.phone_number}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: '600' }}>{selectedVehicle.owner_name} · {selectedVehicle.phone_number}</span>
                   </div>
                 </div>
 
@@ -467,7 +467,7 @@ const FloorMap = () => {
                   <Key size={16} style={{ color: 'var(--text-muted)' }} />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>Driver / Key</span>
-                    <span style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '600' }}>{selectedVehicle.driver_name} ({selectedVehicle.key_code})</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: '600' }}>{selectedVehicle.driver_name} ({selectedVehicle.key_code})</span>
                   </div>
                 </div>
 
@@ -479,7 +479,7 @@ const FloorMap = () => {
                       <div style={{ width: '80px', height: '6px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
                         <div style={{ width: `${selectedVehicle.fuel}%`, height: '100%', backgroundColor: '#fbbf24', borderRadius: '3px' }} />
                       </div>
-                      <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#ffffff' }}>{selectedVehicle.fuel}%</span>
+                      <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-main)' }}>{selectedVehicle.fuel}%</span>
                     </div>
                   </div>
                 </div>
@@ -488,7 +488,7 @@ const FloorMap = () => {
                   <Clock size={16} style={{ color: 'var(--text-muted)' }} />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase' }}>Duration / Received</span>
-                    <span style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '600' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: '600' }}>
                       {selectedVehicle.duration_mins} mins (Checked in @ {formatReceivedTime(selectedVehicle.received_at)})
                     </span>
                   </div>
@@ -514,8 +514,8 @@ const FloorMap = () => {
                 </div>
                 <button
                   style={{
-                    backgroundColor: '#fbbf24',
-                    color: '#080c14',
+                    backgroundColor: 'var(--accent)',
+                    color: 'var(--accent-text)',
                     border: 'none',
                     borderRadius: '8px',
                     padding: '0.45rem 0.85rem',
@@ -548,7 +548,7 @@ const FloorMap = () => {
                 <Car size={28} style={{ opacity: 0.3 }} />
               </div>
               <div>
-                <p style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.25rem' }}>
+                <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.25rem' }}>
                   {selectedSlotNum ? `Slot ${activeZoneTab}-${selectedSlotNum < 10 ? '0' + selectedSlotNum : selectedSlotNum} is Empty` : 'No Slot Selected'}
                 </p>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '200px', margin: '0 auto', lineHeight: 1.3 }}>

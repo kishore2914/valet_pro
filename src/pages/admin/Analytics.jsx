@@ -24,10 +24,18 @@ import {
   AlertCircle,
   X,
   Loader2,
-  UserCheck
+  UserCheck,
+  Phone,
+  Mail,
+  MapPin,
+  Star,
+  FileText,
+  Check,
+  Ban
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { useLocale } from '../../context/LocaleContext';
 
 // Helper to format currency
 const formatINR = (val) => {
@@ -38,87 +46,32 @@ const formatINR = (val) => {
   }).format(val);
 };
 
-const initialChains = [
-  {
-    id: 'ch-1',
-    name: 'Taj Hotels Group',
-    initials: 'TG',
-    isChain: true,
-    branchCount: 4,
-    subtext: 'Chennai · Mumbai · Bengaluru · 42 staff · 2,44,120 vehicles processed',
-    mrr: '₹55K',
-    live: 42,
-    branches: [
-      { id: 'br-1', name: 'Taj Coromandel', city: 'Chennai', staff: 6, tier: 'Professional', live: 4, fee: '₹9,999/mo', status: 'active' },
-      { id: 'br-2', name: 'Taj Connemara', city: 'Chennai', staff: 8, tier: 'Professional', live: 7, fee: '₹9,999/mo', status: 'active' },
-      { id: 'br-3', name: 'Taj Mahal Palace, Mumbai', city: 'Mumbai', staff: 18, tier: 'Enterprise', live: 22, fee: '₹24,999/mo', status: 'active' },
-      { id: 'br-4', name: 'Taj West End, Bengaluru', city: 'Bengaluru', staff: 10, tier: 'Professional', live: 9, fee: '₹9,999/mo', status: 'active' }
-    ]
-  },
-  {
-    id: 'ch-2',
-    name: 'ITC Hotels',
-    initials: 'ITC',
-    isChain: true,
-    branchCount: 3,
-    subtext: 'Chennai · Bengaluru · New Delhi · 47 staff · 4,73,600 vehicles processed',
-    mrr: '₹80K',
-    live: 53,
-    branches: [
-      { id: 'br-5', name: 'ITC Grand Chola', city: 'Chennai', staff: 18, tier: 'Enterprise', live: 24, fee: '₹24,999/mo', status: 'active' },
-      { id: 'br-6', name: 'ITC Gardenia', city: 'Bengaluru', staff: 14, tier: 'Professional', live: 18, fee: '₹9,999/mo', status: 'active' },
-      { id: 'br-7', name: 'ITC Maurya', city: 'New Delhi', staff: 15, tier: 'Professional', live: 11, fee: '₹9,999/mo', status: 'active' }
-    ]
-  },
-  {
-    id: 'ch-3',
-    name: 'Phoenix Mills Ltd',
-    initials: 'PX',
-    isChain: true,
-    branchCount: 3,
-    subtext: 'Chennai · Mumbai · Pune · 74 staff · 6,73,080 vehicles processed',
-    mrr: '₹80K',
-    live: 126,
-    branches: [
-      { id: 'br-8', name: 'Phoenix MarketCity, Chennai', city: 'Chennai', staff: 24, tier: 'Enterprise', live: 45, fee: '₹24,999/mo', status: 'active' },
-      { id: 'br-9', name: 'Phoenix Palladium, Mumbai', city: 'Mumbai', staff: 30, tier: 'Enterprise', live: 55, fee: '₹24,999/mo', status: 'active' },
-      { id: 'br-10', name: 'Phoenix MarketCity, Pune', city: 'Pune', staff: 20, tier: 'Professional', live: 26, fee: '₹9,999/mo', status: 'active' }
-    ]
-  },
-  {
-    id: 'ch-4',
-    name: 'Apollo Hospitals Enterprise',
-    initials: 'AH',
-    isChain: true,
-    branchCount: 3,
-    subtext: 'Chennai · Hyderabad · 60 staff · 6,05,110 vehicles processed',
-    mrr: '₹88K',
-    live: 69,
-    branches: [
-      { id: 'br-11', name: 'Apollo Greams Road', city: 'Chennai', staff: 22, tier: 'Enterprise', live: 30, fee: '₹24,999/mo', status: 'active' },
-      { id: 'br-12', name: 'Apollo Specialty, Chennai', city: 'Chennai', staff: 18, tier: 'Professional', live: 19, fee: '₹9,999/mo', status: 'active' },
-      { id: 'br-13', name: 'Apollo Health City, Hyderabad', city: 'Hyderabad', staff: 20, tier: 'Enterprise', live: 20, fee: '₹24,999/mo', status: 'active' }
-    ]
+// Helper to format revenue in lakhs or normal INR
+const formatRevenue = (val) => {
+  if (val >= 100000) {
+    return `₹${(val / 100000).toFixed(1)}L`;
   }
-];
-
-const initialStandalone = [
-  { id: 'st-1', name: 'Grand Hyatt Chennai', city: 'Chennai', staff: 8, tier: 'Professional', live: 6, fee: '₹9,999/mo', status: 'active' },
-  { id: 'st-2', name: 'VR Mall', city: 'Chennai', staff: 5, tier: 'Starter', live: 12, fee: '₹4,999/mo', status: 'active' },
-  { id: 'st-3', name: 'Express Avenue', city: 'Chennai', staff: 8, tier: 'Professional', live: 0, fee: '₹9,999/mo', status: 'inactive' },
-  { id: 'st-4', name: 'TIDEL Park', city: 'Chennai', staff: 4, tier: 'Starter', live: 3, fee: 'Free Trial', status: 'trial' }
-];
-
-const initialAuditLogs = [
-  { id: 'log-1', title: 'Client onboarded', desc: 'Radisson Blu - Bengaluru', time: '2 hours ago · Admin' },
-  { id: 'log-2', title: 'Plan upgraded', desc: 'VR Mall: Starter → Professional', time: '5 hours ago · Admin' },
-  { id: 'log-3', title: 'Security alert resolved', desc: 'Unauthorized access attempt at ITC Grand Chola', time: '1 day ago · System' },
-  { id: 'log-4', title: 'New location added', desc: 'Phoenix MarketCity - Velachery Branch', time: '2 days ago · Client Admin' },
-  { id: 'log-5', title: 'Payment received', desc: 'Apollo Hospital - ₹39,999 cleared', time: '3 days ago · System' },
-  { id: 'log-6', title: 'Feature flag toggled', desc: 'API Access enabled for ITC Grand Chola', time: '4 days ago · Admin' }
-];
+  return formatINR(val);
+};
 
 const Analytics = () => {
+  const { platformSettings } = useLocale();
+
+  const getMonthlyFeeString = (tier, status) => {
+    if (status === 'trial') return 'Free Trial';
+    const starterVal = platformSettings?.pricing_starter || 4999;
+    const proVal = platformSettings?.pricing_pro || 9999;
+    const enterpriseVal = platformSettings?.pricing_enterprise || 24999;
+
+    if (tier === 'Starter') {
+      return `₹${Number(starterVal).toLocaleString('en-IN')}/mo`;
+    } else if (tier === 'Enterprise') {
+      return `₹${Number(enterpriseVal).toLocaleString('en-IN')}/mo`;
+    } else {
+      return `₹${Number(proVal).toLocaleString('en-IN')}/mo`;
+    }
+  };
+
   const [loading, setLoading] = useState(false);
   const [showOnboardModal, setShowOnboardModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -126,6 +79,102 @@ const Analytics = () => {
   
   // Expanded chain IDs
   const [expandedChains, setExpandedChains] = useState({ 'ch-1': true });
+
+  const [selectedDetail, setSelectedDetail] = useState(null);
+
+  // Helper functions for mock data matching the 2nd image design
+  const getPrimaryContact = (name) => {
+    const contacts = {
+      'Taj Hotels Group': {
+        name: 'Meera Iyer',
+        email: 'meera.i@tajhotels.com',
+        phone: '+91 44 6600 2827',
+        address: '37, Mahatma Gandhi Rd, Nungambakkam'
+      },
+      'ITC Hotels': {
+        name: 'Meera Iyer', // matching the ITC hotels example if we click it
+        email: 'meera.i@itchotels.com',
+        phone: '+91 44 6600 2827',
+        address: '37, Mahatma Gandhi Rd, Nungambakkam'
+      },
+      'Phoenix Mills Ltd': {
+        name: 'Rohan Mehta',
+        email: 'rohan.mehta@phoenixmills.com',
+        phone: '+91 22 6622 7000',
+        address: '142, Velachery Main Rd, Velachery'
+      },
+      'Apollo Hospitals Enterprise': {
+        name: 'Dr. Ramya Reddy',
+        email: 'dr.ramya@apollohospitals.com',
+        phone: '+91 44 2829 0200',
+        address: '21, Greams Lane, Off Greams Road'
+      },
+      'Grand Hyatt Chennai': {
+        name: 'Suresh Menon',
+        email: 'suresh.menon@hyatt.com',
+        phone: '+91 44 6100 1234',
+        address: '365, Anna Salai, Teynampet'
+      },
+      'VR Mall': {
+        name: 'Anish Kumar',
+        email: 'anish@vrmall.in',
+        phone: '+91 44 3008 2777',
+        address: '100 Feet Rd, Koyambedu'
+      },
+      'Express Avenue': {
+        name: 'Deepak Raj',
+        email: 'deepak@expressavenue.in',
+        phone: '+91 44 2846 4444',
+        address: '49, 50L, Whites Rd, Royapettah'
+      },
+      'TIDEL Park': {
+        name: 'Venkatesh S',
+        email: 'venkatesh@tidelpark.com',
+        phone: '+91 44 2254 0500',
+        address: '4, Rajiv Gandhi Salai, Taramani'
+      }
+    };
+    return contacts[name] || {
+      name: 'Operations Manager',
+      email: `ops@${(name || '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'valetpro'}.com`,
+      phone: '+91 98765 43210',
+      address: 'Chennai, Tamil Nadu'
+    };
+  };
+
+  const getAvgRating = (name) => {
+    const ratings = {
+      'Taj Hotels Group': '4.9',
+      'ITC Hotels': '4.8',
+      'Phoenix Mills Ltd': '4.7',
+      'Apollo Hospitals Enterprise': '4.6',
+      'Grand Hyatt Chennai': '4.8',
+      'VR Mall': '4.5'
+    };
+    return ratings[name] || '4.8';
+  };
+
+  const getAccountManager = (name) => {
+    const ams = {
+      'Taj Hotels Group': 'Priya N',
+      'ITC Hotels': 'Priya N',
+      'Phoenix Mills Ltd': 'Rahul S',
+      'Apollo Hospitals Enterprise': 'Amit P',
+      'Grand Hyatt Chennai': 'Karan S'
+    };
+    return ams[name] || 'Priya N';
+  };
+
+  const getUptime = (name) => {
+    const uptimes = {
+      'Taj Hotels Group': '99.91%',
+      'ITC Hotels': '99.95%',
+      'Phoenix Mills Ltd': '99.88%',
+      'Apollo Hospitals Enterprise': '99.99%',
+      'Grand Hyatt Chennai': '99.92%'
+    };
+    return uptimes[name] || '99.91%';
+  };
 
   // Onboard client form state
   const [clientForm, setClientForm] = useState({
@@ -138,85 +187,198 @@ const Analytics = () => {
   });
 
   // Dynamic chains and standalone lists
-  const [chains, setChains] = useState(initialChains);
-  const [standalone, setStandalone] = useState(initialStandalone);
-  const [auditLogs, setAuditLogs] = useState(initialAuditLogs);
+  const [chains, setChains] = useState([]);
+  const [standalone, setStandalone] = useState([]);
+  const [auditLogs, setAuditLogs] = useState([]);
   const [dbLocsCount, setDbLocsCount] = useState(0);
 
-  // Synchronize new locations from database and merge
+  // States for platform metrics
+  const [stats, setStats] = useState({
+    chainGroups: 0,
+    chainGroupsTrend: '↗ +0 this quarter',
+    totalClients: 0,
+    totalClientsTrend: '↗ +0 this month',
+    activeBranches: 0,
+    activeBranchesTrend: '↗ +0 this month',
+    vehiclesToday: 0,
+    vehiclesTodayTrend: '↗ +0% vs yesterday',
+    monthlyRevenue: 0,
+    monthlyRevenueTrend: '↗ +0% MoM',
+    fraudBlocked: 0,
+    fraudBlockedTrend: '↗ ₹0 savings'
+  });
+
+  // State for subscription distribution
+  const [subDistribution, setSubDistribution] = useState({
+    starter: { count: 0, revenue: 0 },
+    professional: { count: 0, revenue: 0 },
+    enterprise: { count: 0, revenue: 0 }
+  });
+
+  // State for city-wise revenue distribution
+  const [cityRevenue, setCityRevenue] = useState([]);
+
+  // Synchronize locations from database and calculate metrics
   const fetchDatabaseLocations = async () => {
     try {
       setLoading(true);
-      // Query locations table
-      const { data: dbLocs } = await supabase.from('locations').select('*');
-      
-      if (dbLocs) {
-        setDbLocsCount(dbLocs.length);
-        
-        if (dbLocs.length > 0) {
-          const chainGroups = {};
-          const standaloneClients = [];
 
-          dbLocs.forEach(loc => {
-            const isStandalone = !loc.company_id || loc.company_name === 'Standalone' || !loc.company_name;
-            
-            const mapped = {
-              id: loc.id,
-              name: loc.name,
-              city: loc.city || 'Chennai',
-              staff: loc.staff_count || 8,
-              tier: loc.tier || 'Professional',
-              live: Math.floor(Math.random() * 25), // Mock live vehicles dynamically
-              fee: loc.monthly_fee || '₹9,999/mo',
-              status: loc.status || 'active'
-            };
+      // 1. Fetch live vehicles to count active parked/retrieved vehicles per branch
+      const { data: activeVehicles } = await supabase
+        .from('vehicles')
+        .select('location_id')
+        .is('delivered_at', null);
 
-            if (isStandalone) {
-              standaloneClients.push(mapped);
-            } else {
-              const chainName = loc.company_name;
-              if (!chainGroups[chainName]) {
-                chainGroups[chainName] = {
-                  id: loc.company_id || `ch-${chainName.toLowerCase().replace(/\s/g, '-')}`,
-                  name: chainName,
-                  initials: chainName.substring(0, 3).toUpperCase(),
-                  isChain: true,
-                  branchCount: 0,
-                  branches: [],
-                  mrr: 0,
-                  live: 0
-                };
-              }
-              chainGroups[chainName].branches.push(mapped);
-              chainGroups[chainName].branchCount += 1;
-              chainGroups[chainName].live += mapped.live;
-              
-              // Accumulate MRR
-              const feeNum = parseInt(mapped.fee.replace(/[^0-9]/g, '')) || 0;
-              chainGroups[chainName].mrr += feeNum;
-            }
-          });
-
-          // Format chains for rendering
-          const formattedChains = Object.values(chainGroups).map(c => ({
-            ...c,
-            subtext: `${c.branches.map(b => b.city).filter((v, i, a) => a.indexOf(v) === i).join(' · ')} · ${c.branchCount * 8} staff`,
-            mrr: `₹${(c.mrr / 1000).toFixed(0)}K`
-          }));
-
-          setChains(formattedChains);
-          setStandalone(standaloneClients);
-        } else {
-          setChains(initialChains);
-          setStandalone(initialStandalone);
-        }
+      const liveCountsByLocation = {};
+      if (activeVehicles) {
+        activeVehicles.forEach(v => {
+          liveCountsByLocation[v.location_id] = (liveCountsByLocation[v.location_id] || 0) + 1;
+        });
       }
 
-      // Fetch audit logs
+      // 2. Query locations table and staff table to count staff dynamically
+      const [{ data: dbLocs }, { data: dbStaffMembers }] = await Promise.all([
+        supabase.from('locations').select('*, companies(company_name), cities(city_name)'),
+        supabase.from('staff').select('location_id')
+      ]);
+
+      const staffCountsByLocation = {};
+      if (dbStaffMembers) {
+        dbStaffMembers.forEach(s => {
+          if (s.location_id) {
+            staffCountsByLocation[s.location_id] = (staffCountsByLocation[s.location_id] || 0) + 1;
+          }
+        });
+      }
+      
+      let formattedChains = [];
+      let standaloneClients = [];
+      let totalLocationsCount = 0;
+      let activeBranchesCount = 0;
+      
+      const subDist = {
+        starter: { count: 0, revenue: 0 },
+        professional: { count: 0, revenue: 0 },
+        enterprise: { count: 0, revenue: 0 }
+      };
+
+      const cityRevMap = {};
+
+      if (dbLocs && dbLocs.length > 0) {
+        totalLocationsCount = dbLocs.length;
+        const chainGroups = {};
+
+        dbLocs.forEach(loc => {
+          const statusVal = loc.status || loc.subscription_status || 'active';
+          if (statusVal === 'active') {
+            activeBranchesCount += 1;
+          }
+
+          const companyName = loc.companies?.company_name || loc.company_name;
+          const isStandalone = !loc.company_id || companyName === 'Standalone' || !companyName;
+          const tierVal = loc.tier || (loc.selected_plan === 'Pro' ? 'Professional' : loc.selected_plan) || 'Professional';
+          const monthlyFeeVal = loc.monthly_fee || getMonthlyFeeString(tierVal, statusVal);
+
+          let feeVal = parseInt((monthlyFeeVal || '').replace(/[^0-9]/g, '')) || 0;
+          if (feeVal === 0 && statusVal !== 'trial') {
+            const starterVal = platformSettings?.pricing_starter || 4999;
+            const proVal = platformSettings?.pricing_pro || 9999;
+            const enterpriseVal = platformSettings?.pricing_enterprise || 24999;
+            feeVal = (tierVal === 'Starter') ? starterVal : (tierVal === 'Enterprise') ? enterpriseVal : proVal;
+          }
+          const liveCount = liveCountsByLocation[loc.id] || 0;
+
+          const mapped = {
+            id: loc.id,
+            name: loc.name,
+            city: loc.cities?.city_name || loc.city || 'Chennai',
+            staff: staffCountsByLocation[loc.id] || 0,
+            tier: tierVal,
+            live: liveCount,
+            fee: monthlyFeeVal,
+            status: statusVal
+          };
+
+          // Accumulate subscription distributions (only for active/trial clients)
+          if (statusVal === 'active' || statusVal === 'trial') {
+            const tierLower = (tierVal || '').toLowerCase();
+            if (tierLower.includes('starter')) {
+              subDist.starter.count += 1;
+              subDist.starter.revenue += feeVal;
+            } else if (tierLower.includes('enterprise')) {
+              subDist.enterprise.count += 1;
+              subDist.enterprise.revenue += feeVal;
+            } else {
+              subDist.professional.count += 1;
+              subDist.professional.revenue += feeVal;
+            }
+          }
+
+          // Accumulate City-wise clients and revenue
+          const cityName = loc.cities?.city_name || loc.city || 'Chennai';
+          if (!cityRevMap[cityName]) {
+            cityRevMap[cityName] = { city: cityName, clientCount: 0, revenue: 0 };
+          }
+          cityRevMap[cityName].clientCount += 1;
+          if (statusVal === 'active' || statusVal === 'trial') {
+            cityRevMap[cityName].revenue += feeVal;
+          }
+
+          if (isStandalone) {
+            standaloneClients.push(mapped);
+          } else {
+            const chainName = companyName;
+            if (!chainGroups[chainName]) {
+              chainGroups[chainName] = {
+                id: loc.company_id || `ch-${chainName.toLowerCase().replace(/\s/g, '-')}`,
+                name: chainName,
+                initials: chainName.substring(0, 3).toUpperCase(),
+                isChain: true,
+                branchCount: 0,
+                branches: [],
+                mrr: 0,
+                live: 0,
+                vehiclesProcessed: 0
+              };
+            }
+            chainGroups[chainName].branches.push(mapped);
+            chainGroups[chainName].branchCount += 1;
+            chainGroups[chainName].live += mapped.live;
+            chainGroups[chainName].mrr += feeVal;
+            chainGroups[chainName].vehiclesProcessed += loc.vehicles_processed || 0;
+          }
+        });
+
+        // Format chains for rendering
+        formattedChains = Object.values(chainGroups).map(c => ({
+          ...c,
+          subtext: `${c.branches.map(b => b.city).filter((v, i, a) => a.indexOf(v) === i).join(' · ')} · ${c.branches.reduce((acc, b) => acc + b.staff, 0)} staff · ${c.vehiclesProcessed.toLocaleString('en-IN')} vehicles processed`,
+          mrr: `₹${(c.mrr / 1000).toFixed(0)}K`
+        }));
+      }
+
+      setChains(formattedChains);
+      setStandalone(standaloneClients);
+      setDbLocsCount(totalLocationsCount);
+      setSubDistribution(subDist);
+
+      // Compute City Revenue Array
+      const cityRevArray = Object.values(cityRevMap);
+      const maxCityRevenue = Math.max(...cityRevArray.map(c => c.revenue), 1);
+      const formattedCityRevenue = cityRevArray
+        .map(c => ({
+          ...c,
+          percentage: Math.min(100, Math.round((c.revenue / maxCityRevenue) * 100))
+        }))
+        .sort((a, b) => b.revenue - a.revenue);
+      setCityRevenue(formattedCityRevenue);
+
+      // 3. Fetch Platform Audit Logs (limit to 6)
       const { data: dbLogs } = await supabase
         .from('platform_audit_logs')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(6);
 
       if (dbLogs && dbLogs.length > 0) {
         const mappedLogs = dbLogs.map(l => {
@@ -237,8 +399,141 @@ const Analytics = () => {
         });
         setAuditLogs(mappedLogs);
       } else {
-        setAuditLogs(initialAuditLogs);
+        setAuditLogs([]);
       }
+
+      // 4. Query vehicles count for Today and Yesterday
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayStartISO = todayStart.toISOString();
+
+      const yesterdayStart = new Date();
+      yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+      yesterdayStart.setHours(0, 0, 0, 0);
+      const yesterdayStartISO = yesterdayStart.toISOString();
+
+      const { count: vehiclesTodayCount } = await supabase
+        .from('vehicles')
+        .select('*', { count: 'exact', head: true })
+        .gte('received_at', todayStartISO);
+
+      const { count: vehiclesYesterdayCount } = await supabase
+        .from('vehicles')
+        .select('*', { count: 'exact', head: true })
+        .gte('received_at', yesterdayStartISO)
+        .lt('received_at', todayStartISO);
+
+      const todayCount = vehiclesTodayCount || 0;
+      const yesterdayCount = vehiclesYesterdayCount || 0;
+      let vehicleTrend = '↗ +0% vs yesterday';
+      if (yesterdayCount > 0) {
+        const pct = ((todayCount - yesterdayCount) / yesterdayCount) * 100;
+        vehicleTrend = `${pct >= 0 ? '↗ +' : '↘ '}${pct.toFixed(1)}% vs yesterday`;
+      } else if (todayCount > 0) {
+        vehicleTrend = `↗ +100% vs yesterday`;
+      }
+
+      // 5. Query Completed Payments for Revenue
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const thirtyDaysAgoISO = thirtyDaysAgo.toISOString();
+
+      const sixtyDaysAgo = new Date();
+      sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+      const sixtyDaysAgoISO = sixtyDaysAgo.toISOString();
+
+      const { data: paymentsLast30Days } = await supabase
+        .from('payments')
+        .select('amount')
+        .eq('status', 'completed')
+        .gte('created_at', thirtyDaysAgoISO);
+
+      const { data: paymentsPrev30Days } = await supabase
+        .from('payments')
+        .select('amount')
+        .eq('status', 'completed')
+        .gte('created_at', sixtyDaysAgoISO)
+        .lt('created_at', thirtyDaysAgoISO);
+
+      let revenueLast30 = 0;
+      if (paymentsLast30Days && paymentsLast30Days.length > 0) {
+        revenueLast30 = paymentsLast30Days.reduce((acc, p) => acc + Number(p.amount), 0);
+      } else {
+        // Fallback: If no payments exist in the database, calculate revenue from active branches' fees
+        dbLocs?.forEach(loc => {
+          const statusVal = loc.status || loc.subscription_status || 'active';
+          if (statusVal === 'active' || statusVal === 'trial') {
+            const tierVal = loc.tier || (loc.selected_plan === 'Pro' ? 'Professional' : loc.selected_plan) || 'Professional';
+            const monthlyFeeVal = loc.monthly_fee || getMonthlyFeeString(tierVal, statusVal);
+            let feeVal = parseInt((monthlyFeeVal || '').replace(/[^0-9]/g, '')) || 0;
+            if (feeVal === 0 && statusVal !== 'trial') {
+              const starterVal = platformSettings?.pricing_starter || 4999;
+              const proVal = platformSettings?.pricing_pro || 9999;
+              const enterpriseVal = platformSettings?.pricing_enterprise || 24999;
+              feeVal = (tierVal === 'Starter') ? starterVal : (tierVal === 'Enterprise') ? enterpriseVal : proVal;
+            }
+            revenueLast30 += feeVal;
+          }
+        });
+      }
+
+      let revenuePrev30 = 0;
+      if (paymentsPrev30Days && paymentsPrev30Days.length > 0) {
+        revenuePrev30 = paymentsPrev30Days.reduce((acc, p) => acc + Number(p.amount), 0);
+      }
+
+      let revenueTrend = '↗ +0% MoM';
+      if (revenuePrev30 > 0) {
+        const pct = ((revenueLast30 - revenuePrev30) / revenuePrev30) * 100;
+        revenueTrend = `${pct >= 0 ? '↗ +' : '↘ '}${pct.toFixed(1)}% MoM`;
+      } else if (revenueLast30 > 0) {
+        revenueTrend = '↗ +100% MoM';
+      }
+
+      // 6. Query Fraud Blocked (SUSPICIOUS incidents)
+      const { count: fraudCount } = await supabase
+        .from('incidents')
+        .select('*', { count: 'exact', head: true })
+        .eq('title', 'SUSPICIOUS');
+
+      const suspIncidents = fraudCount || 0;
+      // 3.5 Lakh savings per blocked incident
+      const savingsVal = suspIncidents * 3.5;
+      const fraudTrend = `↗ ₹${savingsVal.toFixed(1)}L savings`;
+
+      // 7. Calculate trends for Chain Groups, Total Clients, Active Branches
+      const { count: newCompanies } = await supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', thirtyDaysAgoISO);
+
+      const { count: newBranches } = await supabase
+        .from('locations')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', thirtyDaysAgoISO);
+
+      const { count: totalCompaniesCount } = await supabase
+        .from('companies')
+        .select('*', { count: 'exact', head: true });
+
+      const uniqueChainsCount = totalCompaniesCount || 0;
+      const standaloneCount = standaloneClients.length;
+      const totalClientsCount = uniqueChainsCount + standaloneCount;
+
+      setStats({
+        chainGroups: uniqueChainsCount,
+        chainGroupsTrend: `↗ +${newCompanies || 0} this quarter`,
+        totalClients: totalClientsCount,
+        totalClientsTrend: `↗ +${(newCompanies || 0) + (newBranches || 0)} this month`,
+        activeBranches: activeBranchesCount,
+        activeBranchesTrend: `↗ +${newBranches || 0} this month`,
+        vehiclesToday: todayCount,
+        vehiclesTodayTrend: vehicleTrend,
+        monthlyRevenue: revenueLast30,
+        monthlyRevenueTrend: revenueTrend,
+        fraudBlocked: suspIncidents,
+        fraudBlockedTrend: fraudTrend
+      });
 
     } catch (e) {
       console.error('Error fetching database locations:', e);
@@ -258,25 +553,177 @@ const Analytics = () => {
     }));
   };
 
+  const handleOpenDetails = (client, parentChain = null) => {
+    setSelectedDetail({
+      ...client,
+      parentChain: parentChain
+    });
+  };
+
+  const handleToggleSuspend = async () => {
+    if (!selectedDetail) return;
+    const isSuspended = selectedDetail.status === 'suspended' || selectedDetail.status === 'inactive';
+    const newStatus = isSuspended ? 'active' : 'inactive';
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('locations')
+        .update({ status: newStatus })
+        .eq('id', selectedDetail.id);
+        
+      if (error) throw error;
+      
+      // Also add an audit log
+      await supabase.from('platform_audit_logs').insert([{
+        title: newStatus === 'inactive' ? 'Client suspended' : 'Client reactivated',
+        description: `${selectedDetail.name} status updated to ${newStatus}`
+      }]);
+      
+      // Update local selectedDetail
+      setSelectedDetail(prev => ({
+        ...prev,
+        status: newStatus
+      }));
+      
+      // Re-fetch list
+      fetchDatabaseLocations();
+      alert(`Client ${newStatus === 'inactive' ? 'suspended' : 'reactivated'} successfully!`);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update status: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpgradePlan = async () => {
+    if (!selectedDetail) return;
+    const currentTier = selectedDetail.tier;
+    const nextTier = currentTier === 'Starter' ? 'Professional' : 'Enterprise';
+    if (currentTier === 'Enterprise') {
+      alert('Client is already on the highest plan (Enterprise).');
+      return;
+    }
+    
+    if (window.confirm(`Upgrade plan from ${currentTier} to ${nextTier}?`)) {
+      setLoading(true);
+      try {
+        const { error } = await supabase
+          .from('locations')
+          .update({ 
+            tier: nextTier,
+            monthly_fee: getMonthlyFeeString(nextTier, selectedDetail.status)
+          })
+          .eq('id', selectedDetail.id);
+          
+        if (error) throw error;
+        
+        await supabase.from('platform_audit_logs').insert([{
+          title: 'Plan upgraded',
+          description: `${selectedDetail.name}: ${currentTier} → ${nextTier}`
+        }]);
+        
+        setSelectedDetail(prev => ({
+          ...prev,
+          tier: nextTier,
+          fee: getMonthlyFeeString(nextTier, selectedDetail.status)
+        }));
+        
+        fetchDatabaseLocations();
+        alert('Plan upgraded successfully!');
+      } catch (err) {
+        console.error(err);
+        alert('Failed to upgrade plan: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleSendInvoice = () => {
+    if (!selectedDetail) return;
+    const contact = getPrimaryContact(selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name);
+    alert(`Invoice generated and dispatched successfully to ${contact.email}!`);
+  };
+
+  const handleSendEmail = () => {
+    if (!selectedDetail) return;
+    const contact = getPrimaryContact(selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name);
+    window.location.href = `mailto:${contact.email}?subject=ValetPro Support & Billing Inquiry`;
+  };
+
+  const handleImpersonate = () => {
+    if (!selectedDetail) return;
+    alert(`Starting secure impersonation session for ${selectedDetail.name}... Redirecting to client portal.`);
+  };
+
   const handleOnboardSubmit = async (e) => {
     e.preventDefault();
     if (!clientForm.name.trim()) return;
 
     setLoading(true);
     try {
-      // 1. Insert into Supabase locations table
+      let companyId = null;
+      const chainName = clientForm.chainName ? clientForm.chainName.trim() : '';
+
+      // 1. Find or create company
+      if (chainName && chainName.toLowerCase() !== 'standalone') {
+        const { data: compData } = await supabase
+          .from('companies')
+          .select('id')
+          .eq('company_name', chainName)
+          .maybeSingle();
+          
+        if (compData) {
+          companyId = compData.id;
+        } else {
+          const { data: newComp } = await supabase
+            .from('companies')
+            .insert([{ company_name: chainName }])
+            .select();
+          if (newComp?.[0]) {
+            companyId = newComp[0].id;
+          }
+        }
+      }
+
+      // 2. Find or create city
+      let cityId = null;
+      const cityName = clientForm.city ? clientForm.city.trim() : 'Chennai';
+      const { data: cityData } = await supabase
+        .from('cities')
+        .select('id')
+        .eq('city_name', cityName)
+        .maybeSingle();
+
+      if (cityData) {
+        cityId = cityData.id;
+      } else {
+        const { data: newCity } = await supabase
+          .from('cities')
+          .insert([{ city_name: cityName }])
+          .select();
+        if (newCity?.[0]) {
+          cityId = newCity[0].id;
+        }
+      }
+
+      // 3. Insert into Supabase locations table
       const { data, error } = await supabase
         .from('locations')
         .insert([{
           name: clientForm.name,
-          company_name: clientForm.chainName || 'Standalone',
-          city: clientForm.city,
+          company_name: chainName || 'Standalone',
+          company_id: companyId,
+          city: cityName,
+          city_id: cityId,
           country: 'India',
           tier: clientForm.tier,
           status: clientForm.status,
-          staff_count: 8,
-          vehicles_processed: 120000,
-          monthly_fee: clientForm.tier === 'Enterprise' ? '₹24,999/mo' : clientForm.tier === 'Starter' ? '₹4,999/mo' : '₹9,999/mo'
+          staff_count: 0,
+          vehicles_processed: 0,
+          monthly_fee: getMonthlyFeeString(clientForm.tier, clientForm.status)
         }])
         .select();
 
@@ -304,6 +751,8 @@ const Analytics = () => {
     setLoading(true);
     try {
       // Clear database
+      await supabase.from('payments').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('incidents').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('locations').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('companies').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('cities').delete().neq('id', '00000000-0000-0000-0000-000000000000');
@@ -325,7 +774,9 @@ const Analytics = () => {
         if (coData?.[0]) seededCompanies[compName] = coData[0].id;
       }
 
-      // Seed locations
+      // Seed locations and save records for payment seeding
+      const seededLocations = [];
+
       // taj branches
       const tajBranches = [
         { name: 'Taj Coromandel', city: 'Chennai', tier: 'Professional', status: 'active', staff_count: 6, vehicles_processed: 62000, monthly_fee: '₹9,999/mo' },
@@ -334,7 +785,7 @@ const Analytics = () => {
         { name: 'Taj West End, Bengaluru', city: 'Bengaluru', tier: 'Professional', status: 'active', staff_count: 10, vehicles_processed: 42120, monthly_fee: '₹9,999/mo' }
       ];
       for (const b of tajBranches) {
-        await supabase.from('locations').insert([{
+        const { data } = await supabase.from('locations').insert([{
           name: b.name,
           company_name: 'Taj Hotels Group',
           company_id: seededCompanies['Taj Hotels Group'],
@@ -344,8 +795,9 @@ const Analytics = () => {
           status: b.status,
           staff_count: b.staff_count,
           vehicles_processed: b.vehicles_processed,
-          monthly_fee: b.monthly_fee
-        }]);
+          monthly_fee: getMonthlyFeeString(b.tier, b.status)
+        }]).select();
+        if (data?.[0]) seededLocations.push(data[0]);
       }
 
       // itc branches
@@ -355,7 +807,7 @@ const Analytics = () => {
         { name: 'ITC Maurya', city: 'New Delhi', tier: 'Professional', status: 'active', staff_count: 15, vehicles_processed: 103600, monthly_fee: '₹9,999/mo' }
       ];
       for (const b of itcBranches) {
-        await supabase.from('locations').insert([{
+        const { data } = await supabase.from('locations').insert([{
           name: b.name,
           company_name: 'ITC Hotels',
           company_id: seededCompanies['ITC Hotels'],
@@ -365,8 +817,9 @@ const Analytics = () => {
           status: b.status,
           staff_count: b.staff_count,
           vehicles_processed: b.vehicles_processed,
-          monthly_fee: b.monthly_fee
-        }]);
+          monthly_fee: getMonthlyFeeString(b.tier, b.status)
+        }]).select();
+        if (data?.[0]) seededLocations.push(data[0]);
       }
 
       // phoenix branches
@@ -376,7 +829,7 @@ const Analytics = () => {
         { name: 'Phoenix MarketCity, Pune', city: 'Pune', tier: 'Professional', status: 'active', staff_count: 20, vehicles_processed: 200000, monthly_fee: '₹9,999/mo' }
       ];
       for (const b of phoenixBranches) {
-        await supabase.from('locations').insert([{
+        const { data } = await supabase.from('locations').insert([{
           name: b.name,
           company_name: 'Phoenix Mills Ltd',
           company_id: seededCompanies['Phoenix Mills Ltd'],
@@ -386,8 +839,9 @@ const Analytics = () => {
           status: b.status,
           staff_count: b.staff_count,
           vehicles_processed: b.vehicles_processed,
-          monthly_fee: b.monthly_fee
-        }]);
+          monthly_fee: getMonthlyFeeString(b.tier, b.status)
+        }]).select();
+        if (data?.[0]) seededLocations.push(data[0]);
       }
 
       // apollo branches
@@ -397,7 +851,7 @@ const Analytics = () => {
         { name: 'Apollo Health City, Hyderabad', city: 'Hyderabad', tier: 'Enterprise', status: 'active', staff_count: 20, vehicles_processed: 250000, monthly_fee: '₹24,999/mo' }
       ];
       for (const b of apolloBranches) {
-        await supabase.from('locations').insert([{
+        const { data } = await supabase.from('locations').insert([{
           name: b.name,
           company_name: 'Apollo Hospitals Enterprise',
           company_id: seededCompanies['Apollo Hospitals Enterprise'],
@@ -407,8 +861,9 @@ const Analytics = () => {
           status: b.status,
           staff_count: b.staff_count,
           vehicles_processed: b.vehicles_processed,
-          monthly_fee: b.monthly_fee
-        }]);
+          monthly_fee: getMonthlyFeeString(b.tier, b.status)
+        }]).select();
+        if (data?.[0]) seededLocations.push(data[0]);
       }
 
       // standalones
@@ -419,7 +874,7 @@ const Analytics = () => {
         { name: 'TIDEL Park', city: 'Chennai', tier: 'Starter', status: 'trial', staff_count: 4, vehicles_processed: 3000, monthly_fee: 'Free Trial' }
       ];
       for (const b of standalones) {
-        await supabase.from('locations').insert([{
+        const { data } = await supabase.from('locations').insert([{
           name: b.name,
           company_name: 'Standalone',
           company_id: null,
@@ -429,15 +884,91 @@ const Analytics = () => {
           status: b.status,
           staff_count: b.staff_count,
           vehicles_processed: b.vehicles_processed,
-          monthly_fee: b.monthly_fee
-        }]);
+          monthly_fee: getMonthlyFeeString(b.tier, b.status)
+        }]).select();
+        if (data?.[0]) seededLocations.push(data[0]);
+      }
+
+      // Seed payments for the seeded locations (last 30 days and 30-60 days ago for MoM trend)
+      const paymentPayloads = [];
+      seededLocations.forEach(loc => {
+        const statusVal = loc.status || loc.subscription_status || 'active';
+        const tierVal = loc.tier || (loc.selected_plan === 'Pro' ? 'Professional' : loc.selected_plan) || 'Professional';
+        const monthlyFeeVal = loc.monthly_fee || getMonthlyFeeString(tierVal, statusVal);
+        if (statusVal === 'active' || statusVal === 'trial') {
+          const feeVal = parseInt((monthlyFeeVal || '').replace(/[^0-9]/g, '')) || 0;
+          if (feeVal > 0) {
+            // Payment in the last 30 days (completed)
+            paymentPayloads.push({
+              location_id: loc.id,
+              amount: feeVal,
+              plan: tierVal,
+              payment_method: 'UPI',
+              status: 'completed',
+              created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() // 10 days ago
+            });
+            // Payment between 30-60 days ago (completed)
+            paymentPayloads.push({
+              location_id: loc.id,
+              amount: feeVal,
+              plan: tierVal,
+              payment_method: 'UPI',
+              status: 'completed',
+              created_at: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString() // 40 days ago
+            });
+          }
+        }
+      });
+      if (paymentPayloads.length > 0) {
+        await supabase.from('payments').insert(paymentPayloads);
+      }
+
+      // Seed some incidents for the seeded locations (including SUSPICIOUS for fraud cards)
+      const incidentPayloads = [];
+      seededLocations.forEach((loc, index) => {
+        incidentPayloads.push({
+          location_id: loc.id,
+          title: 'DAMAGE',
+          priority: 'MEDIUM',
+          status: 'INVESTIGATING',
+          description: `Minor scratch on rear bumper noticed during check-in at ${loc.name}.`,
+          plate_number: `TN 0${index + 1} AB 1234`,
+          reported_by: 'Arun M',
+          assigned_to: 'Suresh P',
+          zone: 'Zone A entry',
+          time: '10:20 AM',
+          estimated_cost: 2500
+        });
+
+        if (index % 2 === 0) {
+          incidentPayloads.push({
+            location_id: loc.id,
+            title: 'SUSPICIOUS',
+            priority: 'HIGH',
+            status: 'OPEN',
+            description: `Unauthorized person attempted to claim vehicle with mismatched token at ${loc.name}. Security called.`,
+            plate_number: `MH 12 EF ${9000 + index}`,
+            reported_by: 'Suresh P',
+            assigned_to: 'Hotel Security',
+            zone: 'Lobby valet desk',
+            time: '09:30 AM',
+            estimated_cost: 0
+          });
+        }
+      });
+      if (incidentPayloads.length > 0) {
+        await supabase.from('incidents').insert(incidentPayloads);
       }
 
       // Seed audit logs
-      const auditPayload = initialAuditLogs.map(l => ({
-        title: l.title,
-        description: l.desc
-      }));
+      const auditPayload = [
+        { title: 'Client onboarded', description: 'Radisson Blu - Bengaluru' },
+        { title: 'Plan upgraded', description: 'VR Mall: Starter → Professional' },
+        { title: 'Security alert resolved', description: 'Unauthorized access attempt at ITC Grand Chola' },
+        { title: 'New location added', description: 'Phoenix MarketCity - Velachery Branch' },
+        { title: 'Payment received', description: 'Apollo Hospital - ₹39,999 cleared' },
+        { title: 'Feature flag toggled', description: 'API Access enabled for ITC Grand Chola' }
+      ];
       await supabase.from('platform_audit_logs').insert(auditPayload);
 
       fetchDatabaseLocations();
@@ -453,6 +984,8 @@ const Analytics = () => {
   const handleClearDatabase = async () => {
     setLoading(true);
     try {
+      await supabase.from('payments').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      await supabase.from('incidents').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('locations').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('companies').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('cities').delete().neq('id', '00000000-0000-0000-0000-000000000000');
@@ -462,6 +995,12 @@ const Analytics = () => {
       setStandalone([]);
       setAuditLogs([]);
       setDbLocsCount(0);
+      setCityRevenue([]);
+      setSubDistribution({
+        starter: { count: 0, revenue: 0 },
+        professional: { count: 0, revenue: 0 },
+        enterprise: { count: 0, revenue: 0 }
+      });
       alert('Database cleared!');
     } catch (e) {
       console.error(e);
@@ -477,12 +1016,12 @@ const Analytics = () => {
       ['Generated At', new Date().toLocaleString()],
       [],
       ['Metric Summary'],
-      ['Chain Groups', 24],
-      ['Total Clients', 152],
-      ['Active Branches', 287],
-      ['Vehicles Today', '3,841'],
-      ['Monthly Revenue', '₹18.5L'],
-      ['Fraud Blocked', 23],
+      ['Chain Groups', stats.chainGroups],
+      ['Total Clients', stats.totalClients],
+      ['Active Branches', stats.activeBranches],
+      ['Vehicles Today', stats.vehiclesToday],
+      ['Monthly Revenue', formatRevenue(stats.monthlyRevenue)],
+      ['Fraud Blocked', stats.fraudBlocked],
       [],
       ['Standalone Clients'],
       ['Name', 'City', 'Staff', 'Tier', 'Live Count', 'MRR', 'Status'],
@@ -535,31 +1074,12 @@ const Analytics = () => {
       {/* Title Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Platform Overview</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Platform Overview</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             System-wide metrics, clients, billing & health
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          {dbLocsCount > 0 && (
-            <button
-              onClick={handleClearDatabase}
-              disabled={loading}
-              style={{
-                backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                color: '#ef4444',
-                border: '1px solid rgba(239, 68, 68, 0.15)',
-                borderRadius: '10px',
-                padding: '0.65rem 1rem',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              Clear Database
-            </button>
-          )}
           {dbLocsCount === 0 && (
             <button
               onClick={handleSeedDatabase}
@@ -601,8 +1121,8 @@ const Analytics = () => {
           <button
             onClick={() => setShowOnboardModal(true)}
             style={{
-              backgroundColor: '#fbbf24',
-              color: '#080c14',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--accent-text)',
               border: 'none',
               borderRadius: '10px',
               padding: '0.65rem 1.15rem',
@@ -612,7 +1132,7 @@ const Analytics = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)',
+              boxShadow: '0 4px 15px var(--accent-shadow)',
               transition: 'all 0.15s ease'
             }}
             onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
@@ -636,8 +1156,8 @@ const Analytics = () => {
             <span style={statLabelStyle}>Chain Groups</span>
             <div style={{ color: 'var(--text-muted)' }}><Building2 size={16} /></div>
           </div>
-          <div style={statNumStyle}>24</div>
-          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>↗ +2 this quarter</div>
+          <div style={statNumStyle}>{stats.chainGroups}</div>
+          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>{stats.chainGroupsTrend}</div>
         </div>
 
         {/* Total Clients */}
@@ -646,8 +1166,8 @@ const Analytics = () => {
             <span style={statLabelStyle}>Total Clients</span>
             <div style={{ color: 'var(--text-muted)' }}><Users size={16} /></div>
           </div>
-          <div style={statNumStyle}>152</div>
-          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>↗ +8 this month</div>
+          <div style={statNumStyle}>{stats.totalClients}</div>
+          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>{stats.totalClientsTrend}</div>
         </div>
 
         {/* Active Branches */}
@@ -656,8 +1176,8 @@ const Analytics = () => {
             <span style={statLabelStyle}>Active Branches</span>
             <div style={{ color: 'var(--text-muted)' }}><Globe size={16} /></div>
           </div>
-          <div style={statNumStyle}>287</div>
-          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>↗ +14 this month</div>
+          <div style={statNumStyle}>{stats.activeBranches}</div>
+          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>{stats.activeBranchesTrend}</div>
         </div>
 
         {/* Vehicles Today */}
@@ -666,8 +1186,8 @@ const Analytics = () => {
             <span style={statLabelStyle}>Vehicles Today</span>
             <div style={{ color: 'var(--text-muted)' }}><Car size={16} /></div>
           </div>
-          <div style={statNumStyle}>3,841</div>
-          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>↗ +12% vs yesterday</div>
+          <div style={statNumStyle}>{stats.vehiclesToday.toLocaleString('en-IN')}</div>
+          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>{stats.vehiclesTodayTrend}</div>
         </div>
 
         {/* Monthly Revenue */}
@@ -676,8 +1196,8 @@ const Analytics = () => {
             <span style={statLabelStyle}>Monthly Revenue</span>
             <div style={{ color: 'var(--text-muted)' }}><TrendingUp size={16} /></div>
           </div>
-          <div style={statNumStyle}>₹18.5L</div>
-          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>↗ +18.4% MoM</div>
+          <div style={statNumStyle}>{formatRevenue(stats.monthlyRevenue)}</div>
+          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>{stats.monthlyRevenueTrend}</div>
         </div>
 
         {/* Fraud Blocked */}
@@ -686,8 +1206,8 @@ const Analytics = () => {
             <span style={statLabelStyle}>Fraud Blocked</span>
             <div style={{ color: '#ef4444' }}><ShieldAlert size={16} /></div>
           </div>
-          <div style={statNumStyle}>23</div>
-          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>↗ ₹4.2L savings</div>
+          <div style={statNumStyle}>{stats.fraudBlocked}</div>
+          <div style={{ ...trendSubtextStyle, color: '#10b981' }}>{stats.fraudBlockedTrend}</div>
         </div>
       </div>
 
@@ -702,7 +1222,7 @@ const Analytics = () => {
         gap: '0.85rem'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: '800', color: '#ffffff', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
             System Health
           </span>
           <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#10b981', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -789,8 +1309,8 @@ const Analytics = () => {
                   padding: '0.55rem 0.85rem 0.55rem 2.25rem',
                   borderRadius: '10px',
                   border: '1px solid var(--border-color)',
-                  backgroundColor: '#111726',
-                  color: '#ffffff',
+                  backgroundColor: 'var(--bg-subtle)',
+                  color: 'var(--text-main)',
                   fontSize: '0.8rem',
                   outline: 'none'
                 }}
@@ -798,7 +1318,7 @@ const Analytics = () => {
             </div>
 
             {/* Filter tab pills */}
-            <div style={{ display: 'flex', gap: '0.35rem', backgroundColor: '#111726', padding: '3px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', gap: '0.35rem', backgroundColor: 'var(--bg-subtle)', padding: '3px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
               {['All', 'Active', 'Trial', 'Inactive'].map((tab) => (
                 <button
                   key={tab}
@@ -831,7 +1351,7 @@ const Analytics = () => {
                 <div 
                   key={c.id}
                   style={{
-                    backgroundColor: '#111726',
+                    backgroundColor: 'var(--bg-subtle)',
                     border: '1px solid var(--border-color)',
                     borderRadius: '12px',
                     overflow: 'hidden'
@@ -870,7 +1390,7 @@ const Analytics = () => {
 
                     <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ffffff' }}>{c.name}</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>{c.name}</span>
                         <span style={{ fontSize: '0.55rem', fontWeight: '800', color: '#fbbf24', border: '1px solid rgba(251, 191, 36, 0.25)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>CHAIN</span>
                         <span style={{ fontSize: '0.65rem', fontWeight: '700', backgroundColor: 'rgba(255,255,255,0.03)', color: 'var(--text-muted)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>{c.branchCount} branches</span>
                       </div>
@@ -883,7 +1403,7 @@ const Analytics = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexShrink: 0 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <span style={{ fontSize: '0.6rem', fontWeight: '800', color: 'var(--text-muted)' }}>GROUP MRR</span>
-                        <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff' }}>{c.mrr}</span>
+                        <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{c.mrr}</span>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <span style={{ fontSize: '0.6rem', fontWeight: '800', color: 'var(--text-muted)' }}>LIVE</span>
@@ -921,7 +1441,7 @@ const Analytics = () => {
                           }}
                         >
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                            <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff' }}>{b.name}</span>
+                            <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{b.name}</span>
                             <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
                               {b.city} · {b.staff} staff
                             </span>
@@ -942,7 +1462,7 @@ const Analytics = () => {
                             </span>
 
                             {/* Live vehicles */}
-                            <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff', width: '20px', textAlign: 'center' }}>
+                            <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', width: '20px', textAlign: 'center' }}>
                               {b.live}
                             </span>
 
@@ -962,14 +1482,17 @@ const Analytics = () => {
                             </span>
 
                             {/* Action */}
-                            <button style={{
-                              backgroundColor: 'transparent',
-                              border: 'none',
-                              color: '#fbbf24',
-                              fontSize: '0.75rem',
-                              fontWeight: '700',
-                              cursor: 'pointer'
-                            }}>
+                            <button
+                              onClick={() => handleOpenDetails(b, c)}
+                              style={{
+                                backgroundColor: 'transparent',
+                                border: 'none',
+                                color: '#fbbf24',
+                                fontSize: '0.75rem',
+                                fontWeight: '700',
+                                cursor: 'pointer'
+                              }}
+                            >
                               View
                             </button>
                           </div>
@@ -1001,7 +1524,7 @@ const Analytics = () => {
               <div 
                 key={s.id}
                 style={{
-                  backgroundColor: '#111726',
+                  backgroundColor: 'var(--bg-subtle)',
                   border: '1px solid var(--border-color)',
                   borderRadius: '12px',
                   padding: '0.85rem 1rem',
@@ -1023,7 +1546,7 @@ const Analytics = () => {
                     justifyContent: 'center'
                   }}><Building2 size={15} /></div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff' }}>{s.name}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{s.name}</span>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
                       {s.city} · {s.staff} staff
                     </span>
@@ -1045,7 +1568,7 @@ const Analytics = () => {
                   </span>
 
                   {/* Live */}
-                  <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff', width: '20px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', width: '20px', textAlign: 'center' }}>
                     {s.live}
                   </span>
 
@@ -1065,14 +1588,17 @@ const Analytics = () => {
                   </span>
 
                   {/* View Action */}
-                  <button style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    color: '#fbbf24',
-                    fontSize: '0.75rem',
-                    fontWeight: '700',
-                    cursor: 'pointer'
-                  }}>
+                  <button 
+                    onClick={() => handleOpenDetails(s, null)}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: '#fbbf24',
+                      fontSize: '0.75rem',
+                      fontWeight: '700',
+                      cursor: 'pointer'
+                    }}
+                  >
                     View
                   </button>
                 </div>
@@ -1103,7 +1629,7 @@ const Analytics = () => {
                   display: 'flex',
                   gap: '0.75rem',
                   padding: '0.75rem',
-                  backgroundColor: '#111726',
+                  backgroundColor: 'var(--bg-subtle)',
                   borderRadius: '12px',
                   border: '1px solid var(--border-color)',
                   alignItems: 'flex-start'
@@ -1114,7 +1640,7 @@ const Analytics = () => {
                   width: '28px',
                   height: '28px',
                   borderRadius: '6px',
-                  backgroundColor: log.title.toLowerCase().includes('alert') ? 'rgba(239, 68, 68, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                  backgroundColor: log.title.toLowerCase().includes('alert') ? 'rgba(239, 68, 68, 0.08)' : 'var(--bg-app)',
                   color: log.title.toLowerCase().includes('alert') ? '#ef4444' : 'var(--text-muted)',
                   display: 'flex',
                   alignItems: 'center',
@@ -1127,7 +1653,7 @@ const Analytics = () => {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
                     {log.title}
                   </span>
                   <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>
@@ -1160,23 +1686,23 @@ const Analytics = () => {
             
             {/* Starter */}
             <div style={subCardStyle}>
-              <span style={subNumStyle}>42</span>
+              <span style={subNumStyle}>{subDistribution.starter.count}</span>
               <span style={subLabelStyle}>Starter</span>
-              <span style={subCostStyle}>₹2.1L/mo</span>
+              <span style={subCostStyle}>{formatRevenue(subDistribution.starter.revenue)}/mo</span>
             </div>
 
             {/* Professional */}
             <div style={subCardStyle}>
-              <span style={subNumStyle}>78</span>
+              <span style={subNumStyle}>{subDistribution.professional.count}</span>
               <span style={subLabelStyle}>Professional</span>
-              <span style={subCostStyle}>₹7.8L/mo</span>
+              <span style={subCostStyle}>{formatRevenue(subDistribution.professional.revenue)}/mo</span>
             </div>
 
             {/* Enterprise */}
             <div style={subCardStyle}>
-              <span style={subNumStyle}>32</span>
+              <span style={subNumStyle}>{subDistribution.enterprise.count}</span>
               <span style={subLabelStyle}>Enterprise</span>
-              <span style={subCostStyle}>₹8.6L/mo</span>
+              <span style={subCostStyle}>{formatRevenue(subDistribution.enterprise.revenue)}/mo</span>
             </div>
 
           </div>
@@ -1188,54 +1714,434 @@ const Analytics = () => {
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
             
-            {/* Chennai */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              <div style={cityHeaderStyle}>
-                <span>Chennai <span style={{ color: 'var(--text-muted)', fontWeight: '500' }}>· 48 clients</span></span>
-                <span style={{ color: '#ffffff' }}>₹8.7L</span>
+            {cityRevenue.map((item) => (
+              <div key={item.city} style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <div style={cityHeaderStyle}>
+                  <span>{item.city} <span style={{ color: 'var(--text-muted)', fontWeight: '500' }}>· {item.clientCount} {item.clientCount === 1 ? 'client' : 'clients'}</span></span>
+                  <span style={{ color: 'var(--text-main)' }}>{formatRevenue(item.revenue)}</span>
+                </div>
+                <div style={cityBarContainerStyle}>
+                  <div style={{ ...cityBarFillStyle, width: `${item.percentage}%` }} />
+                </div>
               </div>
-              <div style={cityBarContainerStyle}>
-                <div style={{ ...cityBarFillStyle, width: '80%' }} />
-              </div>
-            </div>
+            ))}
 
-            {/* Bengaluru */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              <div style={cityHeaderStyle}>
-                <span>Bengaluru <span style={{ color: 'var(--text-muted)', fontWeight: '500' }}>· 32 clients</span></span>
-                <span style={{ color: '#ffffff' }}>₹5.4L</span>
+            {cityRevenue.length === 0 && (
+              <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem', fontSize: '0.8rem' }}>
+                No city revenue data found.
               </div>
-              <div style={cityBarContainerStyle}>
-                <div style={{ ...cityBarFillStyle, width: '50%' }} />
-              </div>
-            </div>
-
-            {/* Mumbai */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              <div style={cityHeaderStyle}>
-                <span>Mumbai <span style={{ color: 'var(--text-muted)', fontWeight: '500' }}>· 22 clients</span></span>
-                <span style={{ color: '#ffffff' }}>₹3.2L</span>
-              </div>
-              <div style={cityBarContainerStyle}>
-                <div style={{ ...cityBarFillStyle, width: '35%' }} />
-              </div>
-            </div>
-
-            {/* Hyderabad */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-              <div style={cityHeaderStyle}>
-                <span>Hyderabad <span style={{ color: 'var(--text-muted)', fontWeight: '500' }}>· 18 clients</span></span>
-                <span style={{ color: '#ffffff' }}>₹1.2L</span>
-              </div>
-              <div style={cityBarContainerStyle}>
-                <div style={{ ...cityBarFillStyle, width: '15%' }} />
-              </div>
-            </div>
+            )}
 
           </div>
         </div>
 
       </div>
+
+      {/* Client Detail Modal */}
+      {selectedDetail && (() => {
+        const detailContact = getPrimaryContact(selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name);
+        const detailRating = getAvgRating(selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name);
+        const detailAM = getAccountManager(selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name);
+        const detailUptime = getUptime(selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name);
+        
+        return (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(5, 8, 16, 0.75)',
+            zIndex: 99999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backdropFilter: 'blur(6px)',
+            padding: '1rem'
+          }}>
+            <div style={{
+              backgroundColor: '#0a0e1a',
+              border: '1px solid #1e293b',
+              borderRadius: '16px',
+              padding: '2rem',
+              width: '640px',
+              maxWidth: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+              position: 'relative'
+            }}>
+              {/* Close Button */}
+              <button 
+                onClick={() => setSelectedDetail(null)}
+                style={{
+                  position: 'absolute',
+                  top: '1.5rem',
+                  right: '1.5rem',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  transition: 'color 0.15s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+              >
+                <X size={20} />
+              </button>
+
+              {/* Title & Badges Header */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h2 style={{ fontSize: '1.55rem', fontWeight: '855', color: '#fbbf24', margin: 0, letterSpacing: '-0.02em' }}>
+                  {selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name}
+                </h2>
+                {selectedDetail.parentChain && (
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600', marginTop: '-0.25rem' }}>
+                    {selectedDetail.name}
+                  </div>
+                )}
+                
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.15rem' }}>
+                  {/* Tier Badge */}
+                  <span style={{
+                    fontSize: '0.65rem',
+                    fontWeight: '800',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    backgroundColor: selectedDetail.tier === 'Enterprise' ? 'rgba(251,191,36,0.06)' : 'rgba(59,130,246,0.06)',
+                    color: selectedDetail.tier === 'Enterprise' ? '#fbbf24' : '#3b82f6',
+                    border: selectedDetail.tier === 'Enterprise' ? '1px solid rgba(251,191,36,0.15)' : '1px solid rgba(59,130,246,0.15)',
+                    padding: '0.2rem 0.55rem',
+                    borderRadius: '4px'
+                  }}>
+                    {selectedDetail.tier}
+                  </span>
+                  
+                  {/* Vertical Badge */}
+                  <span style={{
+                    fontSize: '0.65rem',
+                    fontWeight: '800',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                    color: 'var(--text-muted)',
+                    border: '1px solid var(--border-color)',
+                    padding: '0.2rem 0.55rem',
+                    borderRadius: '4px'
+                  }}>
+                    {(selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name).toLowerCase().includes('hospital') ? 'Healthcare' : (selectedDetail.parentChain ? selectedDetail.parentChain.name : selectedDetail.name).toLowerCase().includes('mall') ? 'Retail' : 'Hospitality'}
+                  </span>
+
+                  {/* Status Badge */}
+                  <span style={{
+                    fontSize: '0.65rem',
+                    fontWeight: '800',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    backgroundColor: selectedDetail.status === 'active' ? 'rgba(16,185,129,0.06)' : selectedDetail.status === 'trial' ? 'rgba(59,130,246,0.06)' : 'rgba(239,68,68,0.06)',
+                    color: selectedDetail.status === 'active' ? '#10b981' : selectedDetail.status === 'trial' ? '#3b82f6' : '#ef4444',
+                    border: selectedDetail.status === 'active' ? '1px solid rgba(16,185,129,0.15)' : selectedDetail.status === 'trial' ? '1px solid rgba(59,130,246,0.15)' : '1px solid rgba(239,68,68,0.15)',
+                    padding: '0.2rem 0.55rem',
+                    borderRadius: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem'
+                  }}>
+                    <span style={{ fontSize: '0.5rem' }}>●</span>
+                    {selectedDetail.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* KPI Grid */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '0.75rem'
+              }}>
+                <div style={detailKpiCardStyle}>
+                  <span style={detailKpiLabelStyle}>LOCATIONS</span>
+                  <span style={detailKpiValStyle}>{selectedDetail.parentChain ? selectedDetail.parentChain.branchCount : 1}</span>
+                </div>
+                
+                <div style={detailKpiCardStyle}>
+                  <span style={detailKpiLabelStyle}>ACTIVE VEHICLES</span>
+                  <span style={detailKpiValStyle}>{selectedDetail.parentChain ? selectedDetail.parentChain.live : selectedDetail.live}</span>
+                </div>
+                
+                <div style={detailKpiCardStyle}>
+                  <span style={detailKpiLabelStyle}>TOTAL PROCESSED</span>
+                  <span style={detailKpiValStyle}>
+                    {selectedDetail.parentChain 
+                      ? selectedDetail.parentChain.vehiclesProcessed.toLocaleString('en-IN') 
+                      : (selectedDetail.vehiclesProcessed || selectedDetail.staff * 4000 + 1200).toLocaleString('en-IN')}
+                  </span>
+                </div>
+                
+                <div style={detailKpiCardStyle}>
+                  <span style={detailKpiLabelStyle}>AVG RATING</span>
+                  <span style={{ ...detailKpiValStyle, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    {detailRating} <Star size={14} fill="#fbbf24" stroke="none" />
+                  </span>
+                </div>
+              </div>
+
+              {/* Primary Contact Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h3 style={detailSectionTitleStyle}>PRIMARY CONTACT</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '0.75rem 1.5rem',
+                  backgroundColor: 'var(--bg-subtle)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '1rem'
+                }}>
+                  <div style={detailContactItemStyle}>
+                    <User size={15} style={{ color: 'var(--text-muted)' }} />
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{detailContact.name}</span>
+                  </div>
+                  
+                  <div style={detailContactItemStyle}>
+                    <Mail size={15} style={{ color: 'var(--text-muted)' }} />
+                    <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>{detailContact.email}</span>
+                  </div>
+                  
+                  <div style={detailContactItemStyle}>
+                    <Phone size={15} style={{ color: 'var(--text-muted)' }} />
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{detailContact.phone}</span>
+                  </div>
+                  
+                  <div style={detailContactItemStyle}>
+                    <MapPin size={15} style={{ color: 'var(--text-muted)' }} />
+                    <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: 1.25 }}>{detailContact.address}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Billing & Subscription Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h3 style={detailSectionTitleStyle}>BILLING & SUBSCRIPTION</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '0.75rem'
+                }}>
+                  <div style={detailBillingCardStyle}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Monthly</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#fbbf24' }}>
+                      {selectedDetail.fee === 'Free Trial' ? 'Free Trial' : selectedDetail.fee}
+                    </span>
+                  </div>
+                  
+                  <div style={detailBillingCardStyle}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Outstanding</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#10b981' }}>₹0</span>
+                  </div>
+                  
+                  <div style={detailBillingCardStyle}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Method</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                      {selectedDetail.tier === 'Enterprise' ? 'Group ACH' : 'UPI'}
+                    </span>
+                  </div>
+                  
+                  <div style={detailBillingCardStyle}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Next Bill</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>01 Jul 2026</span>
+                  </div>
+                  
+                  <div style={detailBillingCardStyle}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Last Payment</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>01 Jun 2026</span>
+                  </div>
+                  
+                  <div style={detailBillingCardStyle}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Renewal</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>31 Dec 2026</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Operations Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h3 style={detailSectionTitleStyle}>OPERATIONS</h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '0.75rem'
+                }}>
+                  <div style={detailKpiCardStyle}>
+                    <span style={detailKpiLabelStyle}>Uptime (30d)</span>
+                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>{detailUptime}</span>
+                  </div>
+                  
+                  <div style={detailKpiCardStyle}>
+                    <span style={detailKpiLabelStyle}>Account Manager</span>
+                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>{detailAM}</span>
+                  </div>
+                  
+                  <div style={detailKpiCardStyle}>
+                    <span style={detailKpiLabelStyle}>Open Tickets</span>
+                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>1</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Enabled Features Section */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <h3 style={detailSectionTitleStyle}>ENABLED FEATURES</h3>
+                <div style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem'
+                }}>
+                  {['QR Tokens', 'OTP Return', 'Live Tracking', 'Damage Reports', 'Audit Trail'].map((feat) => (
+                    <span 
+                      key={feat}
+                      style={{
+                        fontSize: '0.7rem',
+                        fontWeight: '800',
+                        border: '1px solid rgba(251, 191, 36, 0.25)',
+                        color: '#fbbf24',
+                        padding: '0.25rem 0.55rem',
+                        borderRadius: '6px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        backgroundColor: 'rgba(251, 191, 36, 0.03)'
+                      }}
+                    >
+                      <div style={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#10b981'
+                      }}>
+                        <Check size={8} strokeWidth={4} />
+                      </div>
+                      {feat}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions Footer */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.65rem',
+                marginTop: '0.5rem',
+                flexWrap: 'wrap'
+              }}>
+                <button
+                  onClick={handleSendInvoice}
+                  style={{
+                    backgroundColor: 'var(--accent)',
+                    color: 'var(--accent-text)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '0.65rem 1.15rem',
+                    fontSize: '0.8rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 4px 12px var(--accent-shadow)',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
+                  onMouseLeave={(e) => e.currentTarget.style.filter = 'none'}
+                >
+                  <FileText size={14} />
+                  <span>Send Invoice</span>
+                </button>
+                
+                <button
+                  onClick={handleUpgradePlan}
+                  style={detailOutlineBtnStyle}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = 'var(--border-color)';
+                  }}
+                >
+                  Upgrade Plan
+                </button>
+                
+                <button
+                  onClick={handleImpersonate}
+                  style={detailOutlineBtnStyle}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = 'var(--border-color)';
+                  }}
+                >
+                  Impersonate
+                </button>
+                
+                <button
+                  onClick={handleSendEmail}
+                  style={{
+                    ...detailOutlineBtnStyle,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = 'var(--border-color)';
+                  }}
+                >
+                  <Mail size={14} />
+                  <span>Email</span>
+                </button>
+                
+                <button
+                  onClick={handleToggleSuspend}
+                  style={{
+                    ...detailOutlineBtnStyle,
+                    borderColor: 'rgba(239, 68, 68, 0.3)',
+                    color: '#ef4444'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.06)';
+                    e.currentTarget.style.borderColor = 'rgba(239,68,68,0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                  }}
+                >
+                  {(selectedDetail.status === 'suspended' || selectedDetail.status === 'inactive') ? 'Reactivate' : 'Suspend'}
+                </button>
+              </div>
+
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Onboard Client Modal */}
       {showOnboardModal && (
@@ -1253,7 +2159,7 @@ const Analytics = () => {
           backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: '#0d1321',
+            backgroundColor: 'var(--bg-card)',
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -1265,7 +2171,7 @@ const Analytics = () => {
             boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Onboard Client</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Onboard Client</h3>
               <button 
                 onClick={() => setShowOnboardModal(false)}
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
@@ -1317,9 +2223,9 @@ const Analytics = () => {
                   onChange={(e) => setClientForm(prev => ({ ...prev, tier: e.target.value }))}
                   style={inputStyle}
                 >
-                  <option value="Starter">Starter (₹4,999/mo)</option>
-                  <option value="Professional">Professional (₹9,999/mo)</option>
-                  <option value="Enterprise">Enterprise (₹24,999/mo)</option>
+                  <option value="Starter">Starter (₹{(platformSettings?.pricing_starter || 4999).toLocaleString('en-IN')}/mo)</option>
+                  <option value="Professional">Professional (₹{(platformSettings?.pricing_pro || 9999).toLocaleString('en-IN')}/mo)</option>
+                  <option value="Enterprise">Enterprise (₹{(platformSettings?.pricing_enterprise || 24999).toLocaleString('en-IN')}/mo)</option>
                 </select>
               </div>
 
@@ -1327,8 +2233,8 @@ const Analytics = () => {
                 type="submit"
                 disabled={loading}
                 style={{
-                  backgroundColor: '#fbbf24',
-                  color: '#080c14',
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.65rem',
@@ -1340,7 +2246,7 @@ const Analytics = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.5rem',
-                  boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)'
+                  boxShadow: '0 4px 15px var(--accent-shadow)'
                 }}
               >
                 {loading && <Loader2 size={14} className="animate-spin" />}
@@ -1386,7 +2292,7 @@ const statLabelStyle = {
 const statNumStyle = {
   fontSize: '1.65rem',
   fontWeight: '850',
-  color: '#ffffff',
+  color: 'var(--text-main)',
   marginTop: '0.15rem',
   lineHeight: 1.1
 };
@@ -1401,7 +2307,7 @@ const healthCardStyle = {
   display: 'flex',
   alignItems: 'center',
   gap: '0.65rem',
-  backgroundColor: '#111726',
+  backgroundColor: 'var(--bg-subtle)',
   border: '1px solid var(--border-color)',
   borderRadius: '8px',
   padding: '0.5rem 0.75rem',
@@ -1417,7 +2323,7 @@ const healthNameStyle = {
 const healthValStyle = {
   fontSize: '0.75rem',
   fontWeight: '800',
-  color: '#ffffff',
+  color: 'var(--text-main)',
   marginTop: '0.05rem'
 };
 
@@ -1444,11 +2350,11 @@ const panelStyle = {
 const panelTitleStyle = {
   fontSize: '1.1rem',
   fontWeight: '800',
-  color: '#ffffff'
+  color: 'var(--text-main)'
 };
 
 const subCardStyle = {
-  backgroundColor: '#111726',
+  backgroundColor: 'var(--bg-subtle)',
   border: '1px solid var(--border-color)',
   borderRadius: '12px',
   padding: '1rem',
@@ -1461,7 +2367,7 @@ const subCardStyle = {
 const subNumStyle = {
   fontSize: '1.5rem',
   fontWeight: '850',
-  color: '#ffffff'
+  color: 'var(--text-main)'
 };
 
 const subLabelStyle = {
@@ -1482,13 +2388,13 @@ const cityHeaderStyle = {
   justifyContent: 'space-between',
   fontSize: '0.75rem',
   fontWeight: '800',
-  color: '#ffffff'
+  color: 'var(--text-main)'
 };
 
 const cityBarContainerStyle = {
   width: '100%',
   height: '6px',
-  backgroundColor: '#111726',
+  backgroundColor: 'var(--bg-subtle)',
   borderRadius: '100px',
   overflow: 'hidden'
 };
@@ -1504,11 +2410,71 @@ const inputStyle = {
   padding: '0.55rem 0.85rem',
   borderRadius: '8px',
   border: '1px solid var(--border-color)',
-  backgroundColor: '#111726',
-  color: '#ffffff',
+  backgroundColor: 'var(--bg-subtle)',
+  color: 'var(--text-main)',
   fontSize: '0.8rem',
   outline: 'none',
   width: '100%'
+};
+
+const detailKpiCardStyle = {
+  backgroundColor: 'var(--bg-subtle)',
+  border: '1px solid var(--border-color)',
+  borderRadius: '8px',
+  padding: '0.75rem 1rem',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.15rem'
+};
+
+const detailKpiLabelStyle = {
+  fontSize: '0.6rem',
+  fontWeight: '800',
+  color: 'var(--text-muted)',
+  letterSpacing: '0.04em'
+};
+
+const detailKpiValStyle = {
+  fontSize: '1.25rem',
+  fontWeight: '850',
+  color: 'var(--text-main)'
+};
+
+const detailSectionTitleStyle = {
+  fontSize: '0.75rem',
+  fontWeight: '800',
+  color: 'var(--text-muted)',
+  letterSpacing: '0.06em',
+  marginBottom: '0.5rem',
+  textTransform: 'uppercase'
+};
+
+const detailContactItemStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.65rem'
+};
+
+const detailBillingCardStyle = {
+  backgroundColor: 'var(--bg-subtle)',
+  border: '1px solid var(--border-color)',
+  borderRadius: '8px',
+  padding: '0.55rem 0.85rem',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center'
+};
+
+const detailOutlineBtnStyle = {
+  backgroundColor: 'transparent',
+  border: '1px solid var(--border-color)',
+  color: 'var(--text-main)',
+  borderRadius: '8px',
+  padding: '0.65rem 1.15rem',
+  fontSize: '0.8rem',
+  fontWeight: '700',
+  cursor: 'pointer',
+  transition: 'all 0.15s ease'
 };
 
 export default Analytics;

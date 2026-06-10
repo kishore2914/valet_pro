@@ -223,38 +223,19 @@ const IncidentTracker = () => {
       {/* Title Header Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Incidents</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Incidents</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             {openCount} open · {totalCount} total · {formatINR(totalCost)} estimated cost
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          {incidents.length > 0 && (
-            <button
-              onClick={handleClearIncidents}
-              disabled={loading}
-              style={{
-                backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                color: '#ef4444',
-                border: '1px solid rgba(239, 68, 68, 0.15)',
-                borderRadius: '10px',
-                padding: '0.65rem 1rem',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              Clear Database
-            </button>
-          )}
           {incidents.length === 0 && (
             <button
               onClick={handleSeedIncidents}
               disabled={loading}
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                color: 'var(--text-muted)',
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-main)',
                 border: '1px solid var(--border-color)',
                 borderRadius: '10px',
                 padding: '0.65rem 1rem',
@@ -353,7 +334,7 @@ const IncidentTracker = () => {
                 
                 {/* Header row */}
                 <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff', letterSpacing: '0.04em' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '0.04em' }}>
                     {type}
                   </span>
                   
@@ -400,7 +381,7 @@ const IncidentTracker = () => {
                 </div>
 
                 {/* Description */}
-                <div style={{ fontSize: '0.95rem', fontWeight: '600', color: '#ffffff', lineHeight: '1.4' }}>
+                <div style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.4' }}>
                   {inc.description}
                 </div>
 
@@ -416,7 +397,7 @@ const IncidentTracker = () => {
                   marginTop: '0.25rem' 
                 }}>
                   {inc.plate_number && (
-                    <span style={{ color: '#ffffff', fontWeight: '700' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: '700' }}>
                       {inc.plate_number}
                     </span>
                   )}
@@ -469,9 +450,9 @@ const IncidentTracker = () => {
           bottom: '2rem',
           left: '50%',
           transform: 'translateX(-50%)',
-          backgroundColor: '#111726',
+          backgroundColor: 'var(--bg-card)',
           border: '1px solid #fbbf24',
-          color: '#ffffff',
+          color: 'var(--text-main)',
           padding: '0.75rem 1.5rem',
           borderRadius: '12px',
           zIndex: 999999,

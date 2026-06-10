@@ -47,7 +47,8 @@ export const LocaleProvider = ({ children }) => {
 
   const [platformSettings, setPlatformSettings] = useState({
     pricing_starter: 3999,
-    pricing_pro: 7999
+    pricing_pro: 7999,
+    pricing_enterprise: 24999
   });
 
   useEffect(() => {

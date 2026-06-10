@@ -45,129 +45,6 @@ const getShiftColor = (shift) => {
   };
 };
 
-const initialSchedule = [
-  {
-    id: 's-1',
-    staffName: 'Arun M',
-    zone: 'A',
-    role: 'Valet',
-    hourlyRate: 500,
-    tipsEarned: 4850,
-    mon: 'Evening',
-    tue: 'Morning',
-    wed: 'Off',
-    thu: 'Night',
-    fri: 'Evening',
-    sat: 'Morning',
-    sun: 'Off'
-  },
-  {
-    id: 's-2',
-    staffName: 'Karthik R',
-    zone: 'B',
-    role: 'Valet',
-    hourlyRate: 500,
-    tipsEarned: 3620,
-    mon: 'Night',
-    tue: 'Evening',
-    wed: 'Morning',
-    thu: 'Off',
-    fri: 'Night',
-    sat: 'Evening',
-    sun: 'Morning'
-  },
-  {
-    id: 's-3',
-    staffName: 'Suresh P',
-    zone: 'All',
-    role: 'Supervisor',
-    hourlyRate: 650,
-    tipsEarned: 2400,
-    mon: 'Off',
-    tue: 'Night',
-    wed: 'Evening',
-    thu: 'Morning',
-    fri: 'Off',
-    sat: 'Night',
-    sun: 'Evening'
-  },
-  {
-    id: 's-4',
-    staffName: 'Vijay K',
-    zone: 'C',
-    role: 'Valet',
-    hourlyRate: 500,
-    tipsEarned: 1850,
-    mon: 'Morning',
-    tue: 'Off',
-    wed: 'Night',
-    thu: 'Evening',
-    fri: 'Morning',
-    sat: 'Off',
-    sun: 'Night'
-  },
-  {
-    id: 's-5',
-    staffName: 'Ravi S',
-    zone: 'A',
-    role: 'Valet',
-    hourlyRate: 500,
-    tipsEarned: 1400,
-    mon: 'Evening',
-    tue: 'Morning',
-    wed: 'Off',
-    thu: 'Night',
-    fri: 'Evening',
-    sat: 'Morning',
-    sun: 'Off'
-  },
-  {
-    id: 's-6',
-    staffName: 'Deepak L',
-    zone: 'B',
-    role: 'Valet',
-    hourlyRate: 500,
-    tipsEarned: 0,
-    mon: 'Night',
-    tue: 'Evening',
-    wed: 'Morning',
-    thu: 'Off',
-    fri: 'Night',
-    sat: 'Evening',
-    sun: 'Morning'
-  },
-  {
-    id: 's-7',
-    staffName: 'Mani T',
-    zone: 'C',
-    role: 'Valet',
-    hourlyRate: 500,
-    tipsEarned: 0,
-    mon: 'Off',
-    tue: 'Night',
-    wed: 'Evening',
-    thu: 'Morning',
-    fri: 'Off',
-    sat: 'Night',
-    sun: 'Evening'
-  },
-  {
-    id: 's-8',
-    staffName: 'Bala N',
-    zone: 'All',
-    role: 'Supervisor',
-    hourlyRate: 650,
-    tipsEarned: 0,
-    mon: 'Morning',
-    tue: 'Off',
-    wed: 'Night',
-    thu: 'Evening',
-    fri: 'Morning',
-    sat: 'Off',
-    sun: 'Night'
-  }
-];
-
 const Schedule = () => {
   const { locationId } = useAuth();
   const [activeTab, setActiveTab] = useState('Weekly Schedule');
@@ -240,8 +117,7 @@ const Schedule = () => {
         });
         setScheduleData(dbSchedule);
       } else {
-        // Fall back to initialSchedule if database has no staff members
-        setScheduleData(initialSchedule);
+        setScheduleData([]);
       }
     }
   }, [dbStaff, loading]);
@@ -326,7 +202,7 @@ const Schedule = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: '#ffffff' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: 'var(--text-main)' }}>
         <Loader2 className="animate-spin" size={32} />
         <span style={{ marginLeft: '0.75rem', fontWeight: '600' }}>Loading Schedule & Payroll...</span>
       </div>
@@ -339,7 +215,7 @@ const Schedule = () => {
       {/* Title Header Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Schedule & Payroll</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Schedule & Payroll</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             Plan shifts and track earnings
           </p>
@@ -349,8 +225,8 @@ const Schedule = () => {
             onClick={handleExport}
             disabled={isExporting}
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.03)',
-              color: '#ffffff',
+              backgroundColor: 'var(--bg-card)',
+              color: 'var(--text-main)',
               border: '1px solid var(--border-color)',
               borderRadius: '10px',
               padding: '0.65rem 1rem',
@@ -372,8 +248,8 @@ const Schedule = () => {
               setShowAddModal(true);
             }}
             style={{
-              backgroundColor: '#fbbf24',
-              color: '#080c14',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--accent-text)',
               border: 'none',
               borderRadius: '10px',
               padding: '0.65rem 1.15rem',
@@ -383,7 +259,7 @@ const Schedule = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)',
+              boxShadow: '0 4px 15px var(--accent-shadow)',
               transition: 'all 0.15s ease'
             }}
           >
@@ -409,7 +285,7 @@ const Schedule = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Total Hours
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               {totalHoursCount.toFixed(1)}h
             </span>
           </div>
@@ -430,7 +306,7 @@ const Schedule = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Weekly Payroll
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               ₹{(totalPayrollCost / 1000).toFixed(1)}K
             </span>
           </div>
@@ -451,7 +327,7 @@ const Schedule = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Tips Collected
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               ₹{(totalTipsCount / 1000).toFixed(1)}K
             </span>
           </div>
@@ -472,7 +348,7 @@ const Schedule = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Active Staff
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               {activeStaffCount}
             </span>
           </div>
@@ -483,8 +359,8 @@ const Schedule = () => {
       {/* Tabs Selector row */}
       <div style={{ 
         display: 'inline-flex', 
-        backgroundColor: '#111726', 
-        border: '1px solid #1a2236',
+        backgroundColor: 'var(--bg-card)', 
+        border: '1px solid var(--border-color)',
         borderRadius: '8px', 
         padding: '0.25rem',
         alignSelf: 'flex-start'
@@ -523,8 +399,8 @@ const Schedule = () => {
             <div style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              backgroundColor: '#111726', 
-              border: '1px solid #1a2236', 
+              backgroundColor: 'var(--bg-card)', 
+              border: '1px solid var(--border-color)', 
               borderRadius: '8px', 
               padding: '0.25rem' 
             }}>
@@ -540,7 +416,7 @@ const Schedule = () => {
               }}>
                 <ChevronLeft size={14} />
               </button>
-              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff', padding: '0 0.75rem' }}>Week Current</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-main)', padding: '0 0.75rem' }}>Week Current</span>
               <button style={{ 
                 padding: '0.35rem 0.55rem', 
                 color: '#64748b', 
@@ -580,180 +456,228 @@ const Schedule = () => {
           </div>
 
           {/* Schedule Grid Table */}
-          <div style={{
-            backgroundColor: 'var(--bg-card)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '12px',
-            overflow: 'hidden'
-          }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255,255,255,0.01)' }}>
-                    <th style={{ padding: '1rem', textLeft: 'left', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', minWidth: '150px', textAlign: 'left' }}>Staff</th>
-                    {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(day => (
-                      <th key={day} style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)' }}>{day}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentList.map(staff => (
-                    <tr 
-                      key={staff.id} 
-                      style={{ borderBottom: '1px solid var(--border-color)', transition: 'all 0.15s' }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.01)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      {/* Staff Identity Column */}
-                      <td style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ffffff' }}>{staff.staffName}</span>
-                          <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>{staff.zone}</span>
-                        </div>
-                      </td>
-
-                      {/* Day Shift cells */}
-                      {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => {
-                        const shift = staff[day];
-                        const color = getShiftColor(shift);
-                        const isEditing = editingCell && editingCell.rowId === staff.id && editingCell.day === day;
-
-                        return (
-                          <td key={day} style={{ padding: '0.85rem 0.5rem', position: 'relative' }}>
-                            {isEditing ? (
-                              <select
-                                value={shift}
-                                autoFocus
-                                onBlur={() => setEditingCell(null)}
-                                onChange={(e) => handleCellChange(staff.id, day, e.target.value)}
-                                style={{
-                                  padding: '0.2rem 0.35rem',
-                                  fontSize: '0.65rem',
-                                  fontWeight: '700',
-                                  borderRadius: '6px',
-                                  backgroundColor: '#111726',
-                                  color: '#ffffff',
-                                  border: '1px solid #fbbf24',
-                                  outline: 'none',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                <option value="Morning">Morning</option>
-                                <option value="Evening">Evening</option>
-                                <option value="Night">Night</option>
-                                <option value="Off">Off</option>
-                              </select>
-                            ) : (
-                              <div
-                                onClick={() => handleCellClick(staff.id, day)}
-                                style={{
-                                  padding: '0.45rem 0',
-                                  borderRadius: '6px',
-                                  backgroundColor: color.bg,
-                                  color: color.color,
-                                  border: color.border,
-                                  fontSize: '0.7rem',
-                                  fontWeight: '700',
-                                  cursor: 'pointer',
-                                  width: '100%',
-                                  transition: 'all 0.1s ease',
-                                  textAlign: 'center'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.15)'}
-                                onMouseLeave={(e) => e.currentTarget.style.filter = 'none'}
-                              >
-                                {shift}
-                              </div>
-                            )}
-                          </td>
-                        );
-                      })}
-
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {currentList.length === 0 ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4rem 2rem',
+              backgroundColor: 'var(--bg-card)',
+              border: '1px dashed var(--border-color)',
+              borderRadius: '16px',
+              textAlign: 'center',
+              gap: '1rem',
+              color: 'var(--text-muted)'
+            }}>
+              <Calendar size={48} style={{ opacity: 0.3, color: '#fbbf24' }} />
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.25rem' }}>No Shifts Scheduled</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '300px', margin: '0 auto', lineHeight: '1.4' }}>
+                  Please add staff members in the Staff tab to manage and schedule their weekly shifts.
+                </p>
+              </div>
             </div>
-          </div>
-
-        </div>
-      ) : (
-        /* Payroll View */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          
-          <div style={{
-            backgroundColor: 'var(--bg-card)',
-            border: '1px solid var(--border-color)',
-            borderRadius: '12px',
-            overflow: 'hidden'
-          }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255,255,255,0.01)' }}>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Staff Member</th>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Role</th>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Hours worked</th>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Hourly Rate</th>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Base pay</th>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Tips earned</th>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Gross Pay</th>
-                    <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentList.map(staff => {
-                    const hours = calculateHoursForStaff(staff);
-                    const basePay = hours * staff.hourlyRate;
-                    const grossPay = basePay + staff.tipsEarned;
-
-                    return (
+          ) : (
+            <div style={{
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '12px',
+              overflow: 'hidden'
+            }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255,255,255,0.01)' }}>
+                      <th style={{ padding: '1rem', textLeft: 'left', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', minWidth: '150px', textAlign: 'left' }}>Staff</th>
+                      {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map(day => (
+                        <th key={day} style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)' }}>{day}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentList.map(staff => (
                       <tr 
                         key={staff.id} 
                         style={{ borderBottom: '1px solid var(--border-color)', transition: 'all 0.15s' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.01)'}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
-                        <td style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: '800', color: '#ffffff' }}>
-                          {staff.staffName}
+                        {/* Staff Identity Column */}
+                        <td style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>{staff.staffName}</span>
+                            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>{staff.zone}</span>
+                          </div>
                         </td>
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                          {staff.role}
-                        </td>
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: '#ffffff' }}>
-                          {hours.toFixed(1)}h
-                        </td>
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: '#ffffff' }}>
-                          {formatCurrency(staff.hourlyRate)}/hr
-                        </td>
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: '#ffffff' }}>
-                          {formatCurrency(basePay)}
-                        </td>
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: '#ffffff' }}>
-                          {formatCurrency(staff.tipsEarned)}
-                        </td>
-                        <td style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: '800', color: '#fbbf24' }}>
-                          {formatCurrency(grossPay)}
-                        </td>
-                        <td style={{ padding: '1rem' }}>
-                          <span style={{
-                            padding: '0.15rem 0.45rem',
-                            borderRadius: '4px',
-                            fontSize: '0.65rem',
-                            fontWeight: '700',
-                            backgroundColor: grossPay > 0 ? 'rgba(16, 185, 129, 0.12)' : 'rgba(100, 116, 139, 0.12)',
-                            color: grossPay > 0 ? '#10b981' : '#64748b'
-                          }}>
-                            {grossPay > 0 ? 'Paid' : 'Unpaid'}
-                          </span>
-                        </td>
+
+                        {/* Day Shift cells */}
+                        {['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map(day => {
+                          const shift = staff[day];
+                          const color = getShiftColor(shift);
+                          const isEditing = editingCell && editingCell.rowId === staff.id && editingCell.day === day;
+
+                          return (
+                            <td key={day} style={{ padding: '0.85rem 0.5rem', position: 'relative' }}>
+                              {isEditing ? (
+                                <select
+                                  value={shift}
+                                  autoFocus
+                                  onBlur={() => setEditingCell(null)}
+                                  onChange={(e) => handleCellChange(staff.id, day, e.target.value)}
+                                  style={{
+                                    padding: '0.2rem 0.35rem',
+                                    fontSize: '0.65rem',
+                                    fontWeight: '700',
+                                    borderRadius: '6px',
+                                    backgroundColor: 'var(--bg-subtle)',
+                                    color: 'var(--text-main)',
+                                    border: '1px solid #fbbf24',
+                                    outline: 'none',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <option value="Morning">Morning</option>
+                                  <option value="Evening">Evening</option>
+                                  <option value="Night">Night</option>
+                                  <option value="Off">Off</option>
+                                </select>
+                              ) : (
+                                <div
+                                  onClick={() => handleCellClick(staff.id, day)}
+                                  style={{
+                                    padding: '0.45rem 0',
+                                    borderRadius: '6px',
+                                    backgroundColor: color.bg,
+                                    color: color.color,
+                                    border: color.border,
+                                    fontSize: '0.7rem',
+                                    fontWeight: '700',
+                                    cursor: 'pointer',
+                                    width: '100%',
+                                    transition: 'all 0.1s ease',
+                                    textAlign: 'center'
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.15)'}
+                                  onMouseLeave={(e) => e.currentTarget.style.filter = 'none'}
+                                >
+                                  {shift}
+                                </div>
+                              )}
+                            </td>
+                          );
+                        })}
+
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
+          )}
+
+        </div>
+      ) : (
+        /* Payroll View */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          
+          {currentList.length === 0 ? (
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4rem 2rem',
+              backgroundColor: 'var(--bg-card)',
+              border: '1px dashed var(--border-color)',
+              borderRadius: '16px',
+              textAlign: 'center',
+              gap: '1rem',
+              color: 'var(--text-muted)'
+            }}>
+              <Users size={48} style={{ opacity: 0.3, color: '#fbbf24' }} />
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.25rem' }}>No Payroll Data</h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '300px', margin: '0 auto', lineHeight: '1.4' }}>
+                  Weekly payroll will show up once staff members are scheduled for active shifts.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div style={{
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '12px',
+              overflow: 'hidden'
+            }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255,255,255,0.01)' }}>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Staff Member</th>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Role</th>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Hours worked</th>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Hourly Rate</th>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Base pay</th>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Tips earned</th>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Gross Pay</th>
+                      <th style={{ padding: '1rem', fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentList.map(staff => {
+                      const hours = calculateHoursForStaff(staff);
+                      const basePay = hours * staff.hourlyRate;
+                      const grossPay = basePay + staff.tipsEarned;
+
+                      return (
+                        <tr 
+                          key={staff.id} 
+                          style={{ borderBottom: '1px solid var(--border-color)', transition: 'all 0.15s' }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.01)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
+                          <td style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                            {staff.staffName}
+                          </td>
+                          <td style={{ padding: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            {staff.role}
+                          </td>
+                          <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>
+                            {hours.toFixed(1)}h
+                          </td>
+                          <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>
+                            {formatCurrency(staff.hourlyRate)}/hr
+                          </td>
+                          <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>
+                            {formatCurrency(basePay)}
+                          </td>
+                          <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>
+                            {formatCurrency(staff.tipsEarned)}
+                          </td>
+                          <td style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: '800', color: '#fbbf24' }}>
+                            {formatCurrency(grossPay)}
+                          </td>
+                          <td style={{ padding: '1rem' }}>
+                            <span style={{
+                              padding: '0.15rem 0.45rem',
+                              borderRadius: '4px',
+                              fontSize: '0.65rem',
+                              fontWeight: '700',
+                              backgroundColor: grossPay > 0 ? 'rgba(16, 185, 129, 0.12)' : 'rgba(100, 116, 139, 0.12)',
+                              color: grossPay > 0 ? '#10b981' : '#64748b'
+                            }}>
+                              {grossPay > 0 ? 'Paid' : 'Unpaid'}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
         </div>
       )}
@@ -774,7 +698,7 @@ const Schedule = () => {
           backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: '#0d1321',
+            backgroundColor: 'var(--bg-surface)',
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -787,7 +711,7 @@ const Schedule = () => {
           }}>
             {/* Modal Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Assign New Shift</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Assign New Shift</h3>
               <button 
                 onClick={() => setShowAddModal(false)}
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
@@ -808,8 +732,8 @@ const Schedule = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -830,8 +754,8 @@ const Schedule = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -856,8 +780,8 @@ const Schedule = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none',
                     width: '100%'
@@ -873,8 +797,8 @@ const Schedule = () => {
               <button
                 type="submit"
                 style={{
-                  backgroundColor: '#fbbf24',
-                  color: '#080c14',
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.65rem',
@@ -882,7 +806,7 @@ const Schedule = () => {
                   fontWeight: '700',
                   cursor: 'pointer',
                   marginTop: '0.5rem',
-                  boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)'
+                  boxShadow: '0 4px 15px var(--accent-shadow)'
                 }}
               >
                 Assign Shift

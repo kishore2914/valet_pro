@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
 
 :root {
-  --font-main: 'Outfit', 'Inter', sans-serif;
-  --font-sans: 'Inter', sans-serif;
+  --font-main: -apple-system, BlinkMacSystemFont, "SF Pro", "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro", "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   /* Color Palette - Slate & Deep Blue */
   --slate-50: #f8fafc;
@@ -28,9 +28,14 @@
   /* Functional Colors */
   --primary: var(--blue-600);
   --primary-hover: var(--blue-700);
-  --accent: var(--gold-500);
+  --accent: var(--blue-600);
+  --accent-hover: var(--blue-700);
+  --accent-text: #ffffff;
+  --accent-shadow: rgba(37, 99, 235, 0.2);
+  --accent-alpha: rgba(37, 99, 235, 0.12);
+  --bg-toggle-inactive: rgba(0, 0, 0, 0.05);
   --bg-app: var(--slate-50);
-  --bg-card: rgba(255, 255, 255, 0.15);
+  --bg-card: #ffffff;
   --bg-surface: #ffffff;
   --bg-subtle: var(--slate-100);
   --text-main: var(--slate-900);
@@ -72,6 +77,13 @@
   --text-muted: #64748b;
   --border-color: #1a2236;
   --border-subtle: #141b2c;
+  
+  --accent: #fbbf24;
+  --accent-hover: #d97706;
+  --accent-text: #080c14;
+  --accent-shadow: rgba(251, 191, 36, 0.15);
+  --accent-alpha: rgba(251, 191, 36, 0.12);
+  --bg-toggle-inactive: rgba(255, 255, 255, 0.05);
   
   --badge-gray-bg: #141b2d;
   --badge-gray-text: #94a3b8;

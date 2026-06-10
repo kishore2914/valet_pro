@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { useTheme } from '../../context/ThemeContext';
 
 // Helper to format currency
 const formatINR = (val) => {
@@ -194,14 +195,17 @@ const Forecast = () => {
     };
   });
 
+  const { theme } = useTheme();
+
   const getIntensityColor = (val) => {
+    const isDark = theme === 'dark';
     switch (val) {
-      case 0: return '#0d1321'; // Quietest cell
-      case 1: return '#15223c'; // Low
-      case 2: return '#293a5c'; // Medium
-      case 3: return '#a16207'; // Medium-High (gold/orange)
+      case 0: return isDark ? '#0d1321' : '#f1f5f9'; // Quietest cell
+      case 1: return isDark ? '#15223c' : '#cbd5e1'; // Low
+      case 2: return isDark ? '#293a5c' : '#94a3b8'; // Medium
+      case 3: return '#d97706'; // Medium-High (gold/orange)
       case 4: return '#fbbf24'; // Highest Peak (gold)
-      default: return '#0d1321';
+      default: return isDark ? '#0d1321' : '#f1f5f9';
     }
   };
 
@@ -211,7 +215,7 @@ const Forecast = () => {
       {/* Title Header Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Forecast & Heatmap</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Forecast & Heatmap</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             Predict peak hours and revenue trends
           </p>
@@ -235,7 +239,7 @@ const Forecast = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Next 7 Days
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', display: 'flex', alignItems: 'center' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center' }}>
               ₹{(metrics.next7DaysRevenue / 1000).toFixed(0)}K
             </span>
           </div>
@@ -277,7 +281,7 @@ const Forecast = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Predicted Volume
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               {metrics.predictedVolume.toLocaleString()}
             </span>
           </div>
@@ -298,7 +302,7 @@ const Forecast = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Peak Day
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               {metrics.peakDay.substring(0, 3)}
             </span>
           </div>
@@ -328,7 +332,7 @@ const Forecast = () => {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Peak Hour Heatmap</h2>
+              <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Peak Hour Heatmap</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '500' }}>
                 Last 30-day average – darker = busier
               </p>
@@ -395,7 +399,7 @@ const Forecast = () => {
                           backgroundColor: getIntensityColor(intensity),
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
-                          border: isHovered ? '2px solid #ffffff' : '1px solid rgba(0,0,0,0.2)',
+                          border: isHovered ? '2px solid var(--text-main)' : '1px solid rgba(0,0,0,0.2)',
                           boxShadow: isHovered ? '0 0 10px rgba(251, 191, 36, 0.4)' : 'none',
                           transform: isHovered ? 'scale(1.1)' : 'none',
                           zIndex: isHovered ? 10 : 1
@@ -414,13 +418,13 @@ const Forecast = () => {
               position: 'absolute',
               bottom: '1rem',
               right: '1.5rem',
-              backgroundColor: '#111726',
+              backgroundColor: 'var(--bg-card)',
               border: '1.5px solid var(--border-color)',
               borderRadius: '8px',
               padding: '0.45rem 0.75rem',
               fontSize: '0.7rem',
               fontWeight: '700',
-              color: '#ffffff',
+              color: 'var(--text-main)',
               boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
               display: 'flex',
               alignItems: 'center',
@@ -450,7 +454,7 @@ const Forecast = () => {
           gap: '1.25rem'
         }}>
           <div>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Top Peak Slots</h2>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Top Peak Slots</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '500' }}>
               Schedule extra staff for these
             </p>
@@ -470,7 +474,7 @@ const Forecast = () => {
                     alignItems: 'center',
                     gap: '1rem',
                     padding: '0.75rem',
-                    backgroundColor: '#111726',
+                    backgroundColor: 'var(--bg-card)',
                     borderRadius: '12px',
                     border: '1px solid var(--border-color)',
                     transition: 'all 0.15s ease'
@@ -498,7 +502,7 @@ const Forecast = () => {
 
                   {/* Details */}
                   <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, gap: '0.15rem' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
                       {slot.day} · {slot.time}
                     </span>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
@@ -536,7 +540,7 @@ const Forecast = () => {
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>
               Revenue Forecast – Next 7 Days
             </h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: '500' }}>
@@ -679,14 +683,14 @@ const Forecast = () => {
               top: '10px',
               left: '50%',
               transform: 'translateX(-50%)',
-              backgroundColor: '#111726',
+              backgroundColor: 'var(--bg-card)',
               border: '1px solid #fbbf24',
               borderRadius: '8px',
               padding: '0.5rem 1rem',
               boxShadow: '0 10px 25px rgba(0, 0, 0, 0.4)',
               fontSize: '0.75rem',
               fontWeight: '700',
-              color: '#ffffff',
+              color: 'var(--text-main)',
               pointerEvents: 'none',
               zIndex: 10,
               display: 'flex',

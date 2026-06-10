@@ -144,11 +144,11 @@ const DashboardLayout = ({ role }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.45rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)',
               border: '1px solid var(--border-color)',
               borderRadius: '8px',
               padding: '0.45rem 0.85rem',
-              color: '#ffffff',
+              color: 'var(--text-main)',
               fontSize: '0.75rem',
               fontWeight: '700',
               cursor: 'pointer'
@@ -179,7 +179,7 @@ const DashboardLayout = ({ role }) => {
             {/* User Profile Info */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderLeft: '1px solid var(--border-color)', paddingLeft: '1.25rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#ffffff' }}>{displayName}</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{displayName}</span>
                 <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '500' }}>
                   {profile?.role === 'admin' ? 'Platform Owner' : (profile?.role || 'Platform Owner')}
                 </span>
@@ -321,7 +321,7 @@ const DashboardLayout = ({ role }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: 'rgba(255, 255, 255, 0.03)'
+              backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'
             }}
           >
             {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
@@ -338,9 +338,9 @@ const DashboardLayout = ({ role }) => {
             display: 'flex',
             alignItems: 'center',
             padding: '0.65rem 0.85rem',
-            backgroundColor: '#111726',
+            backgroundColor: theme === 'dark' ? '#111726' : '#f0f7ff',
             borderRadius: '12px',
-            border: '1px solid #1c2438',
+            border: theme === 'dark' ? '1px solid #1c2438' : '1px solid rgba(37, 99, 235, 0.15)',
             gap: '0.75rem',
             cursor: 'pointer'
           }}>
@@ -348,8 +348,8 @@ const DashboardLayout = ({ role }) => {
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              backgroundColor: 'rgba(251, 191, 36, 0.1)',
-              color: '#fbbf24',
+              backgroundColor: theme === 'dark' ? 'rgba(251, 191, 36, 0.1)' : 'rgba(37, 99, 235, 0.1)',
+              color: theme === 'dark' ? '#fbbf24' : '#2563eb',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -358,14 +358,14 @@ const DashboardLayout = ({ role }) => {
               <MapPin size={16} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
+              <div style={{ fontSize: '0.8rem', fontWeight: '700', color: theme === 'dark' ? '#ffffff' : '#1e3a8a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
                 {selectedLocation ? (selectedLocation.name || selectedLocation.hotelName) : 'ITC Grand Chola'}
               </div>
-              <div style={{ fontSize: '0.65rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
+              <div style={{ fontSize: '0.65rem', color: theme === 'dark' ? '#64748b' : '#3b82f6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.2 }}>
                 {selectedLocation?.city_name ? `${selectedLocation.city_name} - ${selectedLocation.company_name || 'ITC Hotels'}` : 'Chennai - ITC Hotels'}
               </div>
             </div>
-            <ChevronDown size={14} style={{ color: '#64748b', flexShrink: 0 }} />
+            <ChevronDown size={14} style={{ color: theme === 'dark' ? '#64748b' : '#3b82f6', flexShrink: 0 }} />
             
             {locations && locations.length > 0 && (
               <select
@@ -384,7 +384,7 @@ const DashboardLayout = ({ role }) => {
                 {(locations || []).map(loc => {
                   if (!loc) return null;
                   return (
-                    <option key={loc.id} value={loc.id} style={{ color: '#ffffff', backgroundColor: '#0d1321' }}>
+                    <option key={loc.id} value={loc.id} style={{ color: theme === 'dark' ? '#ffffff' : 'var(--text-main)', backgroundColor: theme === 'dark' ? '#0d1321' : '#ffffff' }}>
                       {loc.name || loc.hotelName} {loc.city_name ? `- ${loc.city_name}` : ''}
                     </option>
                   );
@@ -407,11 +407,11 @@ const DashboardLayout = ({ role }) => {
                   alignItems: 'center',
                   gap: '0.85rem',
                   padding: '0.65rem 0.85rem',
-                  color: isActive ? '#fbbf24' : 'var(--text-muted)',
+                  color: isActive ? (theme === 'dark' ? '#fbbf24' : '#2563eb') : 'var(--text-muted)',
                   cursor: 'pointer',
                   borderRadius: '10px',
-                  backgroundColor: isActive ? '#161e2e' : 'transparent',
-                  border: isActive ? '1px solid rgba(251, 191, 36, 0.15)' : '1px solid transparent',
+                  backgroundColor: isActive ? (theme === 'dark' ? '#161e2e' : 'rgba(37, 99, 235, 0.08)') : 'transparent',
+                  border: isActive ? (theme === 'dark' ? '1px solid rgba(251, 191, 36, 0.15)' : '1px solid rgba(37, 99, 235, 0.15)') : '1px solid transparent',
                   transition: 'all 0.2s ease',
                   width: '100%'
                 }}
@@ -421,7 +421,7 @@ const DashboardLayout = ({ role }) => {
                   }
                 }}
               >
-                <Icon size={18} style={{ color: isActive ? '#fbbf24' : 'inherit' }} />
+                <Icon size={18} style={{ color: isActive ? (theme === 'dark' ? '#fbbf24' : '#2563eb') : 'inherit' }} />
                 <span style={{ fontWeight: isActive ? '600' : '500', fontSize: '0.85rem' }}>
                   {item.name}
                 </span>
@@ -457,38 +457,38 @@ const DashboardLayout = ({ role }) => {
                 bottom: 'calc(100% + 8px)',
                 left: '0',
                 right: '0',
-                backgroundColor: '#111726',
-                border: '1px solid #1c2438',
+                backgroundColor: theme === 'dark' ? '#111726' : '#ffffff',
+                border: theme === 'dark' ? '1px solid #1c2438' : '1px solid #bfdbfe',
                 borderRadius: '12px',
                 padding: '1rem',
-                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)',
+                boxShadow: theme === 'dark' ? '0 10px 25px -5px rgba(0,0,0,0.5)' : '0 10px 25px -5px rgba(37, 99, 235, 0.1)',
                 zIndex: 100,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.5rem'
               }}>
-                <div style={{ fontWeight: '700', fontSize: '0.85rem', color: '#ffffff' }}>Profile Details</div>
-                <div style={{ height: '1px', backgroundColor: 'var(--border-color)', margin: '0.25rem 0' }} />
+                <div style={{ fontWeight: '700', fontSize: '0.85rem', color: theme === 'dark' ? '#ffffff' : '#1e3a8a' }}>Profile Details</div>
+                <div style={{ height: '1px', backgroundColor: theme === 'dark' ? 'var(--border-color)' : '#bfdbfe', margin: '0.25rem 0' }} />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                   <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Name</div>
-                  <div style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '500' }}>{displayName}</div>
+                  <div style={{ fontSize: '0.8rem', color: theme === 'dark' ? '#ffffff' : 'var(--text-main)', fontWeight: '500' }}>{displayName}</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                   <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Role</div>
-                  <div style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '500' }}>
+                  <div style={{ fontSize: '0.8rem', color: theme === 'dark' ? '#ffffff' : 'var(--text-main)', fontWeight: '500' }}>
                     {role === 'valet' ? 'Valet In-Charge' : role === 'valet_staff' ? 'Valet Staff' : 'Global Admin'}
                   </div>
                 </div>
                 {userEmail && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                     <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email</div>
-                    <div style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '500', wordBreak: 'break-all' }}>{userEmail}</div>
+                    <div style={{ fontSize: '0.8rem', color: theme === 'dark' ? '#ffffff' : 'var(--text-main)', fontWeight: '500', wordBreak: 'break-all' }}>{userEmail}</div>
                   </div>
                 )}
                 {mobileNumber && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
                     <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phone</div>
-                    <div style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '500' }}>{mobileNumber}</div>
+                    <div style={{ fontSize: '0.8rem', color: theme === 'dark' ? '#ffffff' : 'var(--text-main)', fontWeight: '500' }}>{mobileNumber}</div>
                   </div>
                 )}
               </div>
@@ -500,15 +500,15 @@ const DashboardLayout = ({ role }) => {
               gap: '0.75rem', 
               padding: '0.5rem 0.75rem', 
               borderRadius: '12px', 
-              backgroundColor: '#111726',
-              border: '1px solid #1c2438'
+              backgroundColor: theme === 'dark' ? '#111726' : '#f0f7ff',
+              border: theme === 'dark' ? '1px solid #1c2438' : '1px solid rgba(37, 99, 235, 0.15)'
             }}>
               <div style={{ 
                 width: '36px', 
                 height: '36px', 
                 borderRadius: '50%', 
-                backgroundColor: '#fbbf24', 
-                color: '#080c14', 
+                backgroundColor: theme === 'dark' ? '#fbbf24' : '#2563eb', 
+                color: theme === 'dark' ? '#080c14' : '#ffffff', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
@@ -519,10 +519,10 @@ const DashboardLayout = ({ role }) => {
                 {initials}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff', textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: theme === 'dark' ? '#ffffff' : '#1e3a8a', textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {displayName}
                 </span>
-                <span style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: '500' }}>
+                <span style={{ fontSize: '0.65rem', color: theme === 'dark' ? '#64748b' : '#3b82f6', fontWeight: '500' }}>
                   {role === 'valet' ? 'Valet In-Charge' : role === 'valet_staff' ? 'Valet Staff' : 'Global Admin'}
                 </span>
               </div>

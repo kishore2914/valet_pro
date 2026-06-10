@@ -35,11 +35,30 @@ export const adminService = {
       const { count: vehicleCount, error: carError } = await supabase.from('vehicles').select('*', { count: 'exact', head: true }).is('delivered_at', null);
       if (carError) throw carError;
 
+      // Sum all completed payments
+      const { data: payments } = await supabase
+        .from('payments')
+        .select('amount')
+        .eq('status', 'completed');
+      
+      let totalRevenue = 0;
+      if (payments && payments.length > 0) {
+        totalRevenue = payments.reduce((sum, p) => sum + Number(p.amount), 0);
+      } else {
+        // Fallback: sum active locations' monthly fees
+        const { data: activeLocs } = await supabase.from('locations').select('monthly_fee').eq('status', 'active');
+        if (activeLocs) {
+          activeLocs.forEach(loc => {
+            totalRevenue += parseInt((loc.monthly_fee || '').replace(/[^0-9]/g, '')) || 0;
+          });
+        }
+      }
+
       return { 
         data: {
           locationCount: locationCount || 0,
           vehicleCount: vehicleCount || 0,
-          revenue: 0 // Initialize to 0 until payments/subscriptions table is implemented
+          revenue: totalRevenue
         },
         error: null
       };

@@ -73,8 +73,12 @@ const ClientManagement = () => {
         {location.id.slice(0, 8)}...
       </div>
     ),
-    status: <Badge variant="green">Active</Badge>,
-    locations: 1, 
+    status: (
+      <Badge variant={location.status === 'active' ? 'green' : location.status === 'trial' ? 'blue' : 'gray'}>
+        {location.status ? location.status.toUpperCase() : 'ACTIVE'}
+      </Badge>
+    ),
+    locations: 5, 
     joined: new Date(location.created_at).toLocaleDateString('en-IN'),
     actions: (
       <div style={{ display: 'flex', gap: '0.5rem' }}>

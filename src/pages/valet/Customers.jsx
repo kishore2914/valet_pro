@@ -508,30 +508,12 @@ const Customers = () => {
       {/* Title Header Section */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Customers & VIPs</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Customers & VIPs</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             {totalCount} customers · {vipCount} VIPs
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          {customCustomers.length > 0 && (
-            <button
-              onClick={handleClearCustomers}
-              style={{
-                backgroundColor: 'rgba(239, 68, 68, 0.08)',
-                color: '#ef4444',
-                border: '1px solid rgba(239, 68, 68, 0.15)',
-                borderRadius: '10px',
-                padding: '0.65rem 1rem',
-                fontSize: '0.85rem',
-                fontWeight: '700',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              Clear Database
-            </button>
-          )}
           {customCustomers.length === 0 && (
             <button
               onClick={handleSeedCustomers}
@@ -553,8 +535,8 @@ const Customers = () => {
           <button
             onClick={() => setShowAddModal(true)}
             style={{
-              backgroundColor: '#fbbf24',
-              color: '#080c14',
+              backgroundColor: 'var(--accent)',
+              color: 'var(--accent-text)',
               border: 'none',
               borderRadius: '10px',
               padding: '0.65rem 1.15rem',
@@ -564,11 +546,11 @@ const Customers = () => {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)',
+              boxShadow: '0 4px 15px var(--accent-shadow)',
               transition: 'all 0.15s ease'
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
           >
             <Plus size={16} />
             <span>Add Customer</span>
@@ -592,7 +574,7 @@ const Customers = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Total
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>{totalCount}</span>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>{totalCount}</span>
           </div>
           <div style={{ color: 'var(--text-muted)', opacity: 0.7 }}><Star size={20} /></div>
         </div>
@@ -630,7 +612,7 @@ const Customers = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Lifetime Revenue
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)' }}>
               ₹{(totalRevenue / 1000).toFixed(1)}K
             </span>
           </div>
@@ -651,7 +633,7 @@ const Customers = () => {
             <span style={{ fontSize: '0.65rem', fontWeight: '800', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Avg Rating
             </span>
-            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
               <span style={{ color: '#fbbf24' }}>★</span> {avgRating}
             </span>
           </div>
@@ -757,7 +739,7 @@ const Customers = () => {
                         {/* Customer Info */}
                         <td style={{ padding: '1rem' }}>
                           <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: isSelected ? '#fbbf24' : '#ffffff' }}>
+                            <span style={{ fontSize: '0.85rem', fontWeight: '700', color: isSelected ? '#fbbf24' : 'var(--text-main)' }}>
                               {cust.name}
                             </span>
                             <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
@@ -786,12 +768,10 @@ const Customers = () => {
                         </td>
 
                         {/* Visits */}
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: '#ffffff' }}>
+                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>
                           {cust.visits}
                         </td>
-
-                        {/* Spend */}
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: '#ffffff' }}>
+                        <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>
                           {formatCurrency(cust.spend)}
                         </td>
 
@@ -848,7 +828,7 @@ const Customers = () => {
                   {selectedCustomer.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                  <span style={{ fontSize: '1rem', fontWeight: '800', color: '#ffffff' }}>
+                  <span style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-main)' }}>
                     {selectedCustomer.name}
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -879,11 +859,11 @@ const Customers = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Smartphone size={15} style={{ color: 'var(--text-muted)' }} />
-                    <span style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '600' }}>{selectedCustomer.phone}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: '600' }}>{selectedCustomer.phone}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Mail size={15} style={{ color: 'var(--text-muted)' }} />
-                    <span style={{ fontSize: '0.8rem', color: '#ffffff', fontWeight: '600' }}>{selectedCustomer.email}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: '600' }}>{selectedCustomer.email}</span>
                   </div>
                 </div>
 
@@ -893,11 +873,11 @@ const Customers = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', textAlign: 'center' }}>
                   <div style={{ padding: '0.65rem 0.35rem', backgroundColor: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                     <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Visits</div>
-                    <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>{selectedCustomer.visits}</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>{selectedCustomer.visits}</div>
                   </div>
                   <div style={{ padding: '0.65rem 0.35rem', backgroundColor: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                     <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Spend</div>
-                    <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>₹{(selectedCustomer.spend / 1000).toFixed(1)}K</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>₹{(selectedCustomer.spend / 1000).toFixed(1)}K</div>
                   </div>
                   <div style={{ padding: '0.65rem 0.35rem', backgroundColor: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                     <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Rating</div>
@@ -924,7 +904,7 @@ const Customers = () => {
                           }}
                         >
                           <Car size={14} style={{ color: 'var(--text-muted)' }} />
-                          <span style={{ fontSize: '0.75rem', fontWeight: '700', color: '#ffffff' }}>{plate}</span>
+                          <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-main)' }}>{plate}</span>
                         </div>
                       ))}
                     </div>
@@ -956,8 +936,8 @@ const Customers = () => {
                   onClick={() => alert(`Opening chat channel with ${selectedCustomer.name}...`)}
                   style={{
                     flex: 1,
-                    backgroundColor: '#161e2e',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-card)',
+                    color: 'var(--text-main)',
                     border: '1px solid var(--border-color)',
                     borderRadius: '8px',
                     padding: '0.55rem',
@@ -970,8 +950,8 @@ const Customers = () => {
                     gap: '0.45rem',
                     transition: 'all 0.15s'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#161e2e'}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-subtle)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
                 >
                   <MessageSquare size={14} />
                   <span>Send Message</span>
@@ -995,7 +975,7 @@ const Customers = () => {
                 <Crown size={28} style={{ opacity: 0.3 }} />
               </div>
               <div>
-                <p style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.25rem' }}>
+                <p style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.25rem' }}>
                   Select a customer to view profile
                 </p>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '200px', margin: '0 auto', lineHeight: 1.3 }}>
@@ -1023,7 +1003,7 @@ const Customers = () => {
           backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: '#0d1321',
+            backgroundColor: 'var(--bg-surface)',
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -1036,7 +1016,7 @@ const Customers = () => {
           }}>
             {/* Modal Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Add New Customer</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Add New Customer</h3>
               <button 
                 onClick={() => setShowAddModal(false)}
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
@@ -1060,8 +1040,8 @@ const Customers = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none'
                   }}
@@ -1080,8 +1060,8 @@ const Customers = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none'
                   }}
@@ -1099,8 +1079,8 @@ const Customers = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none'
                   }}
@@ -1117,8 +1097,8 @@ const Customers = () => {
                       padding: '0.55rem 0.85rem',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
-                      backgroundColor: '#111726',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--bg-subtle)',
+                      color: 'var(--text-main)',
                       fontSize: '0.8rem',
                       outline: 'none'
                     }}
@@ -1136,9 +1116,9 @@ const Customers = () => {
                     id="newCustVIP"
                     checked={newCustIsVIP}
                     onChange={(e) => setNewCustIsVIP(e.target.checked)}
-                    style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: '#fbbf24' }}
+                    style={{ cursor: 'pointer', width: '15px', height: '15px', accentColor: 'var(--accent)' }}
                   />
-                  <label htmlFor="newCustVIP" style={{ fontSize: '0.75rem', fontWeight: '700', color: '#ffffff', cursor: 'pointer' }}>VIP Customer</label>
+                  <label htmlFor="newCustVIP" style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-main)', cursor: 'pointer' }}>VIP Customer</label>
                 </div>
               </div>
 
@@ -1146,8 +1126,8 @@ const Customers = () => {
               <button
                 type="submit"
                 style={{
-                  backgroundColor: '#fbbf24',
-                  color: '#080c14',
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.65rem',
@@ -1155,7 +1135,7 @@ const Customers = () => {
                   fontWeight: '700',
                   cursor: 'pointer',
                   marginTop: '0.5rem',
-                  boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)'
+                  boxShadow: '0 4px 15px var(--accent-shadow)'
                 }}
               >
                 Create Profile

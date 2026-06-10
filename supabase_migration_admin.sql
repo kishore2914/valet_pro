@@ -21,11 +21,14 @@ CREATE TABLE IF NOT EXISTS cities (
 -- Ensure locations has relations
 ALTER TABLE locations ADD COLUMN IF NOT EXISTS company_id UUID REFERENCES companies(id);
 ALTER TABLE locations ADD COLUMN IF NOT EXISTS city_id UUID REFERENCES cities(id);
+ALTER TABLE locations ADD COLUMN IF NOT EXISTS company_name TEXT;
+ALTER TABLE locations ADD COLUMN IF NOT EXISTS city TEXT;
 ALTER TABLE locations ADD COLUMN IF NOT EXISTS tier TEXT DEFAULT 'Professional';
 ALTER TABLE locations ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active';
 ALTER TABLE locations ADD COLUMN IF NOT EXISTS staff_count INTEGER DEFAULT 8;
 ALTER TABLE locations ADD COLUMN IF NOT EXISTS vehicles_processed INTEGER DEFAULT 120000;
 ALTER TABLE locations ADD COLUMN IF NOT EXISTS monthly_fee TEXT DEFAULT '₹9,999/mo';
+
 
 -- Create platform audit logs table
 CREATE TABLE IF NOT EXISTS platform_audit_logs (
@@ -34,6 +37,34 @@ CREATE TABLE IF NOT EXISTS platform_audit_logs (
     description TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Create platform settings table
+CREATE TABLE IF NOT EXISTS platform_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Seed default platform settings
+INSERT INTO platform_settings (key, value) VALUES
+    ('pricing_starter', '3999'),
+    ('pricing_pro', '7999'),
+    ('pricing_enterprise', '24999')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+
+-- Enable Row Level Security
+ALTER TABLE platform_settings ENABLE ROW LEVEL SECURITY;
+
+-- Allow read access for everyone (anonymous and authenticated) to fetch settings
+DROP POLICY IF EXISTS platform_settings_select_policy ON platform_settings;
+CREATE POLICY platform_settings_select_policy ON platform_settings
+    FOR SELECT USING (true);
+
+-- Allow full access for admin users
+DROP POLICY IF EXISTS platform_settings_admin_policy ON platform_settings;
+CREATE POLICY platform_settings_admin_policy ON platform_settings
+    FOR ALL USING (is_admin()) WITH CHECK (is_admin());
+
 
 -- Add unique constraint for seeding locations
 ALTER TABLE locations DROP CONSTRAINT IF EXISTS locations_name_company_unique;

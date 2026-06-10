@@ -438,7 +438,7 @@ const Pipeline = () => {
       {/* Title & Controls Row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Live Vehicles</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Live Vehicles</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             {mergedVehicles.filter(v => v.status !== 'Returned').length} active · {mergedVehicles.length} total today
           </p>
@@ -496,9 +496,9 @@ const Pipeline = () => {
               fontSize: '0.75rem',
               fontWeight: '700',
               cursor: 'pointer',
-              backgroundColor: activeTab === tab.label ? 'rgba(251, 191, 36, 0.12)' : 'var(--bg-card)',
-              color: activeTab === tab.label ? '#fbbf24' : 'var(--text-muted)',
-              border: activeTab === tab.label ? '1px solid #fbbf24' : '1px solid var(--border-color)',
+              backgroundColor: activeTab === tab.label ? 'var(--accent-alpha)' : 'var(--bg-card)',
+              color: activeTab === tab.label ? 'var(--accent)' : 'var(--text-muted)',
+              border: activeTab === tab.label ? '1px solid var(--accent)' : '1px solid var(--border-color)',
               whiteSpace: 'nowrap',
               transition: 'all 0.2s ease'
             }}
@@ -517,7 +517,7 @@ const Pipeline = () => {
       }}>
         {loading ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem' }}>
-            <Loader2 size={36} className="animate-spin" style={{ color: '#fbbf24' }} />
+            <Loader2 size={36} className="animate-spin" style={{ color: 'var(--accent)' }} />
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
@@ -589,7 +589,7 @@ const Pipeline = () => {
                       {/* Vehicle */}
                       <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>{item.plate_number}</span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>{item.plate_number}</span>
                           <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{item.model} · {item.color}</span>
                         </div>
                       </td>
@@ -597,7 +597,7 @@ const Pipeline = () => {
                       {/* Customer */}
                       <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>{item.owner_name}</span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>{item.owner_name}</span>
                           <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                             <Smartphone size={11} style={{ opacity: 0.8 }} />
                             {item.phone_number}
@@ -621,14 +621,14 @@ const Pipeline = () => {
                       </td>
 
                       {/* Zone / Slot */}
-                      <td style={{ padding: '1rem', verticalAlign: 'middle', fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>
+                      <td style={{ padding: '1rem', verticalAlign: 'middle', fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>
                         {item.zone && item.slot_id ? `${item.zone} / ${item.slot_id}` : '—'}
                       </td>
 
                       {/* Staff / Key */}
                       <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#ffffff' }}>{item.driver_name}</span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)' }}>{item.driver_name}</span>
                           <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                             <Key size={11} style={{ opacity: 0.8 }} />
                             {item.key_code}
@@ -650,7 +650,7 @@ const Pipeline = () => {
                       {/* Duration */}
                       <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                             <Clock size={12} style={{ opacity: 0.8 }} />
                             {item.duration_mins}m
                           </span>
@@ -663,7 +663,7 @@ const Pipeline = () => {
                       {/* Amount */}
                       <td style={{ padding: '1rem', verticalAlign: 'middle' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#ffffff' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--text-main)' }}>
                             ₹ {item.amount}
                           </span>
                           <span style={{ 

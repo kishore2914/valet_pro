@@ -138,7 +138,14 @@ const Payment = () => {
           await supabase.from('locations').update({
             subscription_status: 'active',
             selected_plan: selectedPlan.name,
-            last_payment_at: new Date().toISOString()
+            last_payment_at: new Date().toISOString(),
+            status: 'active',
+            tier: selectedPlan.name === 'Pro' ? 'Professional' : selectedPlan.name,
+            monthly_fee: selectedPlan.name === 'Enterprise' 
+              ? `₹${Number(platformSettings.pricing_enterprise || 24999).toLocaleString('en-IN')}/mo` 
+              : selectedPlan.name === 'Starter' 
+                ? `₹${Number(platformSettings.pricing_starter || 4999).toLocaleString('en-IN')}/mo` 
+                : `₹${Number(platformSettings.pricing_pro || 9999).toLocaleString('en-IN')}/mo`
           }).eq('id', newLocationId);
         }
 

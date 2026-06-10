@@ -306,7 +306,7 @@ const Staff = () => {
       {/* Title & Controls */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.25rem' }}>Staff Management</h1>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.25rem' }}>Staff Management</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>
             {onDutyCount} on duty · {vehiclesHandledCount} vehicles handled · ₹{totalTipsToday} in tips today
           </p>
@@ -314,8 +314,8 @@ const Staff = () => {
         <button
           onClick={() => setModalOpen(true)}
           style={{
-            backgroundColor: '#fbbf24',
-            color: '#080c14',
+            backgroundColor: 'var(--accent)',
+            color: 'var(--accent-text)',
             border: 'none',
             borderRadius: '10px',
             padding: '0.65rem 1.15rem',
@@ -325,7 +325,7 @@ const Staff = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)',
+            boxShadow: '0 4px 15px var(--accent-shadow)',
             transition: 'all 0.15s ease'
           }}
           onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
@@ -351,9 +351,9 @@ const Staff = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Users size={16} style={{ color: '#fbbf24' }} />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#ffffff' }}>Branch Access Requests</span>
+              <span style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)' }}>Branch Access Requests</span>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Staff requesting access to branches within <strong style={{ color: '#ffffff' }}>{companyName}</strong>
+                Staff requesting access to branches within <strong style={{ color: 'var(--text-main)' }}>{companyName}</strong>
               </span>
             </div>
           </div>
@@ -383,8 +383,8 @@ const Staff = () => {
               border: 'none',
               borderRadius: '6px',
               cursor: 'pointer',
-              backgroundColor: activeRequestTab === 'Pending' ? '#fbbf24' : 'transparent',
-              color: activeRequestTab === 'Pending' ? '#080c14' : 'var(--text-muted)',
+              backgroundColor: activeRequestTab === 'Pending' ? 'var(--accent)' : 'transparent',
+              color: activeRequestTab === 'Pending' ? 'var(--accent-text)' : 'var(--text-muted)',
               transition: 'all 0.15s ease'
             }}
           >
@@ -399,8 +399,8 @@ const Staff = () => {
               border: 'none',
               borderRadius: '6px',
               cursor: 'pointer',
-              backgroundColor: activeRequestTab === 'History' ? '#fbbf24' : 'transparent',
-              color: activeRequestTab === 'History' ? '#080c14' : 'var(--text-muted)',
+              backgroundColor: activeRequestTab === 'History' ? 'var(--accent)' : 'transparent',
+              color: activeRequestTab === 'History' ? 'var(--accent-text)' : 'var(--text-muted)',
               transition: 'all 0.15s ease'
             }}
           >
@@ -442,7 +442,7 @@ const Staff = () => {
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '800', color: '#ffffff' }}>{req.name}</span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-main)' }}>{req.name}</span>
                           <span style={{ 
                             fontSize: '0.6rem', 
                             color: '#64748b', 
@@ -487,8 +487,8 @@ const Staff = () => {
                     <button
                       onClick={() => handleApproveRequest(req.id)}
                       style={{
-                        backgroundColor: '#fbbf24',
-                        color: '#080c14',
+                        backgroundColor: 'var(--accent)',
+                        color: 'var(--accent-text)',
                         border: 'none',
                         borderRadius: '6px',
                         padding: '0.35rem 0.75rem',
@@ -539,7 +539,7 @@ const Staff = () => {
               historyRequests.map((req) => (
                 <div key={req.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#ffffff' }}>{req.name} ({req.email})</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-main)' }}>{req.name} ({req.email})</span>
                     <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
                       Requested {req.requestedBranch} · {req.actionTime}
                     </span>
@@ -598,7 +598,7 @@ const Staff = () => {
         }}>
           <Users size={48} style={{ opacity: 0.3, color: '#fbbf24' }} />
           <div>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#ffffff', marginBottom: '0.25rem' }}>No Staff Found</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '0.25rem' }}>No Staff Found</h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '300px', margin: '0 auto', lineHeight: '1.4' }}>
               Add a new staff member to manage your valet runners.
             </p>
@@ -639,7 +639,7 @@ const Staff = () => {
                     {staff.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: '800', color: '#ffffff' }}>{staff.name}</span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: '800', color: 'var(--text-main)' }}>{staff.name}</span>
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{staff.role} · {staff.zone}</span>
                   </div>
                 </div>
@@ -664,11 +664,11 @@ const Staff = () => {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', textAlign: 'center' }}>
                 <div style={{ padding: '0.5rem', backgroundColor: 'rgba(0, 0, 0, 0.15)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                   <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Today</div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>{staff.today_vehicles}</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>{staff.today_vehicles}</div>
                 </div>
                 <div style={{ padding: '0.5rem', backgroundColor: 'rgba(0, 0, 0, 0.15)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                   <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Hours</div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>{staff.hours}h</div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>{staff.hours}h</div>
                 </div>
                 <div style={{ padding: '0.5rem', backgroundColor: 'rgba(0, 0, 0, 0.15)', border: '1px solid var(--border-color)', borderRadius: '8px' }}>
                   <div style={{ fontSize: '0.55rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Tips</div>
@@ -682,37 +682,37 @@ const Staff = () => {
                   <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Star size={12} style={{ color: '#fbbf24' }} fill="#fbbf24" /> Rating
                   </span>
-                  <span style={{ color: '#ffffff', fontWeight: '700' }}>{staff.rating} ({staff.trips} trips)</span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: '700' }}>{staff.rating} ({staff.trips} trips)</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Clock size={12} /> Shift
                   </span>
-                  <span style={{ color: '#ffffff', fontWeight: '600' }}>{staff.shift}</span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: '600' }}>{staff.shift}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Phone size={12} /> Phone
                   </span>
-                  <span style={{ color: '#ffffff', fontWeight: '600' }}>{staff.phone}</span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: '600' }}>{staff.phone}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Calendar size={12} /> Joined
                   </span>
-                  <span style={{ color: '#ffffff', fontWeight: '600' }}>{staff.joined}</span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: '600' }}>{staff.joined}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <Users size={12} /> Speaks
                   </span>
-                  <span style={{ color: '#ffffff', fontWeight: '600' }}>{staff.speaks}</span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: '600' }}>{staff.speaks}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                     <FileText size={12} /> License
                   </span>
-                  <span style={{ color: '#ffffff', fontWeight: '600' }}>{staff.license}</span>
+                  <span style={{ color: 'var(--text-main)', fontWeight: '600' }}>{staff.license}</span>
                 </div>
               </div>
 
@@ -733,7 +733,7 @@ const Staff = () => {
       }}>
         {/* Table Header */}
         <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff' }}>Shift Log</h3>
+          <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)' }}>Shift Log</h3>
           <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
             {filteredStaff.filter(s => s.status === 'On Duty').length} active shifts
           </span>
@@ -767,22 +767,22 @@ const Staff = () => {
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.01)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
-                    <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '700', color: '#ffffff' }}>
+                    <td style={{ padding: '1rem', fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-main)' }}>
                       {staff.name}
                     </td>
                     <td style={{ padding: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       Today
                     </td>
-                    <td style={{ padding: '1rem', fontSize: '0.75rem', color: '#ffffff', fontWeight: '600' }}>
+                    <td style={{ padding: '1rem', fontSize: '0.75rem', color: 'var(--text-main)', fontWeight: '600' }}>
                       {staff.clock_in}
                     </td>
                     <td style={{ padding: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       {staff.clock_out}
                     </td>
-                    <td style={{ padding: '1rem', fontSize: '0.75rem', color: '#ffffff', fontWeight: '600' }}>
+                    <td style={{ padding: '1rem', fontSize: '0.75rem', color: 'var(--text-main)', fontWeight: '600' }}>
                       {staff.hours > 0 ? `${staff.hours}h` : '0h'}
                     </td>
-                    <td style={{ padding: '1rem', fontSize: '0.75rem', color: '#ffffff', fontWeight: '600' }}>
+                    <td style={{ padding: '1rem', fontSize: '0.75rem', color: 'var(--text-main)', fontWeight: '600' }}>
                       {staff.today_vehicles}
                     </td>
                     <td style={{ padding: '1rem', fontSize: '0.75rem', color: '#fbbf24', fontWeight: '600' }}>
@@ -825,7 +825,7 @@ const Staff = () => {
           backdropFilter: 'blur(4px)'
         }}>
           <div style={{
-            backgroundColor: '#0d1321',
+            backgroundColor: 'var(--bg-surface)',
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -837,7 +837,7 @@ const Staff = () => {
             boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#ffffff' }}>Onboard New Staff Member</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: 'var(--text-main)' }}>Onboard New Staff Member</h3>
               <button 
                 onClick={() => setModalOpen(false)}
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
@@ -860,8 +860,8 @@ const Staff = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none'
                   }}
@@ -878,8 +878,8 @@ const Staff = () => {
                       padding: '0.55rem 0.85rem',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
-                      backgroundColor: '#111726',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--bg-subtle)',
+                      color: 'var(--text-main)',
                       fontSize: '0.8rem',
                       outline: 'none'
                     }}
@@ -901,8 +901,8 @@ const Staff = () => {
                       padding: '0.55rem 0.85rem',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
-                      backgroundColor: '#111726',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--bg-subtle)',
+                      color: 'var(--text-main)',
                       fontSize: '0.8rem',
                       outline: 'none'
                     }}
@@ -922,8 +922,8 @@ const Staff = () => {
                       padding: '0.55rem 0.85rem',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
-                      backgroundColor: '#111726',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--bg-subtle)',
+                      color: 'var(--text-main)',
                       fontSize: '0.8rem',
                       outline: 'none'
                     }}
@@ -940,8 +940,8 @@ const Staff = () => {
                       padding: '0.55rem 0.85rem',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
-                      backgroundColor: '#111726',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--bg-subtle)',
+                      color: 'var(--text-main)',
                       fontSize: '0.8rem',
                       outline: 'none'
                     }}
@@ -961,8 +961,8 @@ const Staff = () => {
                       padding: '0.55rem 0.85rem',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
-                      backgroundColor: '#111726',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--bg-subtle)',
+                      color: 'var(--text-main)',
                       fontSize: '0.8rem',
                       outline: 'none'
                     }}
@@ -979,8 +979,8 @@ const Staff = () => {
                       padding: '0.55rem 0.85rem',
                       borderRadius: '8px',
                       border: '1px solid var(--border-color)',
-                      backgroundColor: '#111726',
-                      color: '#ffffff',
+                      backgroundColor: 'var(--bg-subtle)',
+                      color: 'var(--text-main)',
                       fontSize: '0.8rem',
                       outline: 'none'
                     }}
@@ -1000,8 +1000,8 @@ const Staff = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none'
                   }}
@@ -1020,8 +1020,8 @@ const Staff = () => {
                     padding: '0.55rem 0.85rem',
                     borderRadius: '8px',
                     border: '1px solid var(--border-color)',
-                    backgroundColor: '#111726',
-                    color: '#ffffff',
+                    backgroundColor: 'var(--bg-subtle)',
+                    color: 'var(--text-main)',
                     fontSize: '0.8rem',
                     outline: 'none'
                   }}
@@ -1033,8 +1033,8 @@ const Staff = () => {
                 type="submit"
                 disabled={isSubmitting}
                 style={{
-                  backgroundColor: '#fbbf24',
-                  color: '#080c14',
+                  backgroundColor: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '0.65rem',
@@ -1045,7 +1045,7 @@ const Staff = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 4px 15px rgba(251, 191, 36, 0.15)'
+                  boxShadow: '0 4px 15px var(--accent-shadow)'
                 }}
               >
                 {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : 'Onboard Staff'}
