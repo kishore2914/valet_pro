@@ -699,7 +699,7 @@ const Pipeline = () => {
                               boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)',
                               zIndex: 1000,
                               minWidth: '180px',
-                              overflow: 'hidden'
+                              overflow: 'visible'
                             }}
                           >
                             <div style={{ padding: '0.5rem 0.75rem', fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', borderBottom: '1px solid var(--border-color)' }}>
@@ -707,7 +707,7 @@ const Pipeline = () => {
                             </div>
                             
                             {/* Stage progression */}
-                            {NEXT_STATUS[item.status] && (
+                            {NEXT_STATUS[item.status] && NEXT_STATUS[item.status] !== 'Parking' && (
                               <button
                                 onClick={() => handleStatusChange(item.id, NEXT_STATUS[item.status])}
                                 style={{

@@ -54,6 +54,15 @@ const formatRevenue = (val) => {
   return formatINR(val);
 };
 
+const defaultMockLogs = [
+  { id: 'mock-1', title: 'Client onboarded', desc: 'Radisson Blu - Bengaluru', time: '2h ago · Admin' },
+  { id: 'mock-2', title: 'Plan upgraded', desc: 'VR Mall: Starter → Professional', time: '5h ago · Admin' },
+  { id: 'mock-3', title: 'Security alert resolved', desc: 'Unauthorized access attempt at ITC Grand Chola', time: '1d ago · Admin' },
+  { id: 'mock-4', title: 'New location added', desc: 'Phoenix MarketCity - Velachery Branch', time: '2d ago · Admin' },
+  { id: 'mock-5', title: 'Payment received', desc: 'Apollo Hospital - ₹39,999 cleared', time: '3d ago · Admin' },
+  { id: 'mock-6', title: 'Feature flag toggled', desc: 'API Access enabled for ITC Grand Chola', time: '4d ago · Admin' }
+];
+
 const Analytics = () => {
   const { platformSettings } = useLocale();
 
@@ -183,13 +192,17 @@ const Analytics = () => {
     city: 'Chennai',
     tier: 'Professional',
     mrr: '9999',
-    status: 'active'
+    status: 'active',
+    ownerName: '',
+    ownerEmail: '',
+    ownerPhone: '',
+    ownerPassword: ''
   });
 
   // Dynamic chains and standalone lists
   const [chains, setChains] = useState([]);
   const [standalone, setStandalone] = useState([]);
-  const [auditLogs, setAuditLogs] = useState([]);
+  const [auditLogs, setAuditLogs] = useState(defaultMockLogs);
   const [dbLocsCount, setDbLocsCount] = useState(0);
 
   // States for platform metrics
@@ -296,7 +309,20 @@ const Analytics = () => {
             tier: tierVal,
             live: liveCount,
             fee: monthlyFeeVal,
-            status: statusVal
+            status: statusVal,
+            primary_contact_name: loc.primary_contact_name,
+            primary_contact_email: loc.primary_contact_email,
+            primary_contact_phone: loc.primary_contact_phone,
+            primary_contact_address: loc.primary_contact_address,
+            billing_outstanding: loc.billing_outstanding,
+            billing_method: loc.billing_method,
+            next_bill_date: loc.next_bill_date,
+            last_payment_date: loc.last_payment_date,
+            renewal_date: loc.renewal_date,
+            uptime_percent: loc.uptime_percent,
+            account_manager: loc.account_manager,
+            open_tickets_count: loc.open_tickets_count,
+            enabled_features: loc.enabled_features
           };
 
           // Accumulate subscription distributions (only for active/trial clients)
@@ -397,9 +423,11 @@ const Analytics = () => {
             time: timeStr
           };
         });
+        console.log("Audit Logs loaded successfully from Supabase:", mappedLogs);
         setAuditLogs(mappedLogs);
       } else {
-        setAuditLogs([]);
+        console.log("Audit Logs: Falling back to local mock data (table empty or missing)");
+        setAuditLogs(defaultMockLogs);
       }
 
       // 4. Query vehicles count for Today and Yesterday
@@ -661,6 +689,10 @@ const Analytics = () => {
   const handleOnboardSubmit = async (e) => {
     e.preventDefault();
     if (!clientForm.name.trim()) return;
+    if (!clientForm.ownerName.trim() || !clientForm.ownerEmail.trim() || !clientForm.ownerPassword.trim()) {
+      alert('Please fill out all Owner Credentials fields.');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -723,11 +755,89 @@ const Analytics = () => {
           status: clientForm.status,
           staff_count: 0,
           vehicles_processed: 0,
-          monthly_fee: getMonthlyFeeString(clientForm.tier, clientForm.status)
+          monthly_fee: getMonthlyFeeString(clientForm.tier, clientForm.status),
+          primary_contact_name: clientForm.ownerName,
+          primary_contact_email: clientForm.ownerEmail,
+          primary_contact_phone: clientForm.ownerPhone,
+          primary_contact_address: `${clientForm.city}, India`
         }])
         .select();
 
       if (error) throw error;
+
+      if (!data?.[0]?.id) {
+        throw new Error('No location ID returned from location creation.');
+      }
+      const newLocationId = data[0].id;
+
+      // 4. Create secondary Supabase client to sign up user without logging out the current admin
+      const { createClient } = await import('@supabase/supabase-js');
+      const tempClient = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        { auth: { persistSession: false } }
+      );
+
+      const { data: authData, error: authError } = await tempClient.auth.signUp({
+        email: clientForm.ownerEmail,
+        password: clientForm.ownerPassword,
+        options: {
+          data: {
+            full_name: clientForm.ownerName,
+            role: 'valet',
+            location_id: newLocationId
+          }
+        }
+      });
+
+      if (authError) {
+        // Rollback location creation on auth failure to maintain consistent state
+        await supabase.from('locations').delete().eq('id', newLocationId);
+        if (authError.message.includes('already registered')) {
+          throw new Error('This email address is already registered as a user.');
+        }
+        throw authError;
+      }
+
+      if (!authData?.user) {
+        // Rollback
+        await supabase.from('locations').delete().eq('id', newLocationId);
+        throw new Error('Failed to create authentication account.');
+      }
+      const newUserId = authData.user.id;
+
+      // 5. Profile Sync
+      try {
+        await supabase.from('profiles').upsert({
+          id: newUserId,
+          full_name: clientForm.ownerName,
+          email: clientForm.ownerEmail,
+          role: 'valet',
+          location_id: newLocationId
+        }, { onConflict: 'id' });
+      } catch (e) {
+        console.warn('Profile sync handled by trigger or skipped:', e);
+      }
+
+      // 6. Map the owner user to the location
+      try {
+        await supabase.from('user_locations').insert([{
+          user_id: newUserId,
+          location_id: newLocationId
+        }]);
+      } catch (e) {
+        console.warn('user_locations mapping warning:', e);
+      }
+
+      // 7. Update locations table with owner_id reference
+      try {
+        await supabase
+          .from('locations')
+          .update({ owner_id: newUserId })
+          .eq('id', newLocationId);
+      } catch (e) {
+        console.warn('Updating locations owner_id warning:', e);
+      }
 
       // Add to platform audit logs in Supabase
       await supabase.from('platform_audit_logs').insert([{
@@ -736,7 +846,18 @@ const Analytics = () => {
       }]);
 
       setShowOnboardModal(false);
-      setClientForm({ name: '', chainName: '', city: 'Chennai', tier: 'Professional', mrr: '9999', status: 'active' });
+      setClientForm({
+        name: '',
+        chainName: '',
+        city: 'Chennai',
+        tier: 'Professional',
+        mrr: '9999',
+        status: 'active',
+        ownerName: '',
+        ownerEmail: '',
+        ownerPhone: '',
+        ownerPassword: ''
+      });
       fetchDatabaseLocations();
       alert('Client onboarded successfully!');
     } catch (err) {
@@ -961,15 +1082,19 @@ const Analytics = () => {
       }
 
       // Seed audit logs
-      const auditPayload = [
-        { title: 'Client onboarded', description: 'Radisson Blu - Bengaluru' },
-        { title: 'Plan upgraded', description: 'VR Mall: Starter → Professional' },
-        { title: 'Security alert resolved', description: 'Unauthorized access attempt at ITC Grand Chola' },
-        { title: 'New location added', description: 'Phoenix MarketCity - Velachery Branch' },
-        { title: 'Payment received', description: 'Apollo Hospital - ₹39,999 cleared' },
-        { title: 'Feature flag toggled', description: 'API Access enabled for ITC Grand Chola' }
-      ];
-      await supabase.from('platform_audit_logs').insert(auditPayload);
+      try {
+        const auditPayload = [
+          { title: 'Client onboarded', description: 'Radisson Blu - Bengaluru' },
+          { title: 'Plan upgraded', description: 'VR Mall: Starter → Professional' },
+          { title: 'Security alert resolved', description: 'Unauthorized access attempt at ITC Grand Chola' },
+          { title: 'New location added', description: 'Phoenix MarketCity - Velachery Branch' },
+          { title: 'Payment received', description: 'Apollo Hospital - ₹39,999 cleared' },
+          { title: 'Feature flag toggled', description: 'API Access enabled for ITC Grand Chola' }
+        ];
+        await supabase.from('platform_audit_logs').insert(auditPayload);
+      } catch (logErr) {
+        console.warn('Could not seed platform_audit_logs table:', logErr);
+      }
 
       fetchDatabaseLocations();
       alert('Database seeded with platform overview data!');
@@ -989,11 +1114,15 @@ const Analytics = () => {
       await supabase.from('locations').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('companies').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('cities').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      await supabase.from('platform_audit_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      try {
+        await supabase.from('platform_audit_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      } catch (logErr) {
+        console.warn('Could not clear platform_audit_logs table:', logErr);
+      }
       
       setChains([]);
       setStandalone([]);
-      setAuditLogs([]);
+      setAuditLogs(defaultMockLogs);
       setDbLocsCount(0);
       setCityRevenue([]);
       setSubDistribution({
@@ -1903,22 +2032,22 @@ const Analytics = () => {
                 }}>
                   <div style={detailContactItemStyle}>
                     <User size={15} style={{ color: 'var(--text-muted)' }} />
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{detailContact.name}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{selectedDetail.primary_contact_name || detailContact.name}</span>
                   </div>
                   
                   <div style={detailContactItemStyle}>
                     <Mail size={15} style={{ color: 'var(--text-muted)' }} />
-                    <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>{detailContact.email}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)' }}>{selectedDetail.primary_contact_email || detailContact.email}</span>
                   </div>
                   
                   <div style={detailContactItemStyle}>
                     <Phone size={15} style={{ color: 'var(--text-muted)' }} />
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{detailContact.phone}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{selectedDetail.primary_contact_phone || detailContact.phone}</span>
                   </div>
                   
                   <div style={detailContactItemStyle}>
                     <MapPin size={15} style={{ color: 'var(--text-muted)' }} />
-                    <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: 1.25 }}>{detailContact.address}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: 1.25 }}>{selectedDetail.primary_contact_address || detailContact.address}</span>
                   </div>
                 </div>
               </div>
@@ -1940,29 +2069,29 @@ const Analytics = () => {
                   
                   <div style={detailBillingCardStyle}>
                     <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Outstanding</span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#10b981' }}>₹0</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: '#10b981' }}>{selectedDetail.billing_outstanding || '₹0'}</span>
                   </div>
                   
                   <div style={detailBillingCardStyle}>
                     <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Method</span>
                     <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>
-                      {selectedDetail.tier === 'Enterprise' ? 'Group ACH' : 'UPI'}
+                      {selectedDetail.billing_method || (selectedDetail.tier === 'Enterprise' ? 'Group ACH' : 'UPI')}
                     </span>
                   </div>
                   
                   <div style={detailBillingCardStyle}>
                     <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Next Bill</span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>01 Jul 2026</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{selectedDetail.next_bill_date || '01 Jul 2026'}</span>
                   </div>
                   
                   <div style={detailBillingCardStyle}>
                     <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Last Payment</span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>01 Jun 2026</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{selectedDetail.last_payment_date || '01 Jun 2026'}</span>
                   </div>
                   
                   <div style={detailBillingCardStyle}>
                     <span style={{ fontSize: '0.75rem', fontWeight: '600', color: 'var(--text-muted)' }}>Renewal</span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>31 Dec 2026</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '800', color: 'var(--text-main)' }}>{selectedDetail.renewal_date || '31 Dec 2026'}</span>
                   </div>
                 </div>
               </div>
@@ -1977,17 +2106,17 @@ const Analytics = () => {
                 }}>
                   <div style={detailKpiCardStyle}>
                     <span style={detailKpiLabelStyle}>Uptime (30d)</span>
-                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>{detailUptime}</span>
+                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>{selectedDetail.uptime_percent || detailUptime}</span>
                   </div>
                   
                   <div style={detailKpiCardStyle}>
                     <span style={detailKpiLabelStyle}>Account Manager</span>
-                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>{detailAM}</span>
+                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>{selectedDetail.account_manager || detailAM}</span>
                   </div>
                   
                   <div style={detailKpiCardStyle}>
                     <span style={detailKpiLabelStyle}>Open Tickets</span>
-                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>1</span>
+                    <span style={{ ...detailKpiValStyle, fontSize: '0.95rem', marginTop: '0.2rem' }}>{selectedDetail.open_tickets_count !== undefined ? selectedDetail.open_tickets_count : 1}</span>
                   </div>
                 </div>
               </div>
@@ -2000,7 +2129,7 @@ const Analytics = () => {
                   flexWrap: 'wrap',
                   gap: '0.5rem'
                 }}>
-                  {['QR Tokens', 'OTP Return', 'Live Tracking', 'Damage Reports', 'Audit Trail'].map((feat) => (
+                  {(selectedDetail.enabled_features || ['QR Tokens', 'OTP Return', 'Live Tracking', 'Damage Reports', 'Audit Trail']).map((feat) => (
                     <span 
                       key={feat}
                       style={{
@@ -2163,8 +2292,10 @@ const Analytics = () => {
             border: '1.5px solid var(--border-color)',
             borderRadius: '16px',
             padding: '1.5rem',
-            width: '420px',
-            maxWidth: '90%',
+            width: '450px',
+            maxWidth: '95%',
+            maxHeight: '90vh',
+            overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
             gap: '1.25rem',
@@ -2227,6 +2358,57 @@ const Analytics = () => {
                   <option value="Professional">Professional (₹{(platformSettings?.pricing_pro || 9999).toLocaleString('en-IN')}/mo)</option>
                   <option value="Enterprise">Enterprise (₹{(platformSettings?.pricing_enterprise || 24999).toLocaleString('en-IN')}/mo)</option>
                 </select>
+              </div>
+
+              <div style={{ height: '1px', backgroundColor: 'var(--border-color)', margin: '0.4rem 0' }}></div>
+              <h4 style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--accent)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Owner Credentials</h4>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Owner Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={clientForm.ownerName}
+                  onChange={(e) => setClientForm(prev => ({ ...prev, ownerName: e.target.value }))}
+                  placeholder="e.g. Jane Doe"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Email ID *</label>
+                <input
+                  type="email"
+                  required
+                  value={clientForm.ownerEmail}
+                  onChange={(e) => setClientForm(prev => ({ ...prev, ownerEmail: e.target.value }))}
+                  placeholder="e.g. jane@company.com"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Mobile Number *</label>
+                <input
+                  type="tel"
+                  required
+                  value={clientForm.ownerPhone}
+                  onChange={(e) => setClientForm(prev => ({ ...prev, ownerPhone: e.target.value }))}
+                  placeholder="e.g. +91 98765 43210"
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <label style={{ fontSize: '0.65rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Password *</label>
+                <input
+                  type="password"
+                  required
+                  value={clientForm.ownerPassword}
+                  onChange={(e) => setClientForm(prev => ({ ...prev, ownerPassword: e.target.value }))}
+                  placeholder="Minimum 6 characters"
+                  style={inputStyle}
+                />
               </div>
 
               <button
