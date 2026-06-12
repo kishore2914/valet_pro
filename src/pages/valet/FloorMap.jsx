@@ -35,7 +35,7 @@ const getStatusDetails = (status) => {
 // Safe slot ID parsing helpers
 const getSlotNumber = (slotId) => {
   if (!slotId) return null;
-  const slotStr = String(slotId);
+  const slotStr = String(slotId).replace(/\s+/g, '');
   const parts = slotStr.split('-');
   const numPart = parts.length > 1 ? parts[1] : parts[0];
   const num = parseInt(numPart, 10);
@@ -43,13 +43,27 @@ const getSlotNumber = (slotId) => {
 };
 
 const getSlotZone = (slotId, defaultZone = '') => {
-  if (!slotId) return defaultZone;
-  const slotStr = String(slotId);
+  if (!slotId) {
+    if (defaultZone) {
+      const cleaned = String(defaultZone).replace(/\s+/g, '').toUpperCase();
+      if (cleaned.startsWith('EV')) return 'EV';
+      if (cleaned.startsWith('VIP')) return 'VIP';
+      return cleaned[0] || 'A';
+    }
+    return 'A';
+  }
+  const slotStr = String(slotId).replace(/\s+/g, '');
   const parts = slotStr.split('-');
   if (parts.length > 1) {
     return parts[0].toUpperCase();
   }
-  return defaultZone;
+  if (defaultZone) {
+    const cleaned = String(defaultZone).replace(/\s+/g, '').toUpperCase();
+    if (cleaned.startsWith('EV')) return 'EV';
+    if (cleaned.startsWith('VIP')) return 'VIP';
+    return cleaned[0] || 'A';
+  }
+  return 'A';
 };
 
 const FloorMap = () => {

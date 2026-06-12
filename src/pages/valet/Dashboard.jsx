@@ -273,7 +273,8 @@ const ValetDashboard = () => {
   // EV charging count (active vehicles parked in standard EV slot or EV zone)
   const displayEvCharging = (activities || []).filter(v => 
     v.status !== 'Returned' && 
-    (String(v.zone).toUpperCase() === 'EV' || String(v.slot_id).toUpperCase().startsWith('EV-'))
+    (String(v.zone || '').replace(/\s+/g, '').toUpperCase() === 'EV' || 
+     String(v.slot_id || '').replace(/\s+/g, '').toUpperCase().startsWith('EV-'))
   ).length;
 
   // Customer rating average
@@ -286,8 +287,8 @@ const ValetDashboard = () => {
   const getZoneOccupants = (zoneCode) => {
     return (activities || []).filter(v => 
       v.status !== 'Returned' && 
-      (String(v.zone).toUpperCase() === String(zoneCode).toUpperCase() || 
-       String(v.slot_id).toUpperCase().startsWith(`${String(zoneCode).toUpperCase()}-`))
+      (String(v.zone || '').replace(/\s+/g, '').toUpperCase().startsWith(String(zoneCode).toUpperCase()) || 
+       String(v.slot_id || '').replace(/\s+/g, '').toUpperCase().startsWith(`${String(zoneCode).toUpperCase()}-`))
     ).length;
   };
   

@@ -51,6 +51,12 @@ export const vehicleService = {
 
   // Add new vehicle
   async addVehicle(vehicleData) {
+    if (vehicleData.slot_id) {
+      vehicleData.slot_id = String(vehicleData.slot_id).replace(/\s+/g, '').toUpperCase();
+    }
+    if (vehicleData.zone) {
+      vehicleData.zone = String(vehicleData.zone).trim();
+    }
     const { data, error } = await supabase
       .from('vehicles')
       .insert([vehicleData])
@@ -64,6 +70,13 @@ export const vehicleService = {
     if (status === 'Parked') update.parked_at = new Date().toISOString();
     if (status === 'Ready') update.requested_at = new Date().toISOString();
     if (status === 'Returned') update.delivered_at = new Date().toISOString();
+
+    if (update.slot_id) {
+      update.slot_id = String(update.slot_id).replace(/\s+/g, '').toUpperCase();
+    }
+    if (update.zone) {
+      update.zone = String(update.zone).trim();
+    }
 
     const { data, error } = await supabase
       .from('vehicles')
